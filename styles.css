@@ -1267,6 +1267,41 @@ mark {
   position: absolute;
   inset: 0;
   z-index: 1;
+  overflow: hidden;
+}
+
+.weather-map__iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none;
+  filter: saturate(0.6) contrast(1.03) brightness(1.02);
+}
+
+.weather-map__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.25));
+  pointer-events: none;
+}
+
+.weather-map__attribution {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.45rem;
+  z-index: 4;
+  margin: 0;
+  padding: 0.2rem 0.45rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #dbe7f2;
+  font-family: var(--font-sans);
+  font-size: 0.64rem;
+  color: #4d6278;
+}
+
+.weather-map__attribution a {
+  color: #3f5d7c;
+  text-decoration: underline;
 }
 
 .weather-map__wind {

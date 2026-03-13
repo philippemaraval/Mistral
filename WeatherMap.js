@@ -16,6 +16,13 @@ const STATUS_LABELS = {
   rainy: "Pluvieux",
 };
 
+const MARSEILLE_BBOX = {
+  west: 5.206,
+  south: 43.195,
+  east: 5.505,
+  north: 43.398,
+};
+
 function getIcon(status) {
   switch (status) {
     case "sunny":
@@ -91,16 +98,30 @@ function resolveWeatherStatus(baseStatus, latestArticle) {
 }
 
 function buildBaseMap() {
+  const mapUrl = new URL("https://www.openstreetmap.org/export/embed.html");
+  mapUrl.searchParams.set(
+    "bbox",
+    `${MARSEILLE_BBOX.west},${MARSEILLE_BBOX.south},${MARSEILLE_BBOX.east},${MARSEILLE_BBOX.north}`
+  );
+  mapUrl.searchParams.set("layer", "mapnik");
+
   return `
-    <svg class="weather-map__base" viewBox="0 0 100 100" aria-hidden="true">
-      <rect x="0.5" y="0.5" width="99" height="99" fill="#ffffff"></rect>
-      <path d="M10 18 24 12 35 16 48 12 61 18 74 16 88 25 85 38 89 49 84 63 73 70 66 82 51 87 37 84 23 87 12 77 8 66 11 52 6 40 9 29Z" fill="none" stroke="#f5f5f5" stroke-width="0.5"></path>
-      <path d="M24 12 23 24 35 16 37 30 48 12 50 26 61 18 63 31 74 16 73 29 88 25" fill="none" stroke="#f5f5f5" stroke-width="0.5"></path>
-      <path d="M9 29 23 24 22 39 37 30 36 45 50 26 50 43 63 31 62 47 73 29 72 44 85 38" fill="none" stroke="#f5f5f5" stroke-width="0.5"></path>
-      <path d="M6 40 22 39 21 55 36 45 35 60 50 43 49 58 62 47 62 63 72 44 71 58 89 49" fill="none" stroke="#f5f5f5" stroke-width="0.5"></path>
-      <path d="M11 52 21 55 19 68 35 60 34 73 49 58 49 73 62 63 61 76 71 58 73 70" fill="none" stroke="#f5f5f5" stroke-width="0.5"></path>
-      <path d="M8 66 19 68 23 87M34 73 37 84M49 73 51 87M61 76 66 82" fill="none" stroke="#f5f5f5" stroke-width="0.5"></path>
-    </svg>
+    <div class="weather-map__base" aria-hidden="true">
+      <iframe
+        class="weather-map__iframe"
+        src="${mapUrl.toString()}"
+        loading="lazy"
+        tabindex="-1"
+        title=""
+      ></iframe>
+      <div class="weather-map__veil"></div>
+    </div>
+    <p class="weather-map__attribution">
+      Fond de carte :
+      <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
+        © OpenStreetMap contributors
+      </a>
+    </p>
   `;
 }
 

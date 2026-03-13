@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Météo de la vigilance | Mistral</title>
+    <meta
+      name="description"
+      content="Carte de vigilance éditoriale à Marseille. Chaque catégorie affiche sa météo selon la fraîcheur des derniers articles."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="Météo de la vigilance | Mistral" />
+    <meta
+      property="og:description"
+      content="Suivez l'état de vigilance de Politique, Économie, Urbanisme, Mobilités, Culture et Quartiers."
+    />
+    <meta property="og:image" content="./social-preview.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Météo de la vigilance | Mistral" />
+    <meta
+      name="twitter:description"
+      content="La carte interactive qui traduit le rythme des publications en météo éditoriale."
+    />
+    <meta name="twitter:image" content="./social-preview.svg" />
+    <link rel="icon" type="image/png" href="./logo mistral.PNG" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html" aria-label="Accueil Mistral">
+          <img class="brand__logo" src="./logo mistral.PNG" alt="Logo Mistral" />
+          <span class="brand__name">Mistral</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          aria-label="Ouvrir le menu"
+        >
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="site-nav" id="primary-nav" aria-label="Navigation principale">
+          <ul>
+            <li><a href="./category.html?tag=Politique">Politique</a></li>
+            <li><a href="./category.html?tag=%C3%89conomie">Économie</a></li>
+            <li><a href="./category.html?tag=Urbanisme">Urbanisme</a></li>
+            <li><a href="./category.html?tag=Mobilit%C3%A9s">Mobilités</a></li>
+            <li><a href="./category.html?tag=Culture">Culture</a></li>
+            <li><a href="./category.html?tag=Quartiers">Quartiers</a></li>
+            <li><a class="site-nav__weather" href="./weather.html" aria-current="page">Météo</a></li>
+          </ul>
+        </nav>
+
+        <a class="search-bar category-home-link" href="./index.html" aria-label="Retour à l'accueil">
+          Retour à l'accueil
+        </a>
+      </div>
+    </header>
+
+    <main class="weather-page">
+      <section class="weather-map-section" aria-label="Carte de vigilance de Marseille">
+        <div class="weather-map-section__intro">
+          <p class="eyebrow">MÉTÉO DE LA VIGILANCE</p>
+          <h1>Le ciel éditorial de Marseille en temps réel</h1>
+          <p>
+            Survole un point pour voir l'état d'une catégorie et ouvrir directement le dernier
+            dossier publié.
+          </p>
+        </div>
+        <div id="map-container" class="weather-map" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <button class="back-to-top" id="back-to-top" type="button" aria-label="Retour en haut">
+      Retour en haut
+    </button>
+
+    <script type="module" src="./static-page.js"></script>
+    <script type="module" src="./WeatherMap.js"></script>
+  </body>
+</html>

@@ -7,6 +7,15 @@ export const categories = [
   "Quartiers",
 ];
 
+export const weatherConfig = {
+  Politique: { coords: { x: 50, y: 55 }, anchor: "Vieux-Port", status: "storm" },
+  Économie: { coords: { x: 48, y: 40 }, anchor: "Joliette", status: "windy" },
+  Urbanisme: { coords: { x: 55, y: 45 }, anchor: "Euromed", status: "cloudy" },
+  Mobilités: { coords: { x: 52, y: 48 }, anchor: "St-Charles", status: "rainy" },
+  Culture: { coords: { x: 45, y: 50 }, anchor: "Mucem", status: "sunny" },
+  Quartiers: { coords: { x: 60, y: 25 }, anchor: "Nord", status: "cloudy" },
+};
+
 export const featuredArticleId = "om-chiffres-stade";
 
 export const articles = [

@@ -14,14 +14,57 @@ const sentinel = document.querySelector("#scroll-sentinel");
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
 const searchForm = document.querySelector(".search-bar");
+const searchInput = document.querySelector("#site-search");
+const searchStatus = document.querySelector("#search-status");
 
 const feedArticles = articles
   .filter((article) => article.id !== featuredArticleId)
   .sort(sortByDateDesc);
 
+const BATCH_SIZE = 6;
+
+let activeArticles = [...feedArticles];
 let cursor = 0;
 let isLoading = false;
 let observer;
+let searchDebounce;
+let searchTermRaw = "";
+let searchTermNormalized = "";
+let loadTimeout;
+
+function normalizeSearchValue(value) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function highlightText(value) {
+  let output = escapeHtml(value);
+  if (!searchTermRaw) return output;
+
+  const terms = searchTermRaw.split(/\s+/).filter(Boolean);
+  terms.forEach((term) => {
+    const pattern = new RegExp(`(${escapeRegExp(term)})`, "gi");
+    output = output.replace(pattern, "<mark>$1</mark>");
+  });
+
+  return output;
+}
 
 function buildTags(tags, parent) {
   tags.forEach((tag) => {
@@ -39,10 +82,13 @@ function buildCard(article) {
   const link = fragment.querySelector(".article-card__link");
   const tags = fragment.querySelector(".article-card__tags");
   const date = fragment.querySelector(".article-card__date");
+  const title = fragment.querySelector(".article-card__title");
+  const excerpt = fragment.querySelector(".article-card__excerpt");
+  const caption = fragment.querySelector(".article-card__caption");
 
-  fragment.querySelector(".article-card__title").textContent = article.title;
-  fragment.querySelector(".article-card__excerpt").textContent = article.excerpt;
-  fragment.querySelector(".article-card__caption").textContent = article.caption;
+  title.innerHTML = highlightText(article.title);
+  excerpt.innerHTML = highlightText(article.excerpt);
+  caption.innerHTML = highlightText(article.caption);
   date.textContent = `Publie le ${formatDateFr(article.date)}`;
 
   image.src = article.image;
@@ -54,17 +100,47 @@ function buildCard(article) {
   return fragment;
 }
 
-function renderBatch(size = 6) {
-  const end = Math.min(cursor + size, feedArticles.length);
+function updateSearchStatus() {
+  if (!searchStatus) return;
+
+  if (!searchTermRaw) {
+    searchStatus.textContent = "";
+    searchStatus.classList.remove("is-empty");
+    return;
+  }
+
+  if (activeArticles.length === 0) {
+    searchStatus.textContent = `Aucun resultat pour "${searchTermRaw}".`;
+    searchStatus.classList.add("is-empty");
+    return;
+  }
+
+  searchStatus.textContent = `${activeArticles.length} resultat(s) pour "${searchTermRaw}".`;
+  searchStatus.classList.remove("is-empty");
+}
+
+function updateSentinelVisibility() {
+  if (!observer || !sentinel) return;
+
+  const hasMore = cursor < activeArticles.length;
+  sentinel.classList.toggle("is-hidden", !hasMore);
+  if (hasMore) {
+    observer.observe(sentinel);
+  } else {
+    observer.unobserve(sentinel);
+  }
+}
+
+function renderBatch(size = BATCH_SIZE) {
+  const end = Math.min(cursor + size, activeArticles.length);
   for (let i = cursor; i < end; i += 1) {
-    const article = feedArticles[i];
+    const article = activeArticles[i];
     grid.appendChild(buildCard(article));
   }
   cursor = end;
+  updateSentinelVisibility();
 
-  if (cursor >= feedArticles.length) {
-    observer?.disconnect();
-    sentinel?.remove();
+  if (cursor >= activeArticles.length) {
     showLoading(false);
   }
 }
@@ -75,15 +151,36 @@ function showLoading(visible) {
 }
 
 function loadMore() {
-  if (isLoading || cursor >= feedArticles.length) return;
+  if (isLoading || cursor >= activeArticles.length) return;
   isLoading = true;
   showLoading(true);
 
-  window.setTimeout(() => {
-    renderBatch(6);
+  loadTimeout = window.setTimeout(() => {
+    renderBatch(BATCH_SIZE);
     showLoading(false);
     isLoading = false;
   }, 380);
+}
+
+function articleMatchesSearch(article) {
+  if (!searchTermNormalized) return true;
+  const searchableText = normalizeSearchValue(
+    `${article.title} ${article.excerpt} ${article.caption} ${article.tags.join(" ")}`
+  );
+  return searchableText.includes(searchTermNormalized);
+}
+
+function applySearch(value) {
+  window.clearTimeout(loadTimeout);
+  searchTermRaw = value.trim();
+  searchTermNormalized = normalizeSearchValue(searchTermRaw);
+  activeArticles = feedArticles.filter(articleMatchesSearch);
+  cursor = 0;
+  isLoading = false;
+  grid.innerHTML = "";
+  showLoading(false);
+  renderBatch(BATCH_SIZE);
+  updateSearchStatus();
 }
 
 if (grid && template) {
@@ -96,12 +193,20 @@ if (grid && template) {
     { rootMargin: "420px 0px" }
   );
 
-  observer.observe(sentinel);
-  renderBatch(6);
+  applySearch(searchInput?.value ?? "");
 }
 
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();
+  window.clearTimeout(searchDebounce);
+  applySearch(searchInput?.value ?? "");
+});
+
+searchInput?.addEventListener("input", () => {
+  window.clearTimeout(searchDebounce);
+  searchDebounce = window.setTimeout(() => {
+    applySearch(searchInput.value);
+  }, 260);
 });
 
 navToggle?.addEventListener("click", () => {

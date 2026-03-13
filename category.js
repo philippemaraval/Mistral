@@ -13,6 +13,7 @@ const indicator = document.querySelector("#category-loading");
 const sentinel = document.querySelector("#category-sentinel");
 const title = document.querySelector("#category-title");
 const lead = document.querySelector("#category-lead");
+const breadcrumbCurrent = document.querySelector("#breadcrumb-current");
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
 
@@ -93,6 +94,21 @@ function loadMore() {
 function setupCategoryHeader() {
   title.textContent = `#${tag}`;
   lead.textContent = `${filteredArticles.length} article(s), affiches du plus recent au plus ancien.`;
+  breadcrumbCurrent.textContent = tag;
+}
+
+function setupActiveCategoryNav() {
+  nav?.querySelectorAll("a").forEach((link) => {
+    const linkUrl = new URL(link.href, window.location.origin);
+    const linkTag = linkUrl.searchParams.get("tag");
+    const isActive = linkTag === tag;
+    link.classList.toggle("is-active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
 }
 
 function setupNavigation() {
@@ -110,6 +126,7 @@ function setupNavigation() {
 }
 
 setupCategoryHeader();
+setupActiveCategoryNav();
 setupNavigation();
 
 if (filteredArticles.length === 0) {

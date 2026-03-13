@@ -11,12 +11,15 @@ const date = document.querySelector("#article-date");
 const image = document.querySelector("#article-image");
 const caption = document.querySelector("#article-caption");
 const tags = document.querySelector("#article-tags");
+const breadcrumbCategoryLink = document.querySelector("#breadcrumb-category-link");
+const breadcrumbCurrent = document.querySelector("#breadcrumb-current");
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
 
 const searchParams = new URLSearchParams(window.location.search);
 const requestedId = searchParams.get("id");
 const article = articles.find((entry) => entry.id === requestedId) ?? articles[0];
+const primaryTag = article.tags[0];
 
 document.title = `${article.title} | Mistral`;
 title.textContent = article.title;
@@ -25,6 +28,9 @@ date.textContent = `Publie le ${formatDateFr(article.date)}`;
 image.src = article.image;
 image.alt = article.title;
 caption.textContent = article.caption;
+breadcrumbCategoryLink.href = buildCategoryUrl(primaryTag);
+breadcrumbCategoryLink.textContent = primaryTag;
+breadcrumbCurrent.textContent = article.title;
 
 article.tags.forEach((tag) => {
   const link = document.createElement("a");

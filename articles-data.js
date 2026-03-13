@@ -12,20 +12,20 @@ export const featuredArticleId = "om-chiffres-stade";
 export const articles = [
   {
     id: "om-chiffres-stade",
-    title: "OM : Les chiffres caches du nouveau stade",
+    title: "OM : Les chiffres cachés du nouveau stade",
     excerpt:
-      "Notre enquete revele les montants reels du partenariat public-prive pour le Velodrome. Un dossier qui bouscule les certitudes municipales.",
+      "Notre enquête révèle les montants réels du partenariat public-privé pour le Vélodrome. Un dossier qui bouscule les certitudes municipales.",
     caption:
-      "Jean-Pierre C., adjoint aux finances, devant l'Hotel de Ville. Juin 2024.",
+      "Jean-Pierre C., adjoint aux finances, devant l'Hôtel de Ville. Juin 2024.",
     image:
       "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80",
     date: "2026-03-11",
     updatedDate: "2026-03-12",
-    author: "Lea Martin",
+    author: "Léa Martin",
     readTimeMinutes: 8,
     sources: [
       {
-        label: "Convention d'occupation Velodrome - avenant 2",
+        label: "Convention d'occupation Vélodrome - avenant 2",
         file: "convention-velodrome-avenant-2.txt",
       },
       {
@@ -39,8 +39,8 @@ export const articles = [
     id: "dockers-port-autonome",
     title: "Les dockers racontent l'autre visage du port autonome",
     excerpt:
-      "Entre automatisation et fatigue chronique, les travailleurs decrivent une reorganisation qui avance plus vite que la concertation.",
-    caption: "Hangar J1, entretien croise mene sur trois semaines.",
+      "Entre automatisation et fatigue chronique, les travailleurs décrivent une réorganisation qui avance plus vite que la concertation.",
+    caption: "Hangar J1, entretien croisé mené sur trois semaines.",
     image:
       "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80",
     date: "2026-03-09",
@@ -53,8 +53,8 @@ export const articles = [
     id: "retards-nord-ville",
     title: "Transports : les retards se concentrent dans le nord de la ville",
     excerpt:
-      "Nos releves montrent une fracture persistante entre promesses de reseau et realite des temps de trajet.",
-    caption: "Analyse a partir d'horaires publics et de temoignages d'usagers.",
+      "Nos relevés montrent une fracture persistante entre promesses de réseau et réalité des temps de trajet.",
+    caption: "Analyse à partir d'horaires publics et de témoignages d'usagers.",
     image:
       "https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=900&q=80",
     date: "2026-03-06",
@@ -65,10 +65,10 @@ export const articles = [
   },
   {
     id: "mediterranee-argument-politique",
-    title: "La Mediterranee comme argument politique permanent",
+    title: "La Méditerranée comme argument politique permanent",
     excerpt:
-      "Quand les elus invoquent l'exception marseillaise, que disent vraiment les arbitrages budgetaires ?",
-    caption: "Chronique signee redaction Mistral.",
+      "Quand les élus invoquent l'exception marseillaise, que disent vraiment les arbitrages budgétaires ?",
+    caption: "Chronique signée rédaction Mistral.",
     image:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
     date: "2026-03-03",
@@ -79,10 +79,10 @@ export const articles = [
   },
   {
     id: "ecoles-renovees-marches",
-    title: "Ecoles renovees : les marches publics passes au crible",
+    title: "Écoles rénovées : les marchés publics passés au crible",
     excerpt:
-      "Un releve ligne par ligne des appels d'offres fait ressortir des ecarts de couts non expliques.",
-    caption: "Documents consolides sur douze etablissements.",
+      "Un relevé ligne par ligne des appels d'offres fait ressortir des écarts de coûts non expliqués.",
+    caption: "Documents consolidés sur douze établissements.",
     image:
       "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-26",
@@ -99,19 +99,19 @@ export const articles = [
   },
   {
     id: "arretes-municipaux-riverains",
-    title: "Les arretes municipaux reclames par les riverains",
+    title: "Les arrêtés municipaux réclamés par les riverains",
     excerpt:
-      "Mistral publie les textes complets pour suivre ce qui a reellement ete decide autour des grands chantiers.",
-    caption: "Telechargements disponibles dans l'espace documents.",
+      "Mistral publie les textes complets pour suivre ce qui a réellement été décidé autour des grands chantiers.",
+    caption: "Téléchargements disponibles dans l'espace documents.",
     image:
       "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-21",
     updatedDate: "2026-02-22",
-    author: "Lea Martin",
+    author: "Léa Martin",
     readTimeMinutes: 6,
     sources: [
       {
-        label: "Arrete municipal circulation Vieux-Port 2024",
+        label: "Arrêté municipal circulation Vieux-Port 2024",
         file: "arrete-circulation-vieux-port-2024.txt",
       },
     ],
@@ -119,10 +119,10 @@ export const articles = [
   },
   {
     id: "memoire-belle-de-mai",
-    title: "A la Belle de Mai, une memoire de quartier s'organise",
+    title: "À la Belle de Mai, une mémoire de quartier s'organise",
     excerpt:
-      "Carnets, affiches et photos de facade composent une archive citoyenne face au recit officiel.",
-    caption: "Rencontre dans un ancien atelier partage.",
+      "Carnets, affiches et photos de façade composent une archive citoyenne face au récit officiel.",
+    caption: "Rencontre dans un ancien atelier partagé.",
     image:
       "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-16",
@@ -133,10 +133,10 @@ export const articles = [
   },
   {
     id: "tramway-est-hypotheses",
-    title: "Extension du tramway a l'est : les hypotheses sur la table",
+    title: "Extension du tramway à l'est : les hypothèses sur la table",
     excerpt:
-      "Trois scenarios de tracage sont analyses avec leurs impacts budgetaires et leurs effets sur la desserte locale.",
-    caption: "Simulation a partir des dernieres deliberations publiques.",
+      "Trois scénarios de tracé sont analysés avec leurs impacts budgétaires et leurs effets sur la desserte locale.",
+    caption: "Simulation à partir des dernières délibérations publiques.",
     image:
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-11",
@@ -147,10 +147,10 @@ export const articles = [
   },
   {
     id: "friches-culturelles-sud",
-    title: "Friches culturelles du sud : qui decide des occupations ?",
+    title: "Friches culturelles du sud : qui décide des occupations ?",
     excerpt:
-      "Derriere les projets temporaires, des arbitrages politiques tranchent entre programmation artistique et rentabilite.",
-    caption: "Entretiens croises avec collectifs, mairie et exploitants.",
+      "Derrière les projets temporaires, des arbitrages politiques tranchent entre programmation artistique et rentabilité.",
+    caption: "Entretiens croisés avec collectifs, mairie et exploitants.",
     image:
       "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-07",

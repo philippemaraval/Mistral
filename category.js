@@ -54,9 +54,9 @@ function formatCardByline(article) {
 }
 
 function formatPublishedUpdated(article) {
-  const published = `Publie le ${formatDateFr(article.date)}`;
+  const published = `Publié le ${formatDateFr(article.date)}`;
   if (!article.updatedDate || article.updatedDate === article.date) return published;
-  return `${published} · Mis a jour le ${formatDateFr(article.updatedDate)}`;
+  return `${published} · Mis à jour le ${formatDateFr(article.updatedDate)}`;
 }
 
 function readViewMode() {
@@ -90,7 +90,7 @@ function buildTags(tags, parent) {
     const link = document.createElement("a");
     link.href = buildCategoryUrl(entry);
     link.textContent = `#${entry}`;
-    link.setAttribute("aria-label", `Voir la categorie ${entry}`);
+    link.setAttribute("aria-label", `Voir la catégorie ${entry}`);
     parent.appendChild(link);
   });
 }
@@ -129,7 +129,7 @@ function setMetaTag(selector, content) {
 function updateSocialMeta() {
   const pageUrl = new URL(buildCategoryUrl(tag), window.location.href).toString();
   const countText = `${baseArticles.length} article(s)`;
-  const description = `Categorie ${tag} sur Mistral. ${countText} du plus recent au plus ancien.`;
+  const description = `Catégorie ${tag} sur Mistral. ${countText} du plus récent au plus ancien.`;
   const previewImage = baseArticles[0]?.image
     ? buildOptimizedImageUrl(baseArticles[0].image, 1200, 78)
     : new URL("./social-preview.svg", window.location.href).toString();
@@ -224,12 +224,12 @@ function updateCategoryLead() {
   }
 
   if (selectedTags.size === 0) {
-    lead.textContent = `${activeArticles.length} article(s), affiches du plus recent au plus ancien.`;
+    lead.textContent = `${activeArticles.length} article(s), affichés du plus récent au plus ancien.`;
     return;
   }
 
   const filters = [...selectedTags].map((entry) => `#${entry}`).join(", ");
-  lead.textContent = `${activeArticles.length} article(s), affiches du plus recent au plus ancien. Filtres actifs: ${filters}.`;
+  lead.textContent = `${activeArticles.length} article(s), affichés du plus récent au plus ancien. Filtres actifs : ${filters}.`;
 }
 
 function setupCategoryHeader() {

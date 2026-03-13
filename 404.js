@@ -38,7 +38,7 @@ function renderLatestArticles() {
 
     const meta = document.createElement("p");
     meta.className = "related-article__meta";
-    meta.textContent = `Publie le ${formatDateFr(article.date)} · #${article.tags.join(" #")}`;
+    meta.textContent = `Publié le ${formatDateFr(article.date)} · #${article.tags.join(" #")}`;
 
     link.append(title, meta);
     latestContainer.appendChild(link);

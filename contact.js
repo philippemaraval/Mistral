@@ -26,7 +26,7 @@ contactForm?.addEventListener("submit", (event) => {
   window.location.href = `mailto:redaction@mistral-media.fr?subject=${mailtoSubject}&body=${body}`;
 
   contactFeedback.textContent =
-    "Ton client email va s'ouvrir avec le message pre-rempli. Merci pour ton signalement.";
+    "Ton client email va s'ouvrir avec le message pré-rempli. Merci pour ton signalement.";
   contactFeedback.classList.remove("is-error");
   contactFeedback.classList.add("is-success");
 });

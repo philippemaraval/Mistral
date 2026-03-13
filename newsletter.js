@@ -45,7 +45,7 @@ function bindNewsletterForm(form) {
     const email = emailInput.value.trim();
 
     if (!isValidEmail(email)) {
-      feedback.textContent = "Adresse email invalide.";
+      feedback.textContent = "Adresse e-mail invalide.";
       feedback.classList.add("is-error");
       feedback.classList.remove("is-success");
       return;
@@ -60,7 +60,7 @@ function bindNewsletterForm(form) {
 
     writeStoredEmail(email);
     feedback.textContent =
-      "Inscription enregistree. Verifie ta boite mail pour confirmer l'abonnement (double opt-in).";
+      "Inscription enregistrée. Vérifie ta boîte mail pour confirmer l'abonnement (double opt-in).";
     feedback.classList.remove("is-error");
     feedback.classList.add("is-success");
     form.reset();

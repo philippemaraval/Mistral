@@ -137,7 +137,7 @@ function buildTags(tags, parent) {
     const link = document.createElement("a");
     link.href = buildCategoryUrl(tag);
     link.textContent = `#${tag}`;
-    link.setAttribute("aria-label", `Voir la categorie ${tag}`);
+    link.setAttribute("aria-label", `Voir la catégorie ${tag}`);
     parent.appendChild(link);
   });
 }
@@ -151,9 +151,9 @@ function formatCardByline(article) {
 }
 
 function formatPublishedUpdated(article) {
-  const published = `Publie le ${formatDateFr(article.date)}`;
+  const published = `Publié le ${formatDateFr(article.date)}`;
   if (!article.updatedDate || article.updatedDate === article.date) return published;
-  return `${published} · Mis a jour le ${formatDateFr(article.updatedDate)}`;
+  return `${published} · Mis à jour le ${formatDateFr(article.updatedDate)}`;
 }
 
 function renderFeaturedMeta() {
@@ -229,12 +229,12 @@ function updateSearchStatus() {
   }
 
   if (activeArticles.length === 0) {
-    searchStatus.textContent = `Aucun resultat pour "${searchTermRaw}".`;
+    searchStatus.textContent = `Aucun résultat pour "${searchTermRaw}".`;
     searchStatus.classList.add("is-empty");
     return;
   }
 
-  searchStatus.textContent = `${activeArticles.length} resultat(s) pour "${searchTermRaw}".`;
+  searchStatus.textContent = `${activeArticles.length} résultat(s) pour "${searchTermRaw}".`;
   searchStatus.classList.remove("is-empty");
 }
 

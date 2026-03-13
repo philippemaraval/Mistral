@@ -38,9 +38,9 @@ function formatReadingTime(minutes) {
 }
 
 function formatPublishedUpdated(entry) {
-  const published = `Publie le ${formatDateFr(entry.date)}`;
+  const published = `Publié le ${formatDateFr(entry.date)}`;
   if (!entry.updatedDate || entry.updatedDate === entry.date) return published;
-  return `${published} · Mis a jour le ${formatDateFr(entry.updatedDate)}`;
+  return `${published} · Mis à jour le ${formatDateFr(entry.updatedDate)}`;
 }
 
 function formatAuthorLine(entry) {
@@ -59,7 +59,7 @@ function buildRelatedArticleCard(relatedArticle) {
   const link = document.createElement("a");
   link.className = "related-article";
   link.href = buildArticleUrl(relatedArticle.id);
-  link.setAttribute("aria-label", `Lire l'article lie : ${relatedArticle.title}`);
+  link.setAttribute("aria-label", `Lire l'article lié : ${relatedArticle.title}`);
 
   const relatedTitle = document.createElement("h3");
   relatedTitle.className = "related-article__title";
@@ -171,7 +171,7 @@ article.tags.forEach((tag) => {
   const link = document.createElement("a");
   link.href = buildCategoryUrl(tag);
   link.textContent = `#${tag}`;
-  link.setAttribute("aria-label", `Voir la categorie ${tag}`);
+  link.setAttribute("aria-label", `Voir la catégorie ${tag}`);
   tags.appendChild(link);
 });
 

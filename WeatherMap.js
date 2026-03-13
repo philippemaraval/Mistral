@@ -225,10 +225,27 @@ function initMap() {
   });
 
   leaflet
-    .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    .tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
       noWrap: true,
+      opacity: 0.62,
+    })
+    .addTo(map);
+
+  map.createPane("weather-labels");
+  map.getPane("weather-labels").style.zIndex = "520";
+  map.getPane("weather-labels").style.pointerEvents = "none";
+
+  leaflet
+    .tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
+      noWrap: true,
+      opacity: 0.72,
+      pane: "weather-labels",
     })
     .addTo(map);
 

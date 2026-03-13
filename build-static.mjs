@@ -25,7 +25,7 @@ const entries = [
   "404.js",
   "articles-data.js",
   "social-preview.svg",
-  "logo mistral.PNG",
+  "logo_mistral.png",
   "logo-mistral.svg",
   "documents",
 ];

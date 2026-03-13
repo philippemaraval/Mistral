@@ -1,0 +1,9 @@
+{
+  "name": "mistral",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static homepage for Mistral media",
+  "scripts": {
+    "build": "node build-static.mjs"
+  }
+}

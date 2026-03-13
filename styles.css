@@ -1,11 +1,11 @@
 :root {
   --bg: #ffffff;
-  --accent: #0078d4;
+  --accent: #9fbcde;
   --text: #1a1a1a;
   --text-strong: #000000;
   --line: #e0e0e0;
   --muted: #555555;
-  --accent-hover: #005ea8;
+  --accent-hover: #87a7ca;
   --max-width: 1200px;
   --font-sans: "Inter", sans-serif;
   --font-serif: "Lora", serif;
@@ -281,7 +281,7 @@ input {
 .social-links a {
   width: 2.35rem;
   height: 2.35rem;
-  border: 1px solid #cfe3f4;
+  border: 1px solid #c8d9ec;
   color: var(--accent);
   display: inline-grid;
   place-items: center;

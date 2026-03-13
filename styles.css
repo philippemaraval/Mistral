@@ -207,6 +207,15 @@ input {
   position: relative;
 }
 
+.featured-story__link {
+  display: block;
+}
+
+.featured-story__link:hover h2,
+.featured-story__link:focus-visible h2 {
+  color: #3c5875;
+}
+
 .eyebrow {
   display: inline-block;
   padding: 0.32rem 0.72rem;

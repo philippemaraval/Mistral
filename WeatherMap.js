@@ -128,10 +128,61 @@ function buildBaseMap() {
 function buildWindOverlay() {
   return `
     <svg class="weather-map__wind" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <polyline class="wind-line wind-line--a" points="-6 18 10 24 19 20 33 27 45 23 59 29 72 25 89 34 104 30"></polyline>
-      <polyline class="wind-line wind-line--b" points="-7 37 8 42 18 38 34 46 47 41 61 49 74 45 90 53 104 49"></polyline>
-      <polyline class="wind-line wind-line--c" points="-5 58 11 64 22 59 37 67 49 62 64 71 76 66 91 75 106 70"></polyline>
-      <polyline class="wind-line wind-line--d" points="-6 77 9 83 20 79 34 87 45 82 59 90 71 85 87 94 102 89"></polyline>
+      <defs>
+        <filter id="mistral-blur" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="0.24"></feGaussianBlur>
+        </filter>
+        <linearGradient id="mistral-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#d4e4f4" stop-opacity="0"></stop>
+          <stop offset="16%" stop-color="#b6cee7" stop-opacity="0.26"></stop>
+          <stop offset="47%" stop-color="#9fbcde" stop-opacity="0.54"></stop>
+          <stop offset="78%" stop-color="#b6cee7" stop-opacity="0.24"></stop>
+          <stop offset="100%" stop-color="#d4e4f4" stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+
+      <g class="wind-layer wind-layer--soft" filter="url(#mistral-blur)">
+        <path class="wind-stream wind-stream--soft wind-stream--a" stroke="url(#mistral-grad)" d="M-12 14 C 4 20, 17 18, 33 23 C 49 28, 63 24, 80 30 C 93 35, 104 32, 112 35"></path>
+        <path class="wind-stream wind-stream--soft wind-stream--b" stroke="url(#mistral-grad)" d="M-10 31 C 7 37, 20 35, 36 41 C 51 47, 66 43, 81 50 C 95 56, 106 53, 114 57"></path>
+        <path class="wind-stream wind-stream--soft wind-stream--c" stroke="url(#mistral-grad)" d="M-11 51 C 6 57, 18 54, 35 60 C 51 66, 66 62, 82 69 C 96 74, 106 72, 114 75"></path>
+        <path class="wind-stream wind-stream--soft wind-stream--d" stroke="url(#mistral-grad)" d="M-12 70 C 4 76, 17 73, 33 79 C 49 84, 63 82, 79 88 C 92 92, 103 91, 112 93"></path>
+      </g>
+
+      <g class="wind-layer wind-layer--core">
+        <path class="wind-stream wind-stream--core wind-stream--a" stroke="url(#mistral-grad)" d="M-12 14 C 4 20, 17 18, 33 23 C 49 28, 63 24, 80 30 C 93 35, 104 32, 112 35"></path>
+        <path class="wind-stream wind-stream--core wind-stream--b" stroke="url(#mistral-grad)" d="M-10 31 C 7 37, 20 35, 36 41 C 51 47, 66 43, 81 50 C 95 56, 106 53, 114 57"></path>
+        <path class="wind-stream wind-stream--core wind-stream--c" stroke="url(#mistral-grad)" d="M-11 51 C 6 57, 18 54, 35 60 C 51 66, 66 62, 82 69 C 96 74, 106 72, 114 75"></path>
+        <path class="wind-stream wind-stream--core wind-stream--d" stroke="url(#mistral-grad)" d="M-12 70 C 4 76, 17 73, 33 79 C 49 84, 63 82, 79 88 C 92 92, 103 91, 112 93"></path>
+      </g>
+
+      <g class="wind-layer wind-layer--threads">
+        <path class="wind-thread wind-thread--1" d="M-8 22 C 9 27, 24 25, 38 30 C 53 35, 67 33, 84 39 C 96 43, 106 42, 112 45"></path>
+        <path class="wind-thread wind-thread--2" d="M-9 43 C 7 48, 20 46, 37 51 C 52 56, 67 54, 83 60 C 96 65, 105 63, 112 66"></path>
+        <path class="wind-thread wind-thread--3" d="M-9 63 C 8 68, 22 66, 38 72 C 53 77, 68 74, 84 80 C 97 85, 105 84, 112 86"></path>
+      </g>
+
+      <g class="wind-gusts">
+        <circle class="wind-gust" cx="-7" cy="18" r="0.85">
+          <animate attributeName="cx" from="-7" to="107" dur="8.8s" repeatCount="indefinite"></animate>
+          <animate attributeName="cy" values="18;19.2;18.3;18" dur="8.8s" repeatCount="indefinite"></animate>
+          <animate attributeName="opacity" values="0;0.42;0.1;0" dur="8.8s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="wind-gust" cx="-8" cy="38" r="0.75">
+          <animate attributeName="cx" from="-8" to="108" dur="7.9s" repeatCount="indefinite"></animate>
+          <animate attributeName="cy" values="38;39.4;38.1;38" dur="7.9s" repeatCount="indefinite"></animate>
+          <animate attributeName="opacity" values="0;0.4;0.12;0" dur="7.9s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="wind-gust" cx="-9" cy="58" r="0.92">
+          <animate attributeName="cx" from="-9" to="109" dur="10.2s" repeatCount="indefinite"></animate>
+          <animate attributeName="cy" values="58;59.5;58.2;58" dur="10.2s" repeatCount="indefinite"></animate>
+          <animate attributeName="opacity" values="0;0.38;0.1;0" dur="10.2s" repeatCount="indefinite"></animate>
+        </circle>
+        <circle class="wind-gust" cx="-10" cy="79" r="0.82">
+          <animate attributeName="cx" from="-10" to="110" dur="9.4s" repeatCount="indefinite"></animate>
+          <animate attributeName="cy" values="79;80.1;79.2;79" dur="9.4s" repeatCount="indefinite"></animate>
+          <animate attributeName="opacity" values="0;0.35;0.08;0" dur="9.4s" repeatCount="indefinite"></animate>
+        </circle>
+      </g>
     </svg>
   `;
 }

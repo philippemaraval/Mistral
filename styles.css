@@ -1297,32 +1297,79 @@ mark {
   inset: 0;
   z-index: 2;
   pointer-events: none;
+  opacity: 0.95;
 }
 
-.wind-line {
+.wind-layer {
+  transform-origin: center;
+}
+
+.wind-layer--soft {
+  animation: mistralShear 7.8s ease-in-out infinite;
+}
+
+.wind-layer--core {
+  animation: mistralShearReverse 9.2s ease-in-out infinite;
+}
+
+.wind-stream {
   fill: none;
-  stroke: #9fbcde;
-  stroke-opacity: 0.3;
-  stroke-width: 0.6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 4 5;
 }
 
-.wind-line--a {
-  animation: windFlowA 11s linear infinite;
+.wind-stream--soft {
+  stroke-width: 1.35;
+  stroke-opacity: 0.34;
+  stroke-dasharray: 9 12;
 }
 
-.wind-line--b {
-  animation: windFlowB 8.2s linear infinite;
+.wind-stream--core {
+  stroke-width: 0.78;
+  stroke-opacity: 0.58;
+  stroke-dasharray: 7 10;
 }
 
-.wind-line--c {
-  animation: windFlowA 10.4s linear infinite reverse;
+.wind-stream--a {
+  animation: mistralFlowA 10.8s linear infinite;
 }
 
-.wind-line--d {
-  animation: windFlowB 12.5s linear infinite;
+.wind-stream--b {
+  animation: mistralFlowB 8.1s linear infinite;
+}
+
+.wind-stream--c {
+  animation: mistralFlowC 12.4s linear infinite;
+}
+
+.wind-stream--d {
+  animation: mistralFlowD 9.7s linear infinite;
+}
+
+.wind-thread {
+  fill: none;
+  stroke: #9fbcde;
+  stroke-opacity: 0.24;
+  stroke-width: 0.42;
+  stroke-linecap: round;
+  stroke-dasharray: 2.2 6.2;
+}
+
+.wind-thread--1 {
+  animation: mistralThread 8.8s linear infinite;
+}
+
+.wind-thread--2 {
+  animation: mistralThread 10.6s linear infinite reverse;
+}
+
+.wind-thread--3 {
+  animation: mistralThread 9.9s linear infinite;
+}
+
+.wind-gust {
+  fill: #d9e8f8;
+  opacity: 0;
 }
 
 .weather-marker {
@@ -1427,21 +1474,68 @@ mark {
   margin-top: 0.28rem;
 }
 
-@keyframes windFlowA {
+@keyframes mistralFlowA {
   from {
     stroke-dashoffset: 0;
   }
   to {
-    stroke-dashoffset: -190;
+    stroke-dashoffset: -220;
   }
 }
 
-@keyframes windFlowB {
+@keyframes mistralFlowB {
   from {
-    stroke-dashoffset: -120;
+    stroke-dashoffset: -170;
   }
   to {
-    stroke-dashoffset: 60;
+    stroke-dashoffset: 25;
+  }
+}
+
+@keyframes mistralFlowC {
+  from {
+    stroke-dashoffset: 35;
+  }
+  to {
+    stroke-dashoffset: -210;
+  }
+}
+
+@keyframes mistralFlowD {
+  from {
+    stroke-dashoffset: -140;
+  }
+  to {
+    stroke-dashoffset: 45;
+  }
+}
+
+@keyframes mistralThread {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -150;
+  }
+}
+
+@keyframes mistralShear {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.4%);
+  }
+}
+
+@keyframes mistralShearReverse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1.1%);
   }
 }
 

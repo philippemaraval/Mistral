@@ -1261,13 +1261,16 @@ mark {
 }
 
 .weather-side-panel {
-  min-height: 560px;
+  height: 560px;
+  max-height: 560px;
   border: 1px solid var(--line);
   background: #fff;
   padding: 0.85rem;
   display: grid;
   align-content: start;
   gap: 0.7rem;
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .weather-side-panel__eyebrow {
@@ -1756,7 +1759,9 @@ mark {
   }
 
   .weather-side-panel {
-    min-height: 0;
+    height: auto;
+    max-height: none;
+    overflow: visible;
   }
 }
 

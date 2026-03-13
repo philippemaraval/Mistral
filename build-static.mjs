@@ -8,6 +8,7 @@ const distDir = path.join(__dirname, "dist");
 
 const entries = [
   "index.html",
+  "article.html",
   "styles.css",
   "script.js",
   "social-preview.svg",

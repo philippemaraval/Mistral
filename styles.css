@@ -192,7 +192,7 @@ input {
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(250px, 3fr);
+  grid-template-columns: minmax(0, 8.2fr) minmax(150px, 1.8fr);
   gap: 40px;
   padding: 32px 0 56px;
 }
@@ -315,6 +315,10 @@ input {
   background: #fff;
   padding: 0.7rem;
   transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.article-card__link {
+  display: block;
 }
 
 .article-card:hover,

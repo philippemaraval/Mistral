@@ -60,9 +60,20 @@ const searchForm = document.querySelector(".search-bar");
 let cursor = 0;
 let isLoading = false;
 
+function buildArticleUrl(article) {
+  const params = new URLSearchParams({
+    title: article.title,
+    excerpt: article.excerpt,
+    caption: article.caption,
+    image: article.image,
+  });
+  return `./article.html?${params.toString()}`;
+}
+
 function buildCard(article) {
   const fragment = template.content.cloneNode(true);
   const image = fragment.querySelector(".article-card__image");
+  const link = fragment.querySelector(".article-card__link");
 
   fragment.querySelector(".article-card__title").textContent = article.title;
   fragment.querySelector(".article-card__excerpt").textContent = article.excerpt;
@@ -70,6 +81,8 @@ function buildCard(article) {
 
   image.src = article.image;
   image.alt = article.title;
+  link.href = buildArticleUrl(article);
+  link.setAttribute("aria-label", `Lire l'article : ${article.title}`);
 
   return fragment;
 }

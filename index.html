@@ -60,12 +60,12 @@
         </nav>
 
         <form class="search-bar" role="search">
-          <label class="sr-only" for="site-search">Rechercher une enquete...</label>
+          <label class="sr-only" for="site-search">Rechercher un article...</label>
           <input
             id="site-search"
             type="search"
-            placeholder="Rechercher une enquete..."
-            aria-label="Rechercher une enquete"
+            placeholder="Rechercher un article..."
+            aria-label="Rechercher un article"
           />
           <button type="submit" aria-label="Lancer la recherche">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -161,14 +161,16 @@
 
     <template id="article-card-template">
       <article class="article-card">
-        <div class="article-card__image-wrap">
-          <img class="article-card__image" alt="" loading="lazy" />
-        </div>
-        <div class="article-card__meta">
-          <h3 class="article-card__title"></h3>
-          <p class="article-card__excerpt"></p>
-          <p class="caption article-card__caption"></p>
-        </div>
+        <a class="article-card__link" href="#">
+          <div class="article-card__image-wrap">
+            <img class="article-card__image" alt="" loading="lazy" />
+          </div>
+          <div class="article-card__meta">
+            <h3 class="article-card__title"></h3>
+            <p class="article-card__excerpt"></p>
+            <p class="caption article-card__caption"></p>
+          </div>
+        </a>
       </article>
     </template>
 

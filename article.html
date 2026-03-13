@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Article | Mistral</title>
+    <meta name="description" content="Article Mistral" />
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .article-page {
+        width: min(calc(100% - 2rem), 920px);
+        margin: 0 auto;
+        padding: 2rem 0 3rem;
+      }
+
+      .article-page__back {
+        display: inline-flex;
+        margin-bottom: 1rem;
+        font-family: var(--font-sans);
+        color: var(--accent);
+      }
+
+      .article-page__title {
+        margin: 0 0 1rem;
+        font-family: var(--font-sans);
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        line-height: 1.15;
+      }
+
+      .article-page__excerpt {
+        margin: 0 0 1.25rem;
+        font-size: 1.15rem;
+        line-height: 1.65;
+      }
+
+      .article-page__image {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="article-page">
+      <a class="article-page__back" href="./index.html">Retour a l'accueil</a>
+      <h1 class="article-page__title" id="article-title">Article</h1>
+      <p class="article-page__excerpt" id="article-excerpt"></p>
+      <img class="article-page__image" id="article-image" alt="" />
+      <p class="caption" id="article-caption"></p>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const title = params.get("title") || "Article Mistral";
+      const excerpt = params.get("excerpt") || "";
+      const caption = params.get("caption") || "";
+      const image = params.get("image") || "";
+
+      const titleEl = document.querySelector("#article-title");
+      const excerptEl = document.querySelector("#article-excerpt");
+      const captionEl = document.querySelector("#article-caption");
+      const imageEl = document.querySelector("#article-image");
+
+      titleEl.textContent = title;
+      excerptEl.textContent = excerpt;
+      captionEl.textContent = caption;
+      imageEl.src = image;
+      imageEl.alt = title;
+    </script>
+  </body>
+</html>

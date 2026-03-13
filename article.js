@@ -2,6 +2,7 @@ import {
   formatDateFr,
   buildCategoryUrl,
   buildArticleUrl,
+  buildDocumentUrl,
   getArticleById,
   getRelatedArticles,
 } from "./articles-data.js";
@@ -13,6 +14,8 @@ const metaSecondary = document.querySelector("#article-meta-secondary");
 const image = document.querySelector("#article-image");
 const caption = document.querySelector("#article-caption");
 const tags = document.querySelector("#article-tags");
+const articleSources = document.querySelector("#article-sources");
+const articleSourceLinks = document.querySelector("#article-source-links");
 const relatedArticlesSection = document.querySelector("#related-articles");
 const relatedArticlesList = document.querySelector("#related-articles-list");
 const breadcrumbCategoryLink = document.querySelector("#breadcrumb-category-link");
@@ -82,6 +85,25 @@ function renderRelatedArticles() {
   });
 }
 
+function renderSources() {
+  if (!articleSources || !articleSourceLinks) return;
+  articleSourceLinks.innerHTML = "";
+
+  if (!article.sources?.length) {
+    articleSources.remove();
+    return;
+  }
+
+  article.sources.forEach((source) => {
+    const link = document.createElement("a");
+    link.className = "source-link";
+    link.href = buildDocumentUrl(source.file);
+    link.textContent = source.label;
+    link.setAttribute("download", "");
+    articleSourceLinks.appendChild(link);
+  });
+}
+
 function updateReadingProgress() {
   if (!readingProgressBar || !articlePage) return;
   const articleTop = articlePage.offsetTop;
@@ -113,6 +135,7 @@ breadcrumbCategoryLink.href = buildCategoryUrl(primaryTag);
 breadcrumbCategoryLink.textContent = primaryTag;
 breadcrumbCurrent.textContent = article.title;
 setupActiveCategoryNav();
+renderSources();
 renderRelatedArticles();
 
 article.tags.forEach((tag) => {

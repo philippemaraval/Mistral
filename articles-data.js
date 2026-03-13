@@ -23,6 +23,16 @@ export const articles = [
     updatedDate: "2026-03-12",
     author: "Lea Martin",
     readTimeMinutes: 8,
+    sources: [
+      {
+        label: "Convention d'occupation Velodrome - avenant 2",
+        file: "convention-velodrome-avenant-2.txt",
+      },
+      {
+        label: "Subventions associations Marseille 2024",
+        file: "subventions-associations-marseille-2024.csv",
+      },
+    ],
     tags: ["Politique", "Économie", "Urbanisme"],
   },
   {
@@ -79,6 +89,12 @@ export const articles = [
     updatedDate: "2026-03-01",
     author: "Amel Chabane",
     readTimeMinutes: 9,
+    sources: [
+      {
+        label: "Subventions associations Marseille 2024",
+        file: "subventions-associations-marseille-2024.csv",
+      },
+    ],
     tags: ["Urbanisme", "Économie"],
   },
   {
@@ -93,6 +109,12 @@ export const articles = [
     updatedDate: "2026-02-22",
     author: "Lea Martin",
     readTimeMinutes: 6,
+    sources: [
+      {
+        label: "Arrete municipal circulation Vieux-Port 2024",
+        file: "arrete-circulation-vieux-port-2024.txt",
+      },
+    ],
     tags: ["Urbanisme", "Politique"],
   },
   {
@@ -157,6 +179,10 @@ export function buildCategoryUrl(tag) {
 
 export function buildArticleUrl(id) {
   return `./article.html?id=${encodeURIComponent(id)}`;
+}
+
+export function buildDocumentUrl(file) {
+  return `./documents/${encodeURIComponent(file)}`;
 }
 
 export function getArticleById(id) {

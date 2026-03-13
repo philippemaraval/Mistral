@@ -108,6 +108,7 @@
             <a href="./category.html?tag=%C3%89conomie">#Économie</a>
             <a href="./category.html?tag=Urbanisme">#Urbanisme</a>
           </p>
+          <div class="source-links featured-story__sources" id="featured-story-sources"></div>
 
           <aside class="share-rail" aria-label="Partager l'article">
             <span>Partager</span>
@@ -165,9 +166,32 @@
           </div>
         </section>
 
+        <section class="sidebar-card sidebar-card--newsletter">
+          <h3>Newsletter</h3>
+          <p class="sidebar-card__text">Un resume critique chaque vendredi matin.</p>
+          <form class="newsletter-form" data-newsletter-form novalidate>
+            <label class="sr-only" for="newsletter-email-home">Email newsletter</label>
+            <input
+              id="newsletter-email-home"
+              data-newsletter-email
+              type="email"
+              name="email"
+              placeholder="Votre email"
+              autocomplete="email"
+              required
+            />
+            <label class="newsletter-consent">
+              <input data-newsletter-consent type="checkbox" required />
+              J'accepte de recevoir les emails de Mistral.
+            </label>
+            <button type="submit">S'inscrire</button>
+            <p class="newsletter-feedback" data-newsletter-feedback aria-live="polite"></p>
+          </form>
+        </section>
+
         <section class="sidebar-card sidebar-card--links" id="official-docs">
-          <a href="#">A propos</a>
-          <a href="#">Contact</a>
+          <a href="./about.html">A propos</a>
+          <a href="./contact.html">Contact</a>
         </section>
       </aside>
     </main>
@@ -195,5 +219,6 @@
     </template>
 
     <script type="module" src="./script.js"></script>
+    <script type="module" src="./newsletter.js"></script>
   </body>
 </html>

@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Article | Mistral</title>
-    <meta name="description" content="Article Mistral" />
+    <title>A propos | Mistral</title>
+    <meta
+      name="description"
+      content="Qui sommes-nous : ligne editoriale, methode de travail et engagements du media Mistral."
+    />
     <link rel="icon" type="image/png" href="./logo mistral.PNG" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,10 +18,6 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="reading-progress" aria-hidden="true">
-      <div class="reading-progress__bar" id="reading-progress-bar"></div>
-    </div>
-
     <header class="site-header">
       <div class="site-header__inner">
         <a class="brand" href="./index.html" aria-label="Accueil Mistral">
@@ -48,48 +47,71 @@
           </ul>
         </nav>
 
-        <a class="search-bar category-home-link" href="./index.html" aria-label="Retour accueil">
-          Retour accueil
+        <a class="search-bar category-home-link" href="./contact.html" aria-label="Aller a la page contact">
+          Contact
         </a>
       </div>
     </header>
 
-    <main class="article-page">
+    <main class="info-page">
       <nav class="breadcrumb" aria-label="Fil d'ariane">
         <ol>
           <li><a href="./index.html">Accueil</a></li>
-          <li><a id="breadcrumb-category-link" href="./category.html?tag=Politique">Categorie</a></li>
-          <li id="breadcrumb-current" aria-current="page">Article</li>
+          <li aria-current="page">A propos</li>
         </ol>
       </nav>
 
-      <a class="article-page__back" href="./index.html">Retour a l'accueil</a>
-      <h1 class="article-page__title" id="article-title">Article</h1>
-      <p class="article-page__excerpt" id="article-excerpt"></p>
-      <div class="article-meta">
-        <p class="article-meta__line" id="article-meta-primary"></p>
-        <p class="article-meta__line article-meta__line--muted" id="article-meta-secondary"></p>
-      </div>
-      <img class="article-page__image" id="article-image" alt="" />
-      <p class="caption" id="article-caption"></p>
-      <p class="article-tags article-page__tags" id="article-tags"></p>
-      <section class="source-panel" id="article-sources">
-        <h2>Sources</h2>
-        <div class="source-links" id="article-source-links"></div>
+      <header class="info-page__head">
+        <p class="eyebrow">A PROPOS</p>
+        <h1>Mistral, media local d'enquetes a Marseille</h1>
+        <p>
+          Nous publions des enquetes courtes, sourcees et lisibles pour documenter les decisions
+          publiques qui touchent le quotidien des Marseillaises et des Marseillais.
+        </p>
+      </header>
+
+      <section class="info-page__section">
+        <h2>Ligne editoriale</h2>
+        <p>
+          Notre angle est simple : suivre l'argent public, rendre les deliberations compréhensibles
+          et confronter les annonces aux effets de terrain. Chaque sujet est traite avec un ton
+          critique, sans parti pris partisan.
+        </p>
       </section>
 
-      <section class="related-articles" id="related-articles">
-        <h2>Articles lies</h2>
-        <div class="related-articles__list" id="related-articles-list"></div>
+      <section class="info-page__section">
+        <h2>Methode de travail</h2>
+        <p>
+          Nous croisons documents administratifs, entretiens, observations de terrain et donnees
+          ouvertes. Quand une information repose sur un document, nous affichons le lien de source
+          pour permettre la verification.
+        </p>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Nos engagements</h2>
+        <ul class="info-page__list">
+          <li>Transparence sur les sources et les limites de l'enquete.</li>
+          <li>Correction publique rapide en cas d'erreur factuelle.</li>
+          <li>Independance editoriale vis-a-vis des acteurs politiques et economiques.</li>
+        </ul>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Nous contacter</h2>
+        <p>
+          Une question, une alerte locale, un droit de reponse ? Ecris-nous via la page
+          <a href="./contact.html">Contact</a>.
+        </p>
       </section>
 
       <section class="newsletter-panel">
         <h2>Recevoir la newsletter</h2>
-        <p>Une selection hebdomadaire de nos enquetes, sources et decryptages.</p>
+        <p>Une synthese hebdomadaire de nos enquêtes et des documents publies.</p>
         <form class="newsletter-form" data-newsletter-form novalidate>
-          <label class="sr-only" for="newsletter-email-article">Email newsletter</label>
+          <label class="sr-only" for="newsletter-email-about">Email newsletter</label>
           <input
-            id="newsletter-email-article"
+            id="newsletter-email-about"
             data-newsletter-email
             type="email"
             name="email"
@@ -111,7 +133,7 @@
       Retour en haut
     </button>
 
-    <script type="module" src="./article.js"></script>
+    <script type="module" src="./static-page.js"></script>
     <script type="module" src="./newsletter.js"></script>
   </body>
 </html>

@@ -70,6 +70,29 @@
         Chargement des articles...
       </div>
       <div class="sentinel" id="category-sentinel" aria-hidden="true"></div>
+
+      <section class="newsletter-panel">
+        <h2>Recevoir la newsletter</h2>
+        <p>Chaque semaine, notre selection d'articles et de sources officielles.</p>
+        <form class="newsletter-form" data-newsletter-form novalidate>
+          <label class="sr-only" for="newsletter-email-category">Email newsletter</label>
+          <input
+            id="newsletter-email-category"
+            data-newsletter-email
+            type="email"
+            name="email"
+            placeholder="Votre email"
+            autocomplete="email"
+            required
+          />
+          <label class="newsletter-consent">
+            <input data-newsletter-consent type="checkbox" required />
+            J'accepte de recevoir les emails de Mistral.
+          </label>
+          <button type="submit">S'inscrire</button>
+          <p class="newsletter-feedback" data-newsletter-feedback aria-live="polite"></p>
+        </form>
+      </section>
     </main>
 
     <button class="back-to-top" id="back-to-top" type="button" aria-label="Retour en haut">
@@ -95,5 +118,6 @@
     </template>
 
     <script type="module" src="./category.js"></script>
+    <script type="module" src="./newsletter.js"></script>
   </body>
 </html>

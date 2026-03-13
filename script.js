@@ -5,6 +5,7 @@ import {
   formatDateFr,
   buildArticleUrl,
   buildCategoryUrl,
+  buildDocumentUrl,
 } from "./articles-data.js";
 
 const grid = document.querySelector("#article-grid");
@@ -18,6 +19,7 @@ const searchInput = document.querySelector("#site-search");
 const searchStatus = document.querySelector("#search-status");
 const backToTopButton = document.querySelector("#back-to-top");
 const featuredStoryMeta = document.querySelector("#featured-story-meta");
+const featuredStorySources = document.querySelector("#featured-story-sources");
 
 const featuredArticle = articles.find((article) => article.id === featuredArticleId) ?? null;
 
@@ -98,6 +100,25 @@ function renderFeaturedMeta() {
   if (!featuredStoryMeta || !featuredArticle) return;
 
   featuredStoryMeta.textContent = `${formatCardByline(featuredArticle)} · ${formatPublishedUpdated(featuredArticle)}`;
+}
+
+function renderFeaturedSources() {
+  if (!featuredStorySources || !featuredArticle) return;
+  featuredStorySources.innerHTML = "";
+
+  if (!featuredArticle.sources?.length) {
+    featuredStorySources.classList.add("is-empty");
+    return;
+  }
+
+  featuredArticle.sources.forEach((source) => {
+    const link = document.createElement("a");
+    link.className = "source-link";
+    link.href = buildDocumentUrl(source.file);
+    link.textContent = `Source: ${source.label}`;
+    link.setAttribute("download", "");
+    featuredStorySources.appendChild(link);
+  });
 }
 
 function buildCard(article) {
@@ -190,8 +211,9 @@ function loadMore() {
 
 function articleMatchesSearch(article) {
   if (!searchTermNormalized) return true;
+  const sourceText = article.sources?.map((source) => source.label).join(" ") ?? "";
   const searchableText = normalizeSearchValue(
-    `${article.title} ${article.excerpt} ${article.caption} ${article.tags.join(" ")} ${article.author}`
+    `${article.title} ${article.excerpt} ${article.caption} ${article.tags.join(" ")} ${article.author} ${sourceText}`
   );
   return searchableText.includes(searchTermNormalized);
 }
@@ -228,6 +250,7 @@ if (grid && template) {
 }
 
 renderFeaturedMeta();
+renderFeaturedSources();
 
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();

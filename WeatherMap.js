@@ -213,14 +213,15 @@ function initMap() {
     zoomAnimation: true,
     fadeAnimation: true,
     markerZoomAnimation: true,
-    wheelDebounceTime: 15,
-    wheelPxPerZoomLevel: 90,
+    scrollWheelZoom: "center",
+    wheelDebounceTime: 10,
+    wheelPxPerZoomLevel: 180,
     minZoom: 11,
     maxZoom: 16,
     maxBounds,
     maxBoundsViscosity: 1,
-    zoomSnap: 0.05,
-    zoomDelta: 0.25,
+    zoomSnap: 0,
+    zoomDelta: 0.1,
   });
 
   leaflet

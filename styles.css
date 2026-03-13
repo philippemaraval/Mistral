@@ -337,7 +337,7 @@ input {
 
 .featured-story__figure img {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 160 / 63;
   object-fit: cover;
   border-radius: 12px;
   border: 1px solid #dbe7f2;
@@ -553,7 +553,7 @@ input {
 
 .skeleton--image {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 8 / 3;
 }
 
 .skeleton--line {
@@ -621,7 +621,7 @@ mark {
 
 .article-card__image {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 8 / 3;
   object-fit: cover;
   transition: transform 220ms ease;
 }

@@ -132,12 +132,7 @@ input {
 }
 
 .brand__name {
-  font-family: var(--font-sans);
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  color: var(--accent);
+  display: none;
 }
 
 .site-nav {
@@ -1989,10 +1984,6 @@ mark {
   .brand__logo {
     width: 70px;
     height: 42px;
-  }
-
-  .brand__name {
-    font-size: 1.6rem;
   }
 
   .search-bar {

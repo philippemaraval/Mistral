@@ -15,6 +15,10 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="reading-progress" aria-hidden="true">
+      <div class="reading-progress__bar" id="reading-progress-bar"></div>
+    </div>
+
     <header class="site-header">
       <div class="site-header__inner">
         <a class="brand" href="./index.html" aria-label="Accueil Mistral">
@@ -62,11 +66,23 @@
       <a class="article-page__back" href="./index.html">Retour a l'accueil</a>
       <h1 class="article-page__title" id="article-title">Article</h1>
       <p class="article-page__excerpt" id="article-excerpt"></p>
-      <p class="article-page__date" id="article-date"></p>
+      <div class="article-meta">
+        <p class="article-meta__line" id="article-meta-primary"></p>
+        <p class="article-meta__line article-meta__line--muted" id="article-meta-secondary"></p>
+      </div>
       <img class="article-page__image" id="article-image" alt="" />
       <p class="caption" id="article-caption"></p>
       <p class="article-tags article-page__tags" id="article-tags"></p>
+
+      <section class="related-articles" id="related-articles">
+        <h2>Articles lies</h2>
+        <div class="related-articles__list" id="related-articles-list"></div>
+      </section>
     </main>
+
+    <button class="back-to-top" id="back-to-top" type="button" aria-label="Retour en haut">
+      Retour en haut
+    </button>
 
     <script type="module" src="./article.js"></script>
   </body>

@@ -20,6 +20,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80",
     date: "2026-03-11",
+    updatedDate: "2026-03-12",
+    author: "Lea Martin",
+    readTimeMinutes: 8,
     tags: ["Politique", "Économie", "Urbanisme"],
   },
   {
@@ -31,6 +34,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80",
     date: "2026-03-09",
+    updatedDate: "2026-03-09",
+    author: "Nassim Belkacem",
+    readTimeMinutes: 6,
     tags: ["Économie", "Quartiers"],
   },
   {
@@ -42,6 +48,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=900&q=80",
     date: "2026-03-06",
+    updatedDate: "2026-03-08",
+    author: "Sarah Cadi",
+    readTimeMinutes: 7,
     tags: ["Mobilités", "Quartiers"],
   },
   {
@@ -53,6 +62,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
     date: "2026-03-03",
+    updatedDate: "2026-03-05",
+    author: "Paul Ferrand",
+    readTimeMinutes: 5,
     tags: ["Politique", "Culture"],
   },
   {
@@ -64,6 +76,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-26",
+    updatedDate: "2026-03-01",
+    author: "Amel Chabane",
+    readTimeMinutes: 9,
     tags: ["Urbanisme", "Économie"],
   },
   {
@@ -75,6 +90,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-21",
+    updatedDate: "2026-02-22",
+    author: "Lea Martin",
+    readTimeMinutes: 6,
     tags: ["Urbanisme", "Politique"],
   },
   {
@@ -86,6 +104,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-16",
+    updatedDate: "2026-02-17",
+    author: "Yanis Gherbi",
+    readTimeMinutes: 5,
     tags: ["Culture", "Quartiers"],
   },
   {
@@ -97,6 +118,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-11",
+    updatedDate: "2026-02-14",
+    author: "Sarah Cadi",
+    readTimeMinutes: 8,
     tags: ["Mobilités", "Urbanisme", "Économie"],
   },
   {
@@ -108,6 +132,9 @@ export const articles = [
     image:
       "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=900&q=80",
     date: "2026-02-07",
+    updatedDate: "2026-02-10",
+    author: "Paul Ferrand",
+    readTimeMinutes: 7,
     tags: ["Culture", "Politique", "Quartiers"],
   },
 ];
@@ -130,4 +157,27 @@ export function buildCategoryUrl(tag) {
 
 export function buildArticleUrl(id) {
   return `./article.html?id=${encodeURIComponent(id)}`;
+}
+
+export function getArticleById(id) {
+  return articles.find((article) => article.id === id) ?? null;
+}
+
+export function getRelatedArticles(articleId, limit = 3) {
+  const currentArticle = getArticleById(articleId);
+  if (!currentArticle) return [];
+
+  return articles
+    .filter((article) => article.id !== articleId)
+    .map((article) => ({
+      article,
+      score: article.tags.filter((tag) => currentArticle.tags.includes(tag)).length,
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort((entryA, entryB) => {
+      if (entryB.score !== entryA.score) return entryB.score - entryA.score;
+      return sortByDateDesc(entryA.article, entryB.article);
+    })
+    .slice(0, limit)
+    .map((entry) => entry.article);
 }

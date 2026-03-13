@@ -16,6 +16,10 @@ const nav = document.querySelector(".site-nav");
 const searchForm = document.querySelector(".search-bar");
 const searchInput = document.querySelector("#site-search");
 const searchStatus = document.querySelector("#search-status");
+const backToTopButton = document.querySelector("#back-to-top");
+const featuredStoryMeta = document.querySelector("#featured-story-meta");
+
+const featuredArticle = articles.find((article) => article.id === featuredArticleId) ?? null;
 
 const feedArticles = articles
   .filter((article) => article.id !== featuredArticleId)
@@ -76,11 +80,32 @@ function buildTags(tags, parent) {
   });
 }
 
+function formatReadingTime(minutes) {
+  return `${minutes} min de lecture`;
+}
+
+function formatCardByline(article) {
+  return `Par ${article.author} · ${formatReadingTime(article.readTimeMinutes)}`;
+}
+
+function formatPublishedUpdated(article) {
+  const published = `Publie le ${formatDateFr(article.date)}`;
+  if (!article.updatedDate || article.updatedDate === article.date) return published;
+  return `${published} · Mis a jour le ${formatDateFr(article.updatedDate)}`;
+}
+
+function renderFeaturedMeta() {
+  if (!featuredStoryMeta || !featuredArticle) return;
+
+  featuredStoryMeta.textContent = `${formatCardByline(featuredArticle)} · ${formatPublishedUpdated(featuredArticle)}`;
+}
+
 function buildCard(article) {
   const fragment = template.content.cloneNode(true);
   const image = fragment.querySelector(".article-card__image");
   const link = fragment.querySelector(".article-card__link");
   const tags = fragment.querySelector(".article-card__tags");
+  const byline = fragment.querySelector(".article-card__byline");
   const date = fragment.querySelector(".article-card__date");
   const title = fragment.querySelector(".article-card__title");
   const excerpt = fragment.querySelector(".article-card__excerpt");
@@ -89,7 +114,8 @@ function buildCard(article) {
   title.innerHTML = highlightText(article.title);
   excerpt.innerHTML = highlightText(article.excerpt);
   caption.innerHTML = highlightText(article.caption);
-  date.textContent = `Publie le ${formatDateFr(article.date)}`;
+  byline.textContent = formatCardByline(article);
+  date.textContent = formatPublishedUpdated(article);
 
   image.src = article.image;
   image.alt = article.title;
@@ -165,7 +191,7 @@ function loadMore() {
 function articleMatchesSearch(article) {
   if (!searchTermNormalized) return true;
   const searchableText = normalizeSearchValue(
-    `${article.title} ${article.excerpt} ${article.caption} ${article.tags.join(" ")}`
+    `${article.title} ${article.excerpt} ${article.caption} ${article.tags.join(" ")} ${article.author}`
   );
   return searchableText.includes(searchTermNormalized);
 }
@@ -183,6 +209,11 @@ function applySearch(value) {
   updateSearchStatus();
 }
 
+function updateBackToTopVisibility() {
+  if (!backToTopButton) return;
+  backToTopButton.classList.toggle("is-visible", window.scrollY > 480);
+}
+
 if (grid && template) {
   observer = new IntersectionObserver(
     (entries) => {
@@ -195,6 +226,8 @@ if (grid && template) {
 
   applySearch(searchInput?.value ?? "");
 }
+
+renderFeaturedMeta();
 
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -220,3 +253,10 @@ nav?.querySelectorAll("a").forEach((link) => {
     navToggle?.setAttribute("aria-expanded", "false");
   });
 });
+
+backToTopButton?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
+updateBackToTopVisibility();

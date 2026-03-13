@@ -16,6 +16,7 @@ const lead = document.querySelector("#category-lead");
 const breadcrumbCurrent = document.querySelector("#breadcrumb-current");
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
+const backToTopButton = document.querySelector("#back-to-top");
 
 const searchParams = new URLSearchParams(window.location.search);
 const requestedTag = searchParams.get("tag") || "";
@@ -28,6 +29,20 @@ const filteredArticles = articles
 let cursor = 0;
 let isLoading = false;
 let observer;
+
+function formatReadingTime(minutes) {
+  return `${minutes} min de lecture`;
+}
+
+function formatCardByline(article) {
+  return `Par ${article.author} · ${formatReadingTime(article.readTimeMinutes)}`;
+}
+
+function formatPublishedUpdated(article) {
+  const published = `Publie le ${formatDateFr(article.date)}`;
+  if (!article.updatedDate || article.updatedDate === article.date) return published;
+  return `${published} · Mis a jour le ${formatDateFr(article.updatedDate)}`;
+}
 
 function buildTags(tags, parent) {
   tags.forEach((entry) => {
@@ -44,12 +59,14 @@ function buildCard(article) {
   const image = fragment.querySelector(".article-card__image");
   const link = fragment.querySelector(".article-card__link");
   const tags = fragment.querySelector(".article-card__tags");
+  const byline = fragment.querySelector(".article-card__byline");
   const date = fragment.querySelector(".article-card__date");
 
   fragment.querySelector(".article-card__title").textContent = article.title;
   fragment.querySelector(".article-card__excerpt").textContent = article.excerpt;
   fragment.querySelector(".article-card__caption").textContent = article.caption;
-  date.textContent = `Publie le ${formatDateFr(article.date)}`;
+  byline.textContent = formatCardByline(article);
+  date.textContent = formatPublishedUpdated(article);
 
   image.src = article.image;
   image.alt = article.title;
@@ -125,9 +142,16 @@ function setupNavigation() {
   });
 }
 
+function updateBackToTopVisibility() {
+  if (!backToTopButton) return;
+  backToTopButton.classList.toggle("is-visible", window.scrollY > 480);
+}
+
 setupCategoryHeader();
 setupActiveCategoryNav();
 setupNavigation();
+window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
+updateBackToTopVisibility();
 
 if (filteredArticles.length === 0) {
   lead.textContent = "Aucun article pour cette categorie.";
@@ -144,3 +168,7 @@ if (filteredArticles.length === 0) {
   observer.observe(sentinel);
   renderBatch(6);
 }
+
+backToTopButton?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});

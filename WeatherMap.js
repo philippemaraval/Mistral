@@ -3,10 +3,22 @@ import {
   categories,
   weatherConfig,
   buildCategoryUrl,
+  buildArticleUrl,
+  formatDateFr,
+  buildOptimizedImageUrl,
 } from "./articles-data.js";
 
 const mapContainer = document.querySelector("#map-container");
 const leaflet = window.L;
+const sidePlaceholder = document.querySelector("#weather-side-placeholder");
+const sideArticle = document.querySelector("#weather-side-article");
+const sideCategory = document.querySelector("#weather-side-category");
+const sideTitle = document.querySelector("#weather-side-title");
+const sideExcerpt = document.querySelector("#weather-side-excerpt");
+const sideMeta = document.querySelector("#weather-side-meta");
+const sideImage = document.querySelector("#weather-side-image");
+const sideRead = document.querySelector("#weather-side-read");
+const sideCategoryLink = document.querySelector("#weather-side-category-link");
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STATUS_LABELS = {
@@ -106,6 +118,47 @@ function getLatestArticleByCategory(category) {
       .filter((article) => article.tags.includes(category))
       .sort((a, b) => getArticleDate(b).getTime() - getArticleDate(a).getTime())[0] ?? null
   );
+}
+
+function formatPublishedUpdated(article) {
+  const published = `Publié le ${formatDateFr(article.date)}`;
+  if (!article.updatedDate || article.updatedDate === article.date) return published;
+  return `${published} · Mis à jour le ${formatDateFr(article.updatedDate)}`;
+}
+
+function renderLatestPanel(category, latestArticle) {
+  if (
+    !sidePlaceholder ||
+    !sideArticle ||
+    !sideCategory ||
+    !sideTitle ||
+    !sideExcerpt ||
+    !sideMeta ||
+    !sideImage ||
+    !sideRead ||
+    !sideCategoryLink
+  ) {
+    return;
+  }
+
+  if (!latestArticle) {
+    sidePlaceholder.hidden = false;
+    sidePlaceholder.textContent = `Aucun article disponible pour ${category}.`;
+    sideArticle.hidden = true;
+    return;
+  }
+
+  sidePlaceholder.hidden = true;
+  sideArticle.hidden = false;
+  sideCategory.textContent = `#${category}`;
+  sideTitle.textContent = latestArticle.title;
+  sideTitle.href = buildArticleUrl(latestArticle.id);
+  sideExcerpt.textContent = latestArticle.excerpt;
+  sideMeta.textContent = `${formatPublishedUpdated(latestArticle)} · Par ${latestArticle.author}`;
+  sideImage.src = buildOptimizedImageUrl(latestArticle.image, 960, 74);
+  sideImage.alt = latestArticle.title;
+  sideRead.href = buildArticleUrl(latestArticle.id);
+  sideCategoryLink.href = buildCategoryUrl(category);
 }
 
 function resolveWeatherStatus(baseStatus, latestArticle) {
@@ -316,7 +369,8 @@ function createMarker(category, config, latestArticle, status) {
   marker.on("mouseover", () => marker.openPopup());
   marker.on("mouseout", () => marker.closePopup());
   marker.on("click", () => {
-    window.location.href = buildCategoryUrl(category);
+    renderLatestPanel(category, latestArticle);
+    marker.openPopup();
   });
 
   return marker;

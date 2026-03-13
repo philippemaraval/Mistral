@@ -6,6 +6,7 @@ import {
 } from "./articles-data.js";
 
 const mapContainer = document.querySelector("#map-container");
+const leaflet = window.L;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STATUS_LABELS = {
@@ -16,12 +17,31 @@ const STATUS_LABELS = {
   rainy: "Pluvieux",
 };
 
-const MARSEILLE_BBOX = {
+const MARSEILLE_VIEW_BBOX = {
   west: 5.206,
   south: 43.195,
   east: 5.505,
   north: 43.398,
 };
+
+const MARSEILLE_MAX_BOUNDS = {
+  west: 5.12,
+  south: 43.145,
+  east: 5.585,
+  north: 43.445,
+};
+
+let map;
+let markerLayer;
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
 
 function getIcon(status) {
   switch (status) {
@@ -98,30 +118,10 @@ function resolveWeatherStatus(baseStatus, latestArticle) {
 }
 
 function buildBaseMap() {
-  const mapUrl = new URL("https://www.openstreetmap.org/export/embed.html");
-  mapUrl.searchParams.set(
-    "bbox",
-    `${MARSEILLE_BBOX.west},${MARSEILLE_BBOX.south},${MARSEILLE_BBOX.east},${MARSEILLE_BBOX.north}`
-  );
-  mapUrl.searchParams.set("layer", "mapnik");
-
   return `
     <div class="weather-map__base" aria-hidden="true">
-      <iframe
-        class="weather-map__iframe"
-        src="${mapUrl.toString()}"
-        loading="lazy"
-        tabindex="-1"
-        title=""
-      ></iframe>
-      <div class="weather-map__veil"></div>
+      <div class="weather-map__leaflet" id="weather-leaflet-map"></div>
     </div>
-    <p class="weather-map__attribution">
-      Fond de carte :
-      <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
-        © OpenStreetMap contributors
-      </a>
-    </p>
   `;
 }
 
@@ -136,51 +136,11 @@ function buildWindOverlay() {
   `;
 }
 
-function createPoint(category, config, latestArticle, status) {
-  const link = document.createElement("a");
-  link.className = `weather-point weather-point--${status}`;
-  link.href = buildCategoryUrl(category);
-  link.style.left = `${config.coords.x}%`;
-  link.style.top = `${config.coords.y}%`;
-
-  const statusLabel = STATUS_LABELS[status] ?? "Variable";
-  const latestTitle = latestArticle?.title ?? "Aucun article récent";
-  link.setAttribute(
-    "aria-label",
-    `${category} (${statusLabel}) - ${latestTitle}`
-  );
-
-  const icon = document.createElement("span");
-  icon.className = "weather-point__icon";
-  icon.innerHTML = getIcon(status);
-
-  const anchor = document.createElement("span");
-  anchor.className = "weather-point__anchor";
-  anchor.textContent = config.anchor;
-
-  const tooltip = document.createElement("span");
-  tooltip.className = "weather-tooltip";
-
-  const tooltipCategory = document.createElement("strong");
-  tooltipCategory.textContent = category;
-
-  const tooltipStatus = document.createElement("span");
-  tooltipStatus.textContent = statusLabel;
-
-  const tooltipTitle = document.createElement("span");
-  tooltipTitle.textContent = latestTitle;
-
-  tooltip.append(tooltipCategory, tooltipStatus, tooltipTitle);
-  link.append(icon, anchor, tooltip);
-  return link;
-}
-
 function renderMapSkeleton() {
   mapContainer.innerHTML = `
     <div class="weather-map__canvas">
       ${buildBaseMap()}
       ${buildWindOverlay()}
-      <div class="weather-map__points" id="weather-map-points"></div>
     </div>
   `;
 }
@@ -193,21 +153,120 @@ function getConfigForCategory(category) {
   };
 }
 
-function updateWeather() {
-  const pointsRoot = document.querySelector("#weather-map-points");
-  if (!pointsRoot) return;
-  pointsRoot.innerHTML = "";
+function coordsToLatLng(coords) {
+  const lng =
+    MARSEILLE_VIEW_BBOX.west +
+    (coords.x / 100) * (MARSEILLE_VIEW_BBOX.east - MARSEILLE_VIEW_BBOX.west);
+  const lat =
+    MARSEILLE_VIEW_BBOX.north -
+    (coords.y / 100) * (MARSEILLE_VIEW_BBOX.north - MARSEILLE_VIEW_BBOX.south);
+  return [lat, lng];
+}
 
+function buildPointHtml(category, anchor, latestTitle, status) {
+  return `
+    <span class="weather-point weather-point--${status}" aria-label="${escapeHtml(
+    category
+  )}: ${escapeHtml(latestTitle)}">
+      <span class="weather-point__icon">${getIcon(status)}</span>
+      <span class="weather-point__anchor">${escapeHtml(anchor)}</span>
+    </span>
+  `;
+}
+
+function buildPopupHtml(category, statusLabel, latestTitle) {
+  return `
+    <a class="weather-popup-link" href="${buildCategoryUrl(category)}" aria-label="Voir la catégorie ${escapeHtml(
+    category
+  )}">
+      <strong>${escapeHtml(category)}</strong>
+      <span>${escapeHtml(statusLabel)}</span>
+      <span>${escapeHtml(latestTitle)}</span>
+    </a>
+  `;
+}
+
+function initMap() {
+  if (!leaflet || map) return;
+
+  const maxBounds = leaflet.latLngBounds(
+    [MARSEILLE_MAX_BOUNDS.south, MARSEILLE_MAX_BOUNDS.west],
+    [MARSEILLE_MAX_BOUNDS.north, MARSEILLE_MAX_BOUNDS.east]
+  );
+
+  map = leaflet.map("weather-leaflet-map", {
+    center: [43.2965, 5.3698],
+    zoom: 12.2,
+    zoomControl: true,
+    minZoom: 11,
+    maxZoom: 16,
+    maxBounds,
+    maxBoundsViscosity: 1,
+    zoomSnap: 0.2,
+  });
+
+  leaflet
+    .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
+      noWrap: true,
+    })
+    .addTo(map);
+
+  markerLayer = leaflet.layerGroup().addTo(map);
+}
+
+function clearMarkers() {
+  markerLayer?.clearLayers();
+}
+
+function createMarker(category, config, latestArticle, status) {
+  const statusLabel = STATUS_LABELS[status] ?? "Variable";
+  const latestTitle = latestArticle?.title ?? "Aucun article récent";
+
+  const marker = leaflet.marker(coordsToLatLng(config.coords), {
+    icon: leaflet.divIcon({
+      className: "weather-marker",
+      html: buildPointHtml(category, config.anchor, latestTitle, status),
+      iconSize: [74, 74],
+      iconAnchor: [37, 37],
+      popupAnchor: [0, -18],
+    }),
+    keyboard: true,
+    title: `${category} - ${latestTitle}`,
+  });
+
+  marker.bindPopup(buildPopupHtml(category, statusLabel, latestTitle), {
+    className: "weather-tooltip-popup",
+    autoPan: false,
+    closeButton: false,
+    closeOnClick: false,
+  });
+
+  marker.on("mouseover", () => marker.openPopup());
+  marker.on("mouseout", () => marker.closePopup());
+  marker.on("click", () => {
+    window.location.href = buildCategoryUrl(category);
+  });
+
+  return marker;
+}
+
+function updateWeather() {
+  if (!map || !markerLayer) return;
+
+  clearMarkers();
   categories.forEach((category) => {
     const config = getConfigForCategory(category);
     const latestArticle = getLatestArticleByCategory(category);
     const status = resolveWeatherStatus(config.status, latestArticle);
-    pointsRoot.appendChild(createPoint(category, config, latestArticle, status));
+    markerLayer.addLayer(createMarker(category, config, latestArticle, status));
   });
 }
 
 if (mapContainer) {
   renderMapSkeleton();
+  initMap();
   updateWeather();
   window.setInterval(updateWeather, 60 * 60 * 1000);
 }

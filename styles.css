@@ -1251,8 +1251,7 @@ mark {
   overflow: hidden;
 }
 
-.weather-map__canvas,
-.weather-map__points {
+.weather-map__canvas {
   position: absolute;
   inset: 0;
 }
@@ -1270,44 +1269,34 @@ mark {
   overflow: hidden;
 }
 
-.weather-map__iframe {
+.weather-map__leaflet,
+.weather-map__base .leaflet-container {
   width: 100%;
   height: 100%;
-  border: 0;
-  pointer-events: none;
+}
+
+.weather-map__base .leaflet-tile {
   filter: saturate(0.6) contrast(1.03) brightness(1.02);
 }
 
-.weather-map__veil {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.25));
-  pointer-events: none;
-}
-
-.weather-map__attribution {
-  position: absolute;
-  right: 0.65rem;
-  bottom: 0.45rem;
-  z-index: 4;
-  margin: 0;
-  padding: 0.2rem 0.45rem;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #dbe7f2;
+.weather-map__base .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.88);
+  border-top: 1px solid #dbe7f2;
+  border-left: 1px solid #dbe7f2;
   font-family: var(--font-sans);
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   color: #4d6278;
 }
 
-.weather-map__attribution a {
+.weather-map__base .leaflet-control-attribution a {
   color: #3f5d7c;
-  text-decoration: underline;
 }
 
 .weather-map__wind {
   position: absolute;
   inset: 0;
   z-index: 2;
+  pointer-events: none;
 }
 
 .wind-line {
@@ -1336,17 +1325,19 @@ mark {
   animation: windFlowB 12.5s linear infinite;
 }
 
-.weather-map__points {
-  z-index: 3;
+.weather-marker {
+  background: transparent;
+  border: 0;
 }
 
 .weather-point {
-  position: absolute;
-  transform: translate(-50%, -50%);
+  position: relative;
+  transform: none;
   display: grid;
   justify-items: center;
   gap: 0.28rem;
   text-decoration: none;
+  user-select: none;
 }
 
 .weather-point__icon {
@@ -1374,6 +1365,8 @@ mark {
 }
 
 .weather-point__anchor {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 600;
@@ -1385,31 +1378,32 @@ mark {
   padding: 0.16rem 0.38rem;
 }
 
-.weather-tooltip {
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 10px);
-  transform: translate(-50%, 7px);
-  min-width: 215px;
-  max-width: 260px;
-  padding: 0.6rem 0.68rem;
+.weather-tooltip-popup .leaflet-popup-content-wrapper {
   border: 1px solid #d8e4f0;
   background: rgba(255, 255, 255, 0.83);
   backdrop-filter: blur(5px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  pointer-events: auto;
-  transition: opacity 160ms ease, transform 160ms ease;
+  border-radius: 0;
 }
 
-.weather-point:hover .weather-tooltip,
-.weather-point:focus-visible .weather-tooltip,
-.weather-point:focus-within .weather-tooltip {
-  opacity: 1;
-  transform: translate(-50%, 0);
+.weather-tooltip-popup .leaflet-popup-content {
+  margin: 0;
 }
 
-.weather-tooltip strong {
+.weather-tooltip-popup .leaflet-popup-tip-container {
+  display: none;
+}
+
+.weather-popup-link {
+  display: block;
+  min-width: 215px;
+  max-width: 260px;
+  padding: 0.6rem 0.68rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.weather-popup-link strong {
   display: block;
   margin-bottom: 0.2rem;
   font-family: var(--font-sans);
@@ -1419,7 +1413,7 @@ mark {
   color: #314d69;
 }
 
-.weather-tooltip span {
+.weather-popup-link span {
   display: block;
   font-family: var(--font-sans);
   font-size: 0.78rem;
@@ -1427,7 +1421,7 @@ mark {
   color: #4f5f70;
 }
 
-.weather-tooltip span + span {
+.weather-popup-link span + span {
   margin-top: 0.28rem;
 }
 
@@ -1621,7 +1615,7 @@ mark {
     height: 26px;
   }
 
-  .weather-tooltip {
+  .weather-popup-link {
     min-width: 185px;
     max-width: 220px;
   }

@@ -9,8 +9,12 @@ const distDir = path.join(__dirname, "dist");
 const entries = [
   "index.html",
   "article.html",
+  "category.html",
   "styles.css",
   "script.js",
+  "article.js",
+  "category.js",
+  "articles-data.js",
   "social-preview.svg",
   "logo mistral.PNG",
   "logo-mistral.svg",

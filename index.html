@@ -32,7 +32,7 @@
   <body>
     <header class="site-header">
       <div class="site-header__inner">
-        <a class="brand" href="#" aria-label="Accueil Mistral">
+        <a class="brand" href="./index.html" aria-label="Accueil Mistral">
           <img class="brand__logo" src="./logo mistral.PNG" alt="Logo Mistral" />
           <span class="brand__name">Mistral</span>
         </a>
@@ -50,12 +50,12 @@
 
         <nav class="site-nav" id="primary-nav" aria-label="Navigation principale">
           <ul>
-            <li><a href="#featured-story">Politique</a></li>
-            <li><a href="#article-grid">Économie</a></li>
-            <li><a href="#article-grid">Urbanisme</a></li>
-            <li><a href="#article-grid">Mobilités</a></li>
-            <li><a href="#article-grid">Culture</a></li>
-            <li><a href="#article-grid">Quartiers</a></li>
+            <li><a href="./category.html?tag=Politique">Politique</a></li>
+            <li><a href="./category.html?tag=%C3%89conomie">Économie</a></li>
+            <li><a href="./category.html?tag=Urbanisme">Urbanisme</a></li>
+            <li><a href="./category.html?tag=Mobilit%C3%A9s">Mobilités</a></li>
+            <li><a href="./category.html?tag=Culture">Culture</a></li>
+            <li><a href="./category.html?tag=Quartiers">Quartiers</a></li>
           </ul>
         </nav>
 
@@ -96,6 +96,11 @@
               Jean-Pierre C., adjoint aux finances, devant l'Hotel de Ville. Juin 2024.
             </figcaption>
           </figure>
+          <p class="article-tags featured-story__tags">
+            <a href="./category.html?tag=Politique">#Politique</a>
+            <a href="./category.html?tag=%C3%89conomie">#Économie</a>
+            <a href="./category.html?tag=Urbanisme">#Urbanisme</a>
+          </p>
 
           <aside class="share-rail" aria-label="Partager l'article">
             <span>Partager</span>
@@ -168,12 +173,14 @@
           <div class="article-card__meta">
             <h3 class="article-card__title"></h3>
             <p class="article-card__excerpt"></p>
+            <p class="article-card__date"></p>
             <p class="caption article-card__caption"></p>
           </div>
         </a>
+        <p class="article-tags article-card__tags"></p>
       </article>
     </template>
 
-    <script src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
   </body>
 </html>

@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Article | Mistral</title>
-    <meta name="description" content="Article Mistral" />
+    <title>Categorie | Mistral</title>
+    <meta name="description" content="Articles Mistral classes par categorie" />
     <link rel="icon" type="image/png" href="./logo mistral.PNG" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -50,16 +50,38 @@
       </div>
     </header>
 
-    <main class="article-page">
-      <a class="article-page__back" href="./index.html">Retour a l'accueil</a>
-      <h1 class="article-page__title" id="article-title">Article</h1>
-      <p class="article-page__excerpt" id="article-excerpt"></p>
-      <p class="article-page__date" id="article-date"></p>
-      <img class="article-page__image" id="article-image" alt="" />
-      <p class="caption" id="article-caption"></p>
-      <p class="article-tags article-page__tags" id="article-tags"></p>
+    <main class="category-page">
+      <div class="category-page__head">
+        <p class="eyebrow">CATEGORIE</p>
+        <h1 id="category-title">#Categorie</h1>
+        <p class="category-page__lead" id="category-lead"></p>
+      </div>
+
+      <section class="article-grid" id="category-grid" aria-live="polite"></section>
+
+      <div class="loading-indicator" id="category-loading" aria-hidden="true">
+        Chargement des articles...
+      </div>
+      <div class="sentinel" id="category-sentinel" aria-hidden="true"></div>
     </main>
 
-    <script type="module" src="./article.js"></script>
+    <template id="article-card-template">
+      <article class="article-card">
+        <a class="article-card__link" href="#">
+          <div class="article-card__image-wrap">
+            <img class="article-card__image" alt="" loading="lazy" />
+          </div>
+          <div class="article-card__meta">
+            <h3 class="article-card__title"></h3>
+            <p class="article-card__excerpt"></p>
+            <p class="article-card__date"></p>
+            <p class="caption article-card__caption"></p>
+          </div>
+        </a>
+        <p class="article-tags article-card__tags"></p>
+      </article>
+    </template>
+
+    <script type="module" src="./category.js"></script>
   </body>
 </html>

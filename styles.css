@@ -1241,6 +1241,11 @@ mark {
   line-height: 1.6;
 }
 
+.weather-map-section__tagline {
+  max-width: none;
+  white-space: nowrap;
+}
+
 .weather-map-layout {
   width: min(calc(100% - 2rem), var(--max-width));
   margin: 0 auto;
@@ -1756,6 +1761,10 @@ mark {
 
   .weather-map-layout {
     grid-template-columns: 1fr;
+  }
+
+  .weather-map-section__tagline {
+    white-space: normal;
   }
 
   .weather-side-panel {

@@ -21,12 +21,6 @@
     <meta name="twitter:description" content="Une voix libre sur Marseille." />
     <meta name="twitter:image" content="./social-preview.svg" />
     <link rel="icon" type="image/png" href="./logo mistral.PNG" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -96,7 +90,18 @@
             <figure class="featured-story__figure">
               <img
                 src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80"
+                srcset="
+                  https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=640&q=72 640w,
+                  https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=960&q=72 960w,
+                  https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1280&q=72 1280w,
+                  https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=72 1600w
+                "
+                sizes="(max-width: 980px) 100vw, 900px"
                 alt="Vue du Vieux-Port de Marseille"
+                width="1600"
+                height="900"
+                fetchpriority="high"
+                decoding="async"
               />
               <figcaption class="caption">
                 Jean-Pierre C., adjoint aux finances, devant l'Hotel de Ville. Juin 2024.
@@ -211,7 +216,14 @@
       <article class="article-card">
         <a class="article-card__link" href="#">
           <div class="article-card__image-wrap">
-            <img class="article-card__image" alt="" loading="lazy" />
+            <img
+              class="article-card__image"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              width="800"
+              height="600"
+            />
           </div>
           <div class="article-card__meta">
             <h3 class="article-card__title"></h3>

@@ -7,8 +7,8 @@
   --muted: #555555;
   --accent-hover: #87a7ca;
   --max-width: 1200px;
-  --font-sans: "Inter", sans-serif;
-  --font-serif: "Lora", serif;
+  --font-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Georgia", "Times New Roman", Times, serif;
 }
 
 * {
@@ -1144,6 +1144,45 @@ mark {
   color: #8a4950;
 }
 
+.notfound-page .info-page__head h1 {
+  max-width: 28ch;
+}
+
+.notfound-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+}
+
+.notfound-search input {
+  width: 100%;
+  min-height: 2.6rem;
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.7rem;
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+}
+
+.notfound-search button {
+  min-height: 2.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0 1rem;
+  cursor: pointer;
+}
+
+.notfound-search button:hover,
+.notfound-search button:focus-visible {
+  background: var(--accent-hover);
+}
+
 .back-to-top {
   position: fixed;
   right: 1rem;
@@ -1287,6 +1326,10 @@ mark {
   }
 
   .info-page__section--grid {
+    grid-template-columns: 1fr;
+  }
+
+  .notfound-search {
     grid-template-columns: 1fr;
   }
 }

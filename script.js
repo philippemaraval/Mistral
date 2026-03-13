@@ -6,6 +6,8 @@ import {
   buildArticleUrl,
   buildCategoryUrl,
   buildDocumentUrl,
+  buildOptimizedImageUrl,
+  buildOptimizedImageSrcSet,
 } from "./articles-data.js";
 
 const grid = document.querySelector("#article-grid");
@@ -30,6 +32,8 @@ const feedArticles = articles
 
 const BATCH_SIZE = 6;
 const VIEW_MODE_STORAGE_KEY = "mistral.viewMode";
+const pageSearchParams = new URLSearchParams(window.location.search);
+const initialQuery = pageSearchParams.get("q")?.trim() ?? "";
 
 let activeArticles = [...feedArticles];
 let cursor = 0;
@@ -194,13 +198,25 @@ function buildCard(article) {
   byline.textContent = formatCardByline(article);
   date.textContent = formatPublishedUpdated(article);
 
-  image.src = article.image;
+  image.src = buildOptimizedImageUrl(article.image, 640, 72);
+  image.srcset = buildOptimizedImageSrcSet(article.image, [320, 480, 640, 800, 960], 72);
+  image.sizes = "(max-width: 767px) 100vw, (max-width: 980px) 50vw, 33vw";
   image.alt = article.title;
   link.href = buildArticleUrl(article.id);
   link.setAttribute("aria-label", `Lire l'article : ${article.title}`);
   buildTags(article.tags, tags);
 
   return fragment;
+}
+
+function syncSearchQueryParam() {
+  const nextUrl = new URL(window.location.href);
+  if (searchTermRaw) {
+    nextUrl.searchParams.set("q", searchTermRaw);
+  } else {
+    nextUrl.searchParams.delete("q");
+  }
+  window.history.replaceState({}, "", `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
 }
 
 function updateSearchStatus() {
@@ -288,6 +304,7 @@ function applySearch(value) {
   showLoading(false);
   renderBatch(BATCH_SIZE);
   updateSearchStatus();
+  syncSearchQueryParam();
 }
 
 function updateBackToTopVisibility() {
@@ -305,6 +322,7 @@ if (grid && template) {
     { rootMargin: "420px 0px" }
   );
 
+  if (searchInput && initialQuery) searchInput.value = initialQuery;
   applySearch(searchInput?.value ?? "");
 }
 

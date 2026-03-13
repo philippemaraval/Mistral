@@ -3,6 +3,8 @@ import {
   buildCategoryUrl,
   buildArticleUrl,
   buildDocumentUrl,
+  buildOptimizedImageUrl,
+  buildOptimizedImageSrcSet,
   getArticleById,
   getRelatedArticles,
 } from "./articles-data.js";
@@ -123,18 +125,45 @@ function syncScrollUI() {
   updateBackToTopVisibility();
 }
 
+function setMetaTag(selector, content) {
+  const element = document.querySelector(selector);
+  if (!element) return;
+  element.setAttribute("content", content);
+}
+
+function updateSocialMeta() {
+  const pageUrl = new URL(buildArticleUrl(article.id), window.location.href).toString();
+  const description = article.excerpt;
+  const previewImage = buildOptimizedImageUrl(article.image, 1200, 78);
+
+  setMetaTag('meta[name="description"]', description);
+  setMetaTag('meta[property="og:title"]', `${article.title} | Mistral`);
+  setMetaTag('meta[property="og:description"]', description);
+  setMetaTag('meta[property="og:image"]', previewImage);
+  setMetaTag('meta[property="og:url"]', pageUrl);
+  setMetaTag('meta[name="twitter:title"]', `${article.title} | Mistral`);
+  setMetaTag('meta[name="twitter:description"]', description);
+  setMetaTag('meta[name="twitter:image"]', previewImage);
+
+  const canonical = document.querySelector("#canonical-link");
+  if (canonical) canonical.setAttribute("href", pageUrl);
+}
+
 document.title = `${article.title} | Mistral`;
 title.textContent = article.title;
 excerpt.textContent = article.excerpt;
 metaPrimary.textContent = formatAuthorLine(article);
 metaSecondary.textContent = formatPublishedUpdated(article);
-image.src = article.image;
+image.src = buildOptimizedImageUrl(article.image, 960, 72);
+image.srcset = buildOptimizedImageSrcSet(article.image, [480, 720, 960, 1200, 1600], 74);
+image.sizes = "(max-width: 980px) 100vw, 920px";
 image.alt = article.title;
 caption.textContent = article.caption;
 breadcrumbCategoryLink.href = buildCategoryUrl(primaryTag);
 breadcrumbCategoryLink.textContent = primaryTag;
 breadcrumbCurrent.textContent = article.title;
 setupActiveCategoryNav();
+updateSocialMeta();
 renderSources();
 renderRelatedArticles();
 
@@ -165,8 +194,3 @@ backToTopButton?.addEventListener("click", () => {
 window.addEventListener("scroll", syncScrollUI, { passive: true });
 window.addEventListener("resize", syncScrollUI);
 syncScrollUI();
-
-const canonical = document.createElement("link");
-canonical.rel = "canonical";
-canonical.href = buildArticleUrl(article.id);
-document.head.appendChild(canonical);

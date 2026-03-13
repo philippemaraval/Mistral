@@ -3,19 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Categorie | Mistral</title>
-    <meta name="description" content="Articles Mistral classes par categorie" />
+    <title>404 | Mistral</title>
+    <meta
+      name="description"
+      content="Page introuvable. Retrouvez les dernieres enquetes, categories et liens utiles du media Mistral."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:title" content="Categorie | Mistral" />
-    <meta property="og:description" content="Articles classes par categorie sur Mistral." />
+    <meta property="og:title" content="404 | Mistral" />
+    <meta property="og:description" content="Page introuvable sur Mistral." />
     <meta property="og:image" content="./social-preview.svg" />
-    <meta property="og:url" content="./category.html" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Categorie | Mistral" />
-    <meta name="twitter:description" content="Articles classes par categorie sur Mistral." />
+    <meta name="twitter:title" content="404 | Mistral" />
+    <meta name="twitter:description" content="Page introuvable sur Mistral." />
     <meta name="twitter:image" content="./social-preview.svg" />
-    <link rel="canonical" id="canonical-link" href="./category.html" />
     <link rel="icon" type="image/png" href="./logo mistral.PNG" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -55,47 +56,52 @@
       </div>
     </header>
 
-    <main class="category-page">
+    <main class="info-page notfound-page">
       <nav class="breadcrumb" aria-label="Fil d'ariane">
         <ol>
           <li><a href="./index.html">Accueil</a></li>
-          <li id="breadcrumb-current" aria-current="page">Categorie</li>
+          <li aria-current="page">404</li>
         </ol>
       </nav>
 
-      <div class="category-page__head">
-        <p class="eyebrow">CATEGORIE</p>
-        <h1 id="category-title">#Categorie</h1>
-        <p class="category-page__lead" id="category-lead"></p>
-      </div>
+      <header class="info-page__head">
+        <p class="eyebrow">ERREUR 404</p>
+        <h1>Cette page n'existe plus ou a ete deplacee</h1>
+        <p>Utilise la recherche ci-dessous ou repars vers une categorie de la redaction.</p>
+      </header>
 
-      <div class="category-controls">
-        <div class="view-toggle" role="group" aria-label="Mode d'affichage des articles">
-          <button type="button" data-view-option="grid" aria-pressed="true">Vue grille</button>
-          <button type="button" data-view-option="list" aria-pressed="false">Vue liste</button>
-        </div>
+      <section class="info-page__section">
+        <h2>Rechercher un article</h2>
+        <form class="notfound-search" action="./index.html" method="get">
+          <label class="sr-only" for="notfound-query">Rechercher un article</label>
+          <input
+            id="notfound-query"
+            name="q"
+            type="search"
+            placeholder="Ex: Velodrome, transports nord..."
+            autocomplete="off"
+          />
+          <button type="submit">Lancer</button>
+        </form>
+      </section>
 
-        <section class="tag-filters" aria-label="Filtres par tags">
-          <p class="tag-filters__title">Affiner par tags</p>
-          <div class="tag-filters__chips" id="tag-filters-chips"></div>
-          <button class="tag-filters__reset" id="tag-filters-reset" type="button">Effacer filtres</button>
-        </section>
-      </div>
+      <section class="info-page__section">
+        <h2>Categories</h2>
+        <div class="source-links" id="notfound-categories"></div>
+      </section>
 
-      <section class="article-grid" id="category-grid" aria-live="polite"></section>
-
-      <div class="loading-indicator" id="category-loading" aria-hidden="true">
-        Chargement des articles...
-      </div>
-      <div class="sentinel" id="category-sentinel" aria-hidden="true"></div>
+      <section class="info-page__section">
+        <h2>Derniers articles</h2>
+        <div class="related-articles__list" id="notfound-latest"></div>
+      </section>
 
       <section class="newsletter-panel">
         <h2>Recevoir la newsletter</h2>
-        <p>Chaque semaine, notre selection d'articles et de sources officielles.</p>
+        <p>Chaque vendredi, les sujets a suivre dans la semaine marseillaise.</p>
         <form class="newsletter-form" data-newsletter-form novalidate>
-          <label class="sr-only" for="newsletter-email-category">Email newsletter</label>
+          <label class="sr-only" for="newsletter-email-404">Email newsletter</label>
           <input
-            id="newsletter-email-category"
+            id="newsletter-email-404"
             data-newsletter-email
             type="email"
             name="email"
@@ -117,32 +123,8 @@
       Retour en haut
     </button>
 
-    <template id="article-card-template">
-      <article class="article-card">
-        <a class="article-card__link" href="#">
-          <div class="article-card__image-wrap">
-            <img
-              class="article-card__image"
-              alt=""
-              loading="lazy"
-              decoding="async"
-              width="800"
-              height="600"
-            />
-          </div>
-          <div class="article-card__meta">
-            <h3 class="article-card__title"></h3>
-            <p class="article-card__excerpt"></p>
-            <p class="article-card__byline"></p>
-            <p class="article-card__date"></p>
-            <p class="caption article-card__caption"></p>
-          </div>
-        </a>
-        <p class="article-tags article-card__tags"></p>
-      </article>
-    </template>
-
-    <script type="module" src="./category.js"></script>
+    <script type="module" src="./static-page.js"></script>
+    <script type="module" src="./404.js"></script>
     <script type="module" src="./newsletter.js"></script>
   </body>
 </html>

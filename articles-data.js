@@ -185,6 +185,30 @@ export function buildDocumentUrl(file) {
   return `./documents/${encodeURIComponent(file)}`;
 }
 
+export function buildOptimizedImageUrl(source, width = 960, quality = 72) {
+  try {
+    const url = new URL(source);
+    if (!url.hostname.includes("unsplash.com")) return source;
+    url.searchParams.set("auto", "format");
+    url.searchParams.set("fit", "crop");
+    url.searchParams.set("w", String(width));
+    url.searchParams.set("q", String(quality));
+    return url.toString();
+  } catch {
+    return source;
+  }
+}
+
+export function buildOptimizedImageSrcSet(
+  source,
+  widths = [320, 480, 640, 800, 960, 1200],
+  quality = 72
+) {
+  return widths
+    .map((width) => `${buildOptimizedImageUrl(source, width, quality)} ${width}w`)
+    .join(", ");
+}
+
 export function getArticleById(id) {
   return articles.find((article) => article.id === id) ?? null;
 }

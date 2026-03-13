@@ -5,6 +5,8 @@ import {
   formatDateFr,
   buildCategoryUrl,
   buildArticleUrl,
+  buildOptimizedImageUrl,
+  buildOptimizedImageSrcSet,
 } from "./articles-data.js";
 
 const grid = document.querySelector("#category-grid");
@@ -107,13 +109,43 @@ function buildCard(article) {
   byline.textContent = formatCardByline(article);
   date.textContent = formatPublishedUpdated(article);
 
-  image.src = article.image;
+  image.src = buildOptimizedImageUrl(article.image, 640, 72);
+  image.srcset = buildOptimizedImageSrcSet(article.image, [320, 480, 640, 800, 960], 72);
+  image.sizes = "(max-width: 767px) 100vw, (max-width: 980px) 50vw, 33vw";
   image.alt = article.title;
   link.href = buildArticleUrl(article.id);
   link.setAttribute("aria-label", `Lire l'article : ${article.title}`);
   buildTags(article.tags, tags);
 
   return fragment;
+}
+
+function setMetaTag(selector, content) {
+  const element = document.querySelector(selector);
+  if (!element) return;
+  element.setAttribute("content", content);
+}
+
+function updateSocialMeta() {
+  const pageUrl = new URL(buildCategoryUrl(tag), window.location.href).toString();
+  const countText = `${baseArticles.length} article(s)`;
+  const description = `Categorie ${tag} sur Mistral. ${countText} du plus recent au plus ancien.`;
+  const previewImage = baseArticles[0]?.image
+    ? buildOptimizedImageUrl(baseArticles[0].image, 1200, 78)
+    : new URL("./social-preview.svg", window.location.href).toString();
+
+  document.title = `${tag} | Mistral`;
+  setMetaTag('meta[name="description"]', description);
+  setMetaTag('meta[property="og:title"]', `${tag} | Mistral`);
+  setMetaTag('meta[property="og:description"]', description);
+  setMetaTag('meta[property="og:image"]', previewImage);
+  setMetaTag('meta[property="og:url"]', pageUrl);
+  setMetaTag('meta[name="twitter:title"]', `${tag} | Mistral`);
+  setMetaTag('meta[name="twitter:description"]', description);
+  setMetaTag('meta[name="twitter:image"]', previewImage);
+
+  const canonical = document.querySelector("#canonical-link");
+  if (canonical) canonical.setAttribute("href", pageUrl);
 }
 
 function createSkeletonCard() {
@@ -283,6 +315,7 @@ function updateBackToTopVisibility() {
 setupCategoryHeader();
 setupActiveCategoryNav();
 setupNavigation();
+updateSocialMeta();
 setViewMode(readViewMode());
 renderTagFilters();
 window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });

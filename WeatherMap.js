@@ -13,6 +13,7 @@ const leaflet = window.L;
 const sidePlaceholder = document.querySelector("#weather-side-placeholder");
 const sideArticle = document.querySelector("#weather-side-article");
 const sideCategory = document.querySelector("#weather-side-category");
+const sideStatus = document.querySelector("#weather-side-status");
 const sideTitle = document.querySelector("#weather-side-title");
 const sideExcerpt = document.querySelector("#weather-side-excerpt");
 const sideMeta = document.querySelector("#weather-side-meta");
@@ -126,11 +127,14 @@ function formatPublishedUpdated(article) {
   return `${published} · Mis à jour le ${formatDateFr(article.updatedDate)}`;
 }
 
-function renderLatestPanel(category, latestArticle) {
+function renderLatestPanel(category, latestArticle, status) {
+  const statusLabel = STATUS_LABELS[status] ?? "Variable";
+
   if (
     !sidePlaceholder ||
     !sideArticle ||
     !sideCategory ||
+    !sideStatus ||
     !sideTitle ||
     !sideExcerpt ||
     !sideMeta ||
@@ -145,12 +149,16 @@ function renderLatestPanel(category, latestArticle) {
     sidePlaceholder.hidden = false;
     sidePlaceholder.textContent = `Aucun article disponible pour ${category}.`;
     sideArticle.hidden = true;
+    sideStatus.textContent = "";
+    sideStatus.removeAttribute("data-weather");
     return;
   }
 
   sidePlaceholder.hidden = true;
   sideArticle.hidden = false;
   sideCategory.textContent = `#${category}`;
+  sideStatus.textContent = statusLabel;
+  sideStatus.setAttribute("data-weather", status);
   sideTitle.textContent = latestArticle.title;
   sideTitle.href = buildArticleUrl(latestArticle.id);
   sideExcerpt.textContent = latestArticle.excerpt;
@@ -369,7 +377,7 @@ function createMarker(category, config, latestArticle, status) {
   marker.on("mouseover", () => marker.openPopup());
   marker.on("mouseout", () => marker.closePopup());
   marker.on("click", () => {
-    renderLatestPanel(category, latestArticle);
+    renderLatestPanel(category, latestArticle, status);
     marker.openPopup();
   });
 

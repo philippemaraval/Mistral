@@ -83,13 +83,19 @@
           <div id="map-container" class="weather-map" aria-live="polite"></div>
 
           <aside class="weather-side-panel" id="weather-side-panel" aria-live="polite">
-            <p class="weather-side-panel__eyebrow">Dernier article de catégorie</p>
+            <div class="weather-side-panel__header">
+              <p class="weather-side-panel__eyebrow">Dernier article de catégorie</p>
+              <p class="weather-side-panel__hint">Mise à jour en direct depuis la carte météo.</p>
+            </div>
             <p class="weather-side-panel__placeholder" id="weather-side-placeholder">
               Clique sur une catégorie de la carte pour afficher son article le plus récent.
             </p>
 
             <article class="weather-side-article" id="weather-side-article" hidden>
-              <p class="weather-side-article__category" id="weather-side-category"></p>
+              <div class="weather-side-article__topline">
+                <p class="weather-side-article__category" id="weather-side-category"></p>
+                <p class="weather-side-article__status" id="weather-side-status"></p>
+              </div>
               <a class="weather-side-article__title" id="weather-side-title" href="./article.html"></a>
               <p class="weather-side-article__excerpt" id="weather-side-excerpt"></p>
               <p class="weather-side-article__meta" id="weather-side-meta"></p>

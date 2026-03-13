@@ -18,6 +18,7 @@ const searchForm = document.querySelector(".search-bar");
 const searchInput = document.querySelector("#site-search");
 const searchStatus = document.querySelector("#search-status");
 const backToTopButton = document.querySelector("#back-to-top");
+const viewButtons = Array.from(document.querySelectorAll("[data-view-option]"));
 const featuredStoryMeta = document.querySelector("#featured-story-meta");
 const featuredStorySources = document.querySelector("#featured-story-sources");
 
@@ -28,6 +29,7 @@ const feedArticles = articles
   .sort(sortByDateDesc);
 
 const BATCH_SIZE = 6;
+const VIEW_MODE_STORAGE_KEY = "mistral.viewMode";
 
 let activeArticles = [...feedArticles];
 let cursor = 0;
@@ -37,6 +39,7 @@ let searchDebounce;
 let searchTermRaw = "";
 let searchTermNormalized = "";
 let loadTimeout;
+let viewMode = "grid";
 
 function normalizeSearchValue(value) {
   return value
@@ -70,6 +73,59 @@ function highlightText(value) {
   });
 
   return output;
+}
+
+function readViewMode() {
+  try {
+    const stored = localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    return stored === "list" ? "list" : "grid";
+  } catch {
+    return "grid";
+  }
+}
+
+function setViewMode(mode) {
+  viewMode = mode === "list" ? "list" : "grid";
+  grid?.classList.toggle("is-list-view", viewMode === "list");
+
+  viewButtons.forEach((button) => {
+    const isActive = button.dataset.viewOption === viewMode;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  try {
+    localStorage.setItem(VIEW_MODE_STORAGE_KEY, viewMode);
+  } catch {
+    // Ignore storage errors.
+  }
+}
+
+function createSkeletonCard() {
+  const card = document.createElement("article");
+  card.className = "article-card article-card--skeleton";
+  card.setAttribute("aria-hidden", "true");
+  card.innerHTML = `
+    <div class="skeleton skeleton--image"></div>
+    <div class="skeleton skeleton--line skeleton--title"></div>
+    <div class="skeleton skeleton--line"></div>
+    <div class="skeleton skeleton--line skeleton--short"></div>
+  `;
+  return card;
+}
+
+function clearSkeletons() {
+  grid?.querySelectorAll(".article-card--skeleton").forEach((card) => card.remove());
+}
+
+function showSkeletons(count) {
+  if (!grid || count <= 0) return;
+  clearSkeletons();
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < count; i += 1) {
+    fragment.appendChild(createSkeletonCard());
+  }
+  grid.appendChild(fragment);
 }
 
 function buildTags(tags, parent) {
@@ -179,6 +235,7 @@ function updateSentinelVisibility() {
 }
 
 function renderBatch(size = BATCH_SIZE) {
+  clearSkeletons();
   const end = Math.min(cursor + size, activeArticles.length);
   for (let i = cursor; i < end; i += 1) {
     const article = activeArticles[i];
@@ -201,6 +258,7 @@ function loadMore() {
   if (isLoading || cursor >= activeArticles.length) return;
   isLoading = true;
   showLoading(true);
+  showSkeletons(Math.min(BATCH_SIZE, activeArticles.length - cursor));
 
   loadTimeout = window.setTimeout(() => {
     renderBatch(BATCH_SIZE);
@@ -225,6 +283,7 @@ function applySearch(value) {
   activeArticles = feedArticles.filter(articleMatchesSearch);
   cursor = 0;
   isLoading = false;
+  clearSkeletons();
   grid.innerHTML = "";
   showLoading(false);
   renderBatch(BATCH_SIZE);
@@ -249,6 +308,8 @@ if (grid && template) {
   applySearch(searchInput?.value ?? "");
 }
 
+setViewMode(readViewMode());
+
 renderFeaturedMeta();
 renderFeaturedSources();
 
@@ -263,6 +324,13 @@ searchInput?.addEventListener("input", () => {
   searchDebounce = window.setTimeout(() => {
     applySearch(searchInput.value);
   }, 260);
+});
+
+viewButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const mode = button.dataset.viewOption === "list" ? "list" : "grid";
+    setViewMode(mode);
+  });
 });
 
 navToggle?.addEventListener("click", () => {

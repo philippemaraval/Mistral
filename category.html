@@ -64,6 +64,19 @@
         <p class="category-page__lead" id="category-lead"></p>
       </div>
 
+      <div class="category-controls">
+        <div class="view-toggle" role="group" aria-label="Mode d'affichage des articles">
+          <button type="button" data-view-option="grid" aria-pressed="true">Vue grille</button>
+          <button type="button" data-view-option="list" aria-pressed="false">Vue liste</button>
+        </div>
+
+        <section class="tag-filters" aria-label="Filtres par tags">
+          <p class="tag-filters__title">Affiner par tags</p>
+          <div class="tag-filters__chips" id="tag-filters-chips"></div>
+          <button class="tag-filters__reset" id="tag-filters-reset" type="button">Effacer filtres</button>
+        </section>
+      </div>
+
       <section class="article-grid" id="category-grid" aria-live="polite"></section>
 
       <div class="loading-indicator" id="category-loading" aria-hidden="true">

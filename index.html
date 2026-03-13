@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mistral | Marseille, enquetes et portraits</title>
+    <meta
+      name="description"
+      content="Mistral, media independant a Marseille. Enquetes courtes, critiques, sourcees et humaines."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="Mistral | Marseille, enquetes et portraits" />
+    <meta
+      property="og:description"
+      content="Le souffle qui nettoie. Enquetes quotidiennes, portraits bruts et documents officiels telechargeables."
+    />
+    <meta property="og:image" content="./social-preview.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mistral | Marseille, enquetes et portraits" />
+    <meta name="twitter:description" content="Une voix libre sur Marseille." />
+    <meta name="twitter:image" content="./social-preview.svg" />
+    <link rel="icon" type="image/png" href="./logo mistral.PNG" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="#" aria-label="Accueil Mistral">
+          <img class="brand__logo" src="./logo mistral.PNG" alt="Logo Mistral" />
+          <span class="brand__name">Mistral</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          aria-label="Ouvrir le menu"
+        >
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="site-nav" id="primary-nav" aria-label="Navigation principale">
+          <ul>
+            <li><a href="#featured-story">Enquetes</a></li>
+            <li><a href="#article-grid">Portraits</a></li>
+            <li><a href="#article-grid">Donnees</a></li>
+            <li><a href="#article-grid">Chroniques</a></li>
+            <li><a href="#official-docs">Archives</a></li>
+          </ul>
+        </nav>
+
+        <form class="search-bar" role="search">
+          <label class="sr-only" for="site-search">Rechercher une enquete...</label>
+          <input
+            id="site-search"
+            type="search"
+            placeholder="Rechercher une enquete..."
+            aria-label="Rechercher une enquete"
+          />
+          <button type="submit" aria-label="Lancer la recherche">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5"></circle>
+              <path d="M16.2 16.2 21 21"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="content-flow" aria-label="Flux d'articles">
+        <article class="featured-story" id="featured-story">
+          <span class="eyebrow">A LA UNE</span>
+          <h2>OM : Les chiffres caches du nouveau stade</h2>
+          <p class="featured-story__lead">
+            Notre enquete revele les montants reels du partenariat public-prive
+            pour le Velodrome. Un dossier qui bouscule les certitudes municipales.
+          </p>
+
+          <figure class="featured-story__figure">
+            <img
+              src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80"
+              alt="Vue du Vieux-Port de Marseille"
+            />
+            <figcaption class="caption">
+              Jean-Pierre C., adjoint aux finances, devant l'Hotel de Ville. Juin 2024.
+            </figcaption>
+          </figure>
+
+          <aside class="share-rail" aria-label="Partager l'article">
+            <span>Partager</span>
+            <a href="#" aria-label="Partager sur WhatsApp">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2.8A9.2 9.2 0 0 0 4.1 16.9L3 21l4.2-1.1A9.2 9.2 0 1 0 12 2.8Zm0 16.8a7.5 7.5 0 0 1-3.8-1l-.3-.2-2.5.7.7-2.4-.2-.4a7.4 7.4 0 1 1 6.1 3.3Z" />
+              </svg>
+            </a>
+            <a href="#" aria-label="Partager sur Facebook">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M13.3 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.4 0-4.1 1.4-4.1 4.2v2.1H7.3V13h2.7v8h3.3Z" />
+              </svg>
+            </a>
+            <a href="#" aria-label="Partager sur X">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h3.7l4.3 5.9L17 4h3l-6.6 7.4L20.6 20H17l-4.8-6.5L6.5 20h-3l7-7.9L4 4Z" />
+              </svg>
+            </a>
+          </aside>
+        </article>
+
+        <section class="article-grid" id="article-grid" aria-live="polite"></section>
+
+        <div class="loading-indicator" id="loading-indicator" aria-hidden="true">
+          Le vent souleve de nouveaux dossiers...
+        </div>
+        <div class="sentinel" id="scroll-sentinel" aria-hidden="true"></div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="sidebar-card sidebar-card--support">
+          <h3>Nous soutenir</h3>
+          <a class="donate-button" href="#">FAIRE UN DON</a>
+        </section>
+
+        <section class="sidebar-card sidebar-card--social">
+          <h3>Suivez-nous</h3>
+          <div class="social-links" aria-label="Reseaux sociaux">
+            <a href="#" aria-label="WhatsApp">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2.8A9.2 9.2 0 0 0 4.1 16.9L3 21l4.2-1.1A9.2 9.2 0 1 0 12 2.8Zm0 16.8a7.5 7.5 0 0 1-3.8-1l-.3-.2-2.5.7.7-2.4-.2-.4a7.4 7.4 0 1 1 6.1 3.3Z" />
+              </svg>
+            </a>
+            <a href="#" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M13.3 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.4 0-4.1 1.4-4.1 4.2v2.1H7.3V13h2.7v8h3.3Z" />
+              </svg>
+            </a>
+            <a href="#" aria-label="X">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h3.7l4.3 5.9L17 4h3l-6.6 7.4L20.6 20H17l-4.8-6.5L6.5 20h-3l7-7.9L4 4Z" />
+              </svg>
+            </a>
+          </div>
+        </section>
+
+        <section class="sidebar-card sidebar-card--links" id="official-docs">
+          <a href="#">A propos</a>
+          <a href="#">Contact</a>
+        </section>
+      </aside>
+    </main>
+
+    <template id="article-card-template">
+      <article class="article-card">
+        <div class="article-card__image-wrap">
+          <img class="article-card__image" alt="" loading="lazy" />
+        </div>
+        <div class="article-card__meta">
+          <h3 class="article-card__title"></h3>
+          <p class="article-card__excerpt"></p>
+          <p class="caption article-card__caption"></p>
+        </div>
+      </article>
+    </template>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

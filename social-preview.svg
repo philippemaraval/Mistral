@@ -1,0 +1,11 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#FFFFFF"/>
+  <rect x="40" y="40" width="1120" height="550" stroke="#E0E0E0" stroke-width="2"/>
+  <circle cx="255" cy="190" r="130" fill="#B8D3F2"/>
+  <text x="140" y="235" fill="#142A45" font-family="Georgia, serif" font-size="120" font-weight="700">Mistral</text>
+  <text x="140" y="330" fill="#0078D4" font-family="Helvetica, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="2">LE SOUFFLE QUI NETTOIE MARSEILLE</text>
+  <line x1="140" y1="370" x2="1020" y2="370" stroke="#E0E0E0" stroke-width="2"/>
+  <text x="140" y="425" fill="#111111" font-family="Helvetica, Arial, sans-serif" font-size="56" font-weight="700">Enquetes quotidiennes, ton critique,</text>
+  <text x="140" y="486" fill="#111111" font-family="Helvetica, Arial, sans-serif" font-size="56" font-weight="700">source et humain.</text>
+  <text x="140" y="548" fill="#0078D4" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700">mistral-media.fr</text>
+</svg>

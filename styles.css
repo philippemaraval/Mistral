@@ -1279,10 +1279,6 @@ mark {
   filter: saturate(0.6) contrast(1.03) brightness(1.02);
 }
 
-.weather-map__base .leaflet-weather-labels-pane .leaflet-tile {
-  filter: none;
-}
-
 .weather-map__base .leaflet-control-attribution {
   background: rgba(255, 255, 255, 0.88);
   border-top: 1px solid #dbe7f2;

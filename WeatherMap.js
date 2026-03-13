@@ -185,14 +185,13 @@ function buildPointHtml(category, latestTitle, status) {
   `;
 }
 
-function buildPopupHtml(category, anchor, statusLabel, latestTitle) {
+function buildPopupHtml(category, statusLabel, latestTitle) {
   return `
     <a class="weather-popup-link" href="${buildCategoryUrl(category)}" aria-label="Voir la catégorie ${escapeHtml(
     category
   )}">
       <strong>${escapeHtml(category)}</strong>
       <span>${escapeHtml(statusLabel)}</span>
-      <span>Centre : ${escapeHtml(anchor)}</span>
       <span>${escapeHtml(latestTitle)}</span>
     </a>
   `;
@@ -225,27 +224,11 @@ function initMap() {
   });
 
   leaflet
-    .tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
-      subdomains: "abcd",
+    .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
       noWrap: true,
-      opacity: 0.62,
-    })
-    .addTo(map);
-
-  map.createPane("weather-labels");
-  map.getPane("weather-labels").style.zIndex = "520";
-  map.getPane("weather-labels").style.pointerEvents = "none";
-
-  leaflet
-    .tileLayer("https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png", {
-      subdomains: "abcd",
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
-      noWrap: true,
-      opacity: 0.72,
-      pane: "weather-labels",
+      opacity: 0.9,
     })
     .addTo(map);
 
@@ -272,7 +255,7 @@ function createMarker(category, config, latestArticle, status) {
     title: `${category} (${config.anchor}) - ${latestTitle}`,
   });
 
-  marker.bindPopup(buildPopupHtml(category, config.anchor, statusLabel, latestTitle), {
+  marker.bindPopup(buildPopupHtml(category, statusLabel, latestTitle), {
     className: "weather-tooltip-popup",
     autoPan: false,
     closeButton: false,

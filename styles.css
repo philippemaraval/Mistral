@@ -1368,14 +1368,17 @@ mark {
   display: inline-flex;
   align-items: center;
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #3f5d7c;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid #deebf7;
-  padding: 0.16rem 0.38rem;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: #d63a32;
+  background: #ffffff;
+  border: 2px solid #e03b35;
+  padding: 0.22rem 0.46rem;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 }
 
 .weather-tooltip-popup .leaflet-popup-content-wrapper {
@@ -1602,7 +1605,8 @@ mark {
   }
 
   .weather-point__anchor {
-    display: none;
+    font-size: 0.72rem;
+    padding: 0.16rem 0.38rem;
   }
 
   .weather-point__icon {

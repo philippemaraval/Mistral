@@ -8,12 +8,42 @@ export const categories = [
 ];
 
 export const weatherConfig = {
-  Politique: { coords: { x: 55, y: 56 }, anchor: "Vieux-Port", status: "storm" },
-  Économie: { coords: { x: 54, y: 44 }, anchor: "Joliette", status: "windy" },
-  Urbanisme: { coords: { x: 57, y: 40 }, anchor: "Euromed", status: "cloudy" },
-  Mobilités: { coords: { x: 60, y: 47 }, anchor: "St-Charles", status: "rainy" },
-  Culture: { coords: { x: 50, y: 55 }, anchor: "Mucem", status: "sunny" },
-  Quartiers: { coords: { x: 55, y: 23 }, anchor: "Nord", status: "cloudy" },
+  Politique: {
+    coords: { x: 42, y: 56 },
+    latLng: { lat: 43.2963, lng: 5.3699 },
+    anchor: "Hôtel de Ville",
+    status: "storm",
+  },
+  Économie: {
+    coords: { x: 41, y: 34 },
+    latLng: { lat: 43.3123, lng: 5.3665 },
+    anchor: "Arenc",
+    status: "windy",
+  },
+  Urbanisme: {
+    coords: { x: 55, y: 83 },
+    latLng: { lat: 43.2579, lng: 5.3928 },
+    anchor: "Sainte-Anne",
+    status: "cloudy",
+  },
+  Mobilités: {
+    coords: { x: 56, y: 18 },
+    latLng: { lat: 43.3425, lng: 5.3802 },
+    anchor: "La Delorme",
+    status: "rainy",
+  },
+  Culture: {
+    coords: { x: 58, y: 56 },
+    latLng: { lat: 43.2899, lng: 5.3854 },
+    anchor: "Notre-Dame-du-Mont",
+    status: "sunny",
+  },
+  Quartiers: {
+    coords: { x: 68, y: 43 },
+    latLng: { lat: 43.3089, lng: 5.4208 },
+    anchor: "Montolivet",
+    status: "cloudy",
+  },
 };
 
 export const featuredArticleId = "om-chiffres-stade";

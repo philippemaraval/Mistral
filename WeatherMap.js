@@ -163,24 +163,36 @@ function coordsToLatLng(coords) {
   return [lat, lng];
 }
 
-function buildPointHtml(category, anchor, latestTitle, status) {
+function getMarkerLatLng(config) {
+  if (
+    config.latLng &&
+    typeof config.latLng.lat === "number" &&
+    typeof config.latLng.lng === "number"
+  ) {
+    return [config.latLng.lat, config.latLng.lng];
+  }
+  return coordsToLatLng(config.coords);
+}
+
+function buildPointHtml(category, latestTitle, status) {
   return `
     <span class="weather-point weather-point--${status}" aria-label="${escapeHtml(
     category
   )}: ${escapeHtml(latestTitle)}">
       <span class="weather-point__icon">${getIcon(status)}</span>
-      <span class="weather-point__anchor">${escapeHtml(anchor)}</span>
+      <span class="weather-point__anchor">${escapeHtml(category)}</span>
     </span>
   `;
 }
 
-function buildPopupHtml(category, statusLabel, latestTitle) {
+function buildPopupHtml(category, anchor, statusLabel, latestTitle) {
   return `
     <a class="weather-popup-link" href="${buildCategoryUrl(category)}" aria-label="Voir la catégorie ${escapeHtml(
     category
   )}">
       <strong>${escapeHtml(category)}</strong>
       <span>${escapeHtml(statusLabel)}</span>
+      <span>Centre : ${escapeHtml(anchor)}</span>
       <span>${escapeHtml(latestTitle)}</span>
     </a>
   `;
@@ -198,11 +210,17 @@ function initMap() {
     center: [43.2965, 5.3698],
     zoom: 12.2,
     zoomControl: true,
+    zoomAnimation: true,
+    fadeAnimation: true,
+    markerZoomAnimation: true,
+    wheelDebounceTime: 15,
+    wheelPxPerZoomLevel: 90,
     minZoom: 11,
     maxZoom: 16,
     maxBounds,
     maxBoundsViscosity: 1,
-    zoomSnap: 0.2,
+    zoomSnap: 0.05,
+    zoomDelta: 0.25,
   });
 
   leaflet
@@ -224,19 +242,19 @@ function createMarker(category, config, latestArticle, status) {
   const statusLabel = STATUS_LABELS[status] ?? "Variable";
   const latestTitle = latestArticle?.title ?? "Aucun article récent";
 
-  const marker = leaflet.marker(coordsToLatLng(config.coords), {
+  const marker = leaflet.marker(getMarkerLatLng(config), {
     icon: leaflet.divIcon({
       className: "weather-marker",
-      html: buildPointHtml(category, config.anchor, latestTitle, status),
-      iconSize: [74, 74],
-      iconAnchor: [37, 37],
-      popupAnchor: [0, -18],
+      html: buildPointHtml(category, latestTitle, status),
+      iconSize: [136, 92],
+      iconAnchor: [68, 38],
+      popupAnchor: [0, -22],
     }),
     keyboard: true,
-    title: `${category} - ${latestTitle}`,
+    title: `${category} (${config.anchor}) - ${latestTitle}`,
   });
 
-  marker.bindPopup(buildPopupHtml(category, statusLabel, latestTitle), {
+  marker.bindPopup(buildPopupHtml(category, config.anchor, statusLabel, latestTitle), {
     className: "weather-tooltip-popup",
     autoPan: false,
     closeButton: false,

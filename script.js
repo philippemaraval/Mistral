@@ -53,6 +53,7 @@ let selectedAuthorFilter = "";
 let loadTimeout;
 let viewMode = "grid";
 let suggestionValues = [];
+let activeSuggestionIndex = -1;
 
 function normalizeSearchValue(value) {
   return value
@@ -191,10 +192,44 @@ function renderFeaturedSources() {
   });
 }
 
+function getSuggestionButtons() {
+  if (!searchSuggestList) return [];
+  return [...searchSuggestList.querySelectorAll(".search-suggest__item")];
+}
+
+function setActiveSuggestion(index) {
+  const buttons = getSuggestionButtons();
+  if (buttons.length === 0) {
+    activeSuggestionIndex = -1;
+    searchInput?.removeAttribute("aria-activedescendant");
+    return;
+  }
+
+  const boundedIndex = ((index % buttons.length) + buttons.length) % buttons.length;
+  activeSuggestionIndex = boundedIndex;
+
+  buttons.forEach((button, buttonIndex) => {
+    const isActive = buttonIndex === boundedIndex;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+    if (isActive) {
+      searchInput?.setAttribute("aria-activedescendant", button.id);
+    }
+  });
+}
+
+function selectSuggestion(value) {
+  if (searchInput) searchInput.value = value;
+  hideSuggestionPanel();
+  applySearchAndFilters(value);
+}
+
 function hideSuggestionPanel() {
   if (!searchSuggestPanel) return;
   searchSuggestPanel.hidden = true;
   searchInput?.setAttribute("aria-expanded", "false");
+  searchInput?.removeAttribute("aria-activedescendant");
+  activeSuggestionIndex = -1;
 }
 
 function populateSearchSuggestions() {
@@ -226,16 +261,24 @@ function updateSuggestionPanel(rawValue) {
   }
 
   searchSuggestList.innerHTML = "";
+  activeSuggestionIndex = -1;
   matches.forEach((value) => {
     const item = document.createElement("li");
     const button = document.createElement("button");
     button.type = "button";
     button.className = "search-suggest__item";
+    button.id = `search-suggest-item-${normalizeSearchValue(value).replace(/\s+/g, "-")}`;
+    button.setAttribute("role", "option");
+    button.setAttribute("aria-selected", "false");
+    button.dataset.value = value;
     button.textContent = value;
     button.addEventListener("click", () => {
-      if (searchInput) searchInput.value = value;
-      hideSuggestionPanel();
-      applySearchAndFilters(value);
+      selectSuggestion(value);
+    });
+    button.addEventListener("mouseenter", () => {
+      const buttons = getSuggestionButtons();
+      const hoveredIndex = buttons.indexOf(button);
+      if (hoveredIndex >= 0) setActiveSuggestion(hoveredIndex);
     });
     item.appendChild(button);
     searchSuggestList.appendChild(item);
@@ -476,6 +519,42 @@ searchInput?.addEventListener("input", () => {
   searchDebounce = window.setTimeout(() => {
     applySearchAndFilters(searchInput.value);
   }, 260);
+});
+
+searchInput?.addEventListener("keydown", (event) => {
+  const buttons = getSuggestionButtons();
+  const hasSuggestions = buttons.length > 0 && searchSuggestPanel && !searchSuggestPanel.hidden;
+
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    if (!hasSuggestions) {
+      updateSuggestionPanel(searchInput.value);
+      const refreshedButtons = getSuggestionButtons();
+      if (refreshedButtons.length === 0) return;
+      setActiveSuggestion(0);
+      return;
+    }
+    setActiveSuggestion(activeSuggestionIndex + 1);
+    return;
+  }
+
+  if (event.key === "ArrowUp") {
+    if (!hasSuggestions) return;
+    event.preventDefault();
+    setActiveSuggestion(activeSuggestionIndex - 1);
+    return;
+  }
+
+  if (event.key === "Enter" && hasSuggestions && activeSuggestionIndex >= 0) {
+    event.preventDefault();
+    const value = buttons[activeSuggestionIndex]?.dataset.value ?? "";
+    if (value) selectSuggestion(value);
+    return;
+  }
+
+  if (event.key === "Escape") {
+    hideSuggestionPanel();
+  }
 });
 
 searchInput?.addEventListener("focus", () => {

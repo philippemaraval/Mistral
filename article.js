@@ -36,11 +36,20 @@ const mobileReadingBar = document.querySelector("#mobile-reading-bar");
 const mobileReadingToc = document.querySelector("#mobile-reading-toc");
 const mobileReadingSources = document.querySelector("#mobile-reading-sources");
 const mobileReadingTop = document.querySelector("#mobile-reading-top");
+const readingSizeToggle = document.querySelector("#reading-size-toggle");
+const readingSpacingToggle = document.querySelector("#reading-spacing-toggle");
 
 const searchParams = new URLSearchParams(window.location.search);
 const requestedId = searchParams.get("id");
 const article = getArticleById(requestedId) ?? getArticleById("om-chiffres-stade");
 const primaryTag = article.tags[0];
+const READING_PREFS_STORAGE_KEY = "mistral.reading.preferences";
+
+const tocEntries = [];
+const readingPrefs = {
+  largeText: false,
+  relaxedSpacing: false,
+};
 
 function formatReadingTime(minutes) {
   return `${minutes} min de lecture`;
@@ -101,6 +110,52 @@ function buildFallbackSections(entry) {
   ];
 }
 
+function readReadingPrefs() {
+  try {
+    const raw = localStorage.getItem(READING_PREFS_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    readingPrefs.largeText = Boolean(parsed.largeText);
+    readingPrefs.relaxedSpacing = Boolean(parsed.relaxedSpacing);
+  } catch {
+    // Ignore malformed local storage values.
+  }
+}
+
+function persistReadingPrefs() {
+  try {
+    localStorage.setItem(READING_PREFS_STORAGE_KEY, JSON.stringify(readingPrefs));
+  } catch {
+    // Ignore storage errors.
+  }
+}
+
+function applyReadingPrefs() {
+  if (articlePage) {
+    articlePage.dataset.readingSize = readingPrefs.largeText ? "large" : "default";
+    articlePage.dataset.readingSpacing = readingPrefs.relaxedSpacing ? "relaxed" : "default";
+  }
+
+  if (readingSizeToggle) {
+    readingSizeToggle.setAttribute("aria-pressed", String(readingPrefs.largeText));
+    readingSizeToggle.textContent = readingPrefs.largeText ? "Texte standard" : "Texte agrandi";
+  }
+
+  if (readingSpacingToggle) {
+    readingSpacingToggle.setAttribute("aria-pressed", String(readingPrefs.relaxedSpacing));
+    readingSpacingToggle.textContent = readingPrefs.relaxedSpacing
+      ? "Interligne standard"
+      : "Interligne plus aéré";
+  }
+}
+
+function getStickyOffset() {
+  const offset = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue("--sticky-offset")
+  );
+  return Number.isFinite(offset) ? offset : 96;
+}
+
 function inferSourceType(source) {
   if (source.type) return source.type;
   const file = source.file?.toLowerCase() ?? "";
@@ -148,6 +203,7 @@ function renderArticleBody() {
   const internalTargets = getRelatedArticles(article.id, 6);
   articleBody.innerHTML = "";
   articleTocList.innerHTML = "";
+  tocEntries.length = 0;
 
   sections.forEach((section, index) => {
     const sectionId = slugify(section.title, index);
@@ -204,6 +260,7 @@ function renderArticleBody() {
     tocLink.textContent = section.title;
     tocItem.appendChild(tocLink);
     articleTocList.appendChild(tocItem);
+    tocEntries.push({ section: articleSection, link: tocLink });
   });
 
   articleToc.hidden = sections.length < 2;
@@ -329,8 +386,32 @@ function updateBackToTopVisibility() {
   backToTopButton.classList.toggle("is-visible", window.scrollY > 480);
 }
 
+function updateActiveTocEntry() {
+  if (!tocEntries.length || articleToc?.hidden) return;
+
+  const threshold = getStickyOffset() + 22;
+  let activeEntry = tocEntries[0];
+
+  tocEntries.forEach((entry) => {
+    if (entry.section.getBoundingClientRect().top - threshold <= 0) {
+      activeEntry = entry;
+    }
+  });
+
+  tocEntries.forEach((entry) => {
+    const isActive = entry === activeEntry;
+    entry.link.classList.toggle("is-active", isActive);
+    if (isActive) {
+      entry.link.setAttribute("aria-current", "location");
+    } else {
+      entry.link.removeAttribute("aria-current");
+    }
+  });
+}
+
 function syncScrollUI() {
   updateReadingProgress();
+  updateActiveTocEntry();
   updateBackToTopVisibility();
 }
 
@@ -353,6 +434,25 @@ function syncMobileReadingBar() {
 
   toggleMobileShortcut(mobileReadingToc, hasToc);
   toggleMobileShortcut(mobileReadingSources, hasSources);
+}
+
+function setupReadingPreferences() {
+  readReadingPrefs();
+  applyReadingPrefs();
+
+  readingSizeToggle?.addEventListener("click", () => {
+    readingPrefs.largeText = !readingPrefs.largeText;
+    applyReadingPrefs();
+    persistReadingPrefs();
+    syncScrollUI();
+  });
+
+  readingSpacingToggle?.addEventListener("click", () => {
+    readingPrefs.relaxedSpacing = !readingPrefs.relaxedSpacing;
+    applyReadingPrefs();
+    persistReadingPrefs();
+    syncScrollUI();
+  });
 }
 
 function setMetaTag(selector, content) {
@@ -398,6 +498,7 @@ renderArticleBody();
 renderSources();
 renderRevisionHistory();
 renderRelatedArticles();
+setupReadingPreferences();
 syncMobileReadingBar();
 
 article.tags.forEach((tag) => {

@@ -63,6 +63,7 @@
             type="search"
             placeholder="Rechercher un article..."
             aria-label="Rechercher un article"
+            aria-haspopup="listbox"
             aria-controls="search-suggest"
             aria-expanded="false"
             autocomplete="off"
@@ -74,7 +75,7 @@
             </svg>
           </button>
           <div class="search-suggest" id="search-suggest" aria-label="Suggestions de recherche" hidden>
-            <ul class="search-suggest__list" id="search-suggest-list"></ul>
+            <ul class="search-suggest__list" id="search-suggest-list" role="listbox"></ul>
           </div>
         </form>
       </div>

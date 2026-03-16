@@ -38,6 +38,7 @@ const mobileReadingSources = document.querySelector("#mobile-reading-sources");
 const mobileReadingTop = document.querySelector("#mobile-reading-top");
 const readingSizeToggle = document.querySelector("#reading-size-toggle");
 const readingSpacingToggle = document.querySelector("#reading-spacing-toggle");
+const articleContentGrid = document.querySelector(".article-content-grid");
 
 const searchParams = new URLSearchParams(window.location.search);
 const requestedId = searchParams.get("id");
@@ -432,6 +433,7 @@ function syncMobileReadingBar() {
   const hasToc = Boolean(articleToc && !articleToc.hidden);
   const hasSources = Boolean(article.sources?.length && articleSources?.isConnected);
 
+  articleContentGrid?.classList.toggle("article-content-grid--with-toc", hasToc);
   toggleMobileShortcut(mobileReadingToc, hasToc);
   toggleMobileShortcut(mobileReadingSources, hasSources);
 }

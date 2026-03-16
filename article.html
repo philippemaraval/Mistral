@@ -77,29 +77,28 @@
       <div class="article-meta">
         <p class="article-meta__line" id="article-meta-primary"></p>
         <p class="article-meta__line article-meta__line--muted" id="article-meta-secondary"></p>
-      </div>
-
-      <section class="reading-preferences" aria-label="Confort de lecture">
-        <p class="reading-preferences__label">Confort de lecture</p>
-        <div class="reading-preferences__controls">
-          <button
-            class="reading-preferences__button"
-            id="reading-size-toggle"
-            type="button"
-            aria-pressed="false"
-          >
-            Texte agrandi
-          </button>
-          <button
-            class="reading-preferences__button"
-            id="reading-spacing-toggle"
-            type="button"
-            aria-pressed="false"
-          >
-            Interligne plus aéré
-          </button>
+        <div class="reading-preferences" aria-label="Confort de lecture">
+          <span class="reading-preferences__label">Confort</span>
+          <div class="reading-preferences__controls">
+            <button
+              class="reading-preferences__button"
+              id="reading-size-toggle"
+              type="button"
+              aria-pressed="false"
+            >
+              Texte agrandi
+            </button>
+            <button
+              class="reading-preferences__button"
+              id="reading-spacing-toggle"
+              type="button"
+              aria-pressed="false"
+            >
+              Interligne plus aéré
+            </button>
+          </div>
         </div>
-      </section>
+      </div>
 
       <img
         class="article-page__image"
@@ -113,54 +112,58 @@
       <p class="caption" id="article-caption"></p>
       <p class="article-tags article-page__tags" id="article-tags"></p>
 
-      <nav class="article-toc" id="article-toc" aria-label="Table des matières" hidden>
-        <h2>Sommaire</h2>
-        <ol id="article-toc-list"></ol>
-      </nav>
+      <div class="article-content-grid">
+        <nav class="article-toc" id="article-toc" aria-label="Table des matières" hidden>
+          <h2>Sommaire</h2>
+          <ol id="article-toc-list"></ol>
+        </nav>
 
-      <article class="article-body" id="article-body" aria-label="Contenu de l'article"></article>
+        <div class="article-content-stack">
+          <article class="article-body" id="article-body" aria-label="Contenu de l'article"></article>
 
-      <section class="source-panel" id="article-sources">
-        <h2>Sources et vérification</h2>
-        <p class="source-panel__intro">
-          Chaque pièce ci-dessous indique son type, sa date de référence et son rôle dans
-          l'enquête.
-        </p>
-        <div class="source-list" id="article-source-links"></div>
-      </section>
+          <section class="source-panel" id="article-sources">
+            <h2>Sources et vérification</h2>
+            <p class="source-panel__intro">
+              Chaque pièce ci-dessous indique son type, sa date de référence et son rôle dans
+              l'enquête.
+            </p>
+            <div class="source-list" id="article-source-links"></div>
+          </section>
 
-      <section class="revision-panel" id="article-revisions">
-        <h2>Historique de publication</h2>
-        <ol class="revision-list" id="article-revision-list"></ol>
-      </section>
+          <section class="revision-panel" id="article-revisions">
+            <h2>Historique de publication</h2>
+            <ol class="revision-list" id="article-revision-list"></ol>
+          </section>
 
-      <section class="related-articles" id="related-articles">
-        <h2>Articles liés</h2>
-        <div class="related-articles__list" id="related-articles-list"></div>
-      </section>
+          <section class="related-articles" id="related-articles">
+            <h2>Articles liés</h2>
+            <div class="related-articles__list" id="related-articles-list"></div>
+          </section>
 
-      <section class="newsletter-panel">
-        <h2>Recevoir la newsletter</h2>
-        <p>Une sélection hebdomadaire de nos enquêtes, sources et décryptages.</p>
-        <form class="newsletter-form" data-newsletter-form novalidate>
-          <label class="sr-only" for="newsletter-email-article">Email newsletter</label>
-          <input
-            id="newsletter-email-article"
-            data-newsletter-email
-            type="email"
-            name="email"
-            placeholder="Votre email"
-            autocomplete="email"
-            required
-          />
-          <label class="newsletter-consent">
-            <input data-newsletter-consent type="checkbox" required />
-            J'accepte de recevoir les emails de Mistral.
-          </label>
-          <button type="submit">S'inscrire</button>
-          <p class="newsletter-feedback" data-newsletter-feedback aria-live="polite"></p>
-        </form>
-      </section>
+          <section class="newsletter-panel">
+            <h2>Recevoir la newsletter</h2>
+            <p>Une sélection hebdomadaire de nos enquêtes, sources et décryptages.</p>
+            <form class="newsletter-form" data-newsletter-form novalidate>
+              <label class="sr-only" for="newsletter-email-article">Email newsletter</label>
+              <input
+                id="newsletter-email-article"
+                data-newsletter-email
+                type="email"
+                name="email"
+                placeholder="Votre email"
+                autocomplete="email"
+                required
+              />
+              <label class="newsletter-consent">
+                <input data-newsletter-consent type="checkbox" required />
+                J'accepte de recevoir les emails de Mistral.
+              </label>
+              <button type="submit">S'inscrire</button>
+              <p class="newsletter-feedback" data-newsletter-feedback aria-live="polite"></p>
+            </form>
+          </section>
+        </div>
+      </div>
     </main>
 
     <nav class="mobile-reading-bar" id="mobile-reading-bar" aria-label="Actions de lecture rapide">

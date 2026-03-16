@@ -28,6 +28,7 @@ const entries = [
   "social-preview.svg",
   "logo_mistral.png",
   "logo-mistral.svg",
+  "favicon_mistral.ico",
   "documents",
 ];
 

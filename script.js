@@ -18,7 +18,10 @@ const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
 const searchForm = document.querySelector(".search-bar");
 const searchInput = document.querySelector("#site-search");
+const searchSuggestions = document.querySelector("#search-suggestions");
 const searchStatus = document.querySelector("#search-status");
+const filterTag = document.querySelector("#filter-tag");
+const filterAuthor = document.querySelector("#filter-author");
 const backToTopButton = document.querySelector("#back-to-top");
 const viewButtons = Array.from(document.querySelectorAll("[data-view-option]"));
 const featuredStoryMeta = document.querySelector("#featured-story-meta");
@@ -34,6 +37,8 @@ const BATCH_SIZE = 6;
 const VIEW_MODE_STORAGE_KEY = "mistral.viewMode";
 const pageSearchParams = new URLSearchParams(window.location.search);
 const initialQuery = pageSearchParams.get("q")?.trim() ?? "";
+const initialTagFilter = pageSearchParams.get("tag")?.trim() ?? "";
+const initialAuthorFilter = pageSearchParams.get("author")?.trim() ?? "";
 
 let activeArticles = [...feedArticles];
 let cursor = 0;
@@ -42,6 +47,8 @@ let observer;
 let searchDebounce;
 let searchTermRaw = "";
 let searchTermNormalized = "";
+let selectedTagFilter = "";
+let selectedAuthorFilter = "";
 let loadTimeout;
 let viewMode = "grid";
 
@@ -49,6 +56,7 @@ function normalizeSearchValue(value) {
   return value
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/#/g, " ")
     .toLowerCase()
     .trim();
 }
@@ -181,6 +189,62 @@ function renderFeaturedSources() {
   });
 }
 
+function populateSearchSuggestions() {
+  if (!searchSuggestions) return;
+  searchSuggestions.innerHTML = "";
+
+  const suggestions = new Set();
+  feedArticles.forEach((article) => {
+    suggestions.add(article.title);
+    suggestions.add(article.author);
+    article.tags.forEach((tag) => suggestions.add(`#${tag}`));
+  });
+
+  [...suggestions]
+    .sort((a, b) => a.localeCompare(b, "fr"))
+    .slice(0, 80)
+    .forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      searchSuggestions.appendChild(option);
+    });
+}
+
+function populateFilterControls() {
+  if (filterTag) {
+    const tags = [...new Set(feedArticles.flatMap((article) => article.tags))].sort((a, b) =>
+      a.localeCompare(b, "fr")
+    );
+    tags.forEach((tag) => {
+      const option = document.createElement("option");
+      option.value = tag;
+      option.textContent = tag;
+      filterTag.appendChild(option);
+    });
+    if ([...filterTag.options].some((option) => option.value === initialTagFilter)) {
+      filterTag.value = initialTagFilter;
+    }
+  }
+
+  if (filterAuthor) {
+    const authors = [...new Set(feedArticles.map((article) => article.author))].sort((a, b) =>
+      a.localeCompare(b, "fr")
+    );
+    authors.forEach((author) => {
+      const option = document.createElement("option");
+      option.value = author;
+      option.textContent = author;
+      filterAuthor.appendChild(option);
+    });
+    if ([...filterAuthor.options].some((option) => option.value === initialAuthorFilter)) {
+      filterAuthor.value = initialAuthorFilter;
+    }
+  }
+
+  selectedTagFilter = filterTag?.value ?? "";
+  selectedAuthorFilter = filterAuthor?.value ?? "";
+}
+
 function buildCard(article) {
   const fragment = template.content.cloneNode(true);
   const image = fragment.querySelector(".article-card__image");
@@ -216,25 +280,46 @@ function syncSearchQueryParam() {
   } else {
     nextUrl.searchParams.delete("q");
   }
+
+  if (selectedTagFilter) {
+    nextUrl.searchParams.set("tag", selectedTagFilter);
+  } else {
+    nextUrl.searchParams.delete("tag");
+  }
+
+  if (selectedAuthorFilter) {
+    nextUrl.searchParams.set("author", selectedAuthorFilter);
+  } else {
+    nextUrl.searchParams.delete("author");
+  }
+
   window.history.replaceState({}, "", `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
 }
 
 function updateSearchStatus() {
   if (!searchStatus) return;
 
-  if (!searchTermRaw) {
+  const activeFilters = [];
+  if (selectedTagFilter) activeFilters.push(`rubrique ${selectedTagFilter}`);
+  if (selectedAuthorFilter) activeFilters.push(`auteur ${selectedAuthorFilter}`);
+  const filtersLabel = activeFilters.length ? ` (${activeFilters.join(" · ")})` : "";
+  const hasQuery = Boolean(searchTermRaw);
+
+  if (!hasQuery && activeFilters.length === 0) {
     searchStatus.textContent = "";
     searchStatus.classList.remove("is-empty");
     return;
   }
 
   if (activeArticles.length === 0) {
-    searchStatus.textContent = `Aucun résultat pour "${searchTermRaw}".`;
+    const queryLabel = hasQuery ? `"${searchTermRaw}"` : "les filtres actuels";
+    searchStatus.textContent = `Aucun résultat pour ${queryLabel}${filtersLabel}.`;
     searchStatus.classList.add("is-empty");
     return;
   }
 
-  searchStatus.textContent = `${activeArticles.length} résultat(s) pour "${searchTermRaw}".`;
+  const queryLabel = hasQuery ? ` pour "${searchTermRaw}"` : "";
+  searchStatus.textContent = `${activeArticles.length} résultat(s)${queryLabel}${filtersLabel}.`;
   searchStatus.classList.remove("is-empty");
 }
 
@@ -292,11 +377,21 @@ function articleMatchesSearch(article) {
   return searchableText.includes(searchTermNormalized);
 }
 
-function applySearch(value) {
+function articleMatchesFilters(article) {
+  if (selectedTagFilter && !article.tags.includes(selectedTagFilter)) return false;
+  if (selectedAuthorFilter && article.author !== selectedAuthorFilter) return false;
+  return true;
+}
+
+function applySearchAndFilters(value) {
   window.clearTimeout(loadTimeout);
   searchTermRaw = value.trim();
   searchTermNormalized = normalizeSearchValue(searchTermRaw);
-  activeArticles = feedArticles.filter(articleMatchesSearch);
+  selectedTagFilter = filterTag?.value ?? "";
+  selectedAuthorFilter = filterAuthor?.value ?? "";
+  activeArticles = feedArticles.filter(
+    (article) => articleMatchesSearch(article) && articleMatchesFilters(article)
+  );
   cursor = 0;
   isLoading = false;
   clearSkeletons();
@@ -322,8 +417,10 @@ if (grid && template) {
     { rootMargin: "420px 0px" }
   );
 
+  populateSearchSuggestions();
+  populateFilterControls();
   if (searchInput && initialQuery) searchInput.value = initialQuery;
-  applySearch(searchInput?.value ?? "");
+  applySearchAndFilters(searchInput?.value ?? "");
 }
 
 setViewMode(readViewMode());
@@ -334,14 +431,22 @@ renderFeaturedSources();
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   window.clearTimeout(searchDebounce);
-  applySearch(searchInput?.value ?? "");
+  applySearchAndFilters(searchInput?.value ?? "");
 });
 
 searchInput?.addEventListener("input", () => {
   window.clearTimeout(searchDebounce);
   searchDebounce = window.setTimeout(() => {
-    applySearch(searchInput.value);
+    applySearchAndFilters(searchInput.value);
   }, 260);
+});
+
+filterTag?.addEventListener("change", () => {
+  applySearchAndFilters(searchInput?.value ?? "");
+});
+
+filterAuthor?.addEventListener("change", () => {
+  applySearchAndFilters(searchInput?.value ?? "");
 });
 
 viewButtons.forEach((button) => {

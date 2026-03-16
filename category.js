@@ -239,26 +239,17 @@ function setupCategoryHeader() {
 }
 
 function setupActiveCategoryNav() {
-  let hasActiveCategory = false;
   nav?.querySelectorAll("a").forEach((link) => {
     const linkUrl = new URL(link.href, window.location.origin);
     const linkTag = linkUrl.searchParams.get("tag");
     const isActive = linkTag === tag;
     link.classList.toggle("is-active", isActive);
-    if (isActive) hasActiveCategory = true;
     if (isActive) {
       link.setAttribute("aria-current", "page");
     } else {
       link.removeAttribute("aria-current");
     }
   });
-
-  const subnav = nav?.querySelector(".site-subnav");
-  if (hasActiveCategory) {
-    subnav?.setAttribute("open", "");
-  } else {
-    subnav?.removeAttribute("open");
-  }
 }
 
 function renderTagFilters() {

@@ -16,6 +16,11 @@ const metaSecondary = document.querySelector("#article-meta-secondary");
 const image = document.querySelector("#article-image");
 const caption = document.querySelector("#article-caption");
 const tags = document.querySelector("#article-tags");
+const articleToc = document.querySelector("#article-toc");
+const articleTocList = document.querySelector("#article-toc-list");
+const articleBody = document.querySelector("#article-body");
+const articleMethodList = document.querySelector("#article-method-list");
+const articleMethodLimits = document.querySelector("#article-method-limits");
 const articleSources = document.querySelector("#article-sources");
 const articleSourceLinks = document.querySelector("#article-source-links");
 const relatedArticlesSection = document.querySelector("#related-articles");
@@ -47,22 +52,118 @@ function formatAuthorLine(entry) {
   return `Par ${entry.author} · ${formatReadingTime(entry.readTimeMinutes)}`;
 }
 
+function slugify(value, index) {
+  return (
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || `section-${index + 1}`
+  );
+}
+
+function buildFallbackSections(entry) {
+  const publishedText = `Publié le ${formatDateFr(entry.date)}.`;
+  const updatedText =
+    entry.updatedDate && entry.updatedDate !== entry.date
+      ? `Mise à jour le ${formatDateFr(entry.updatedDate)}.`
+      : "";
+  const sourceCount = entry.sources?.length ?? 0;
+  const sourceText =
+    sourceCount > 0
+      ? `${sourceCount} document(s) source ont été mobilisés pour ce sujet.`
+      : "Ce sujet repose sur des témoignages et des éléments publics recoupés.";
+
+  return [
+    {
+      title: "Contexte",
+      paragraphs: [entry.excerpt, publishedText],
+    },
+    {
+      title: "Constats clés",
+      paragraphs: [
+        `L'enquête croise les enjeux de ${entry.tags.join(", ")} à Marseille.`,
+        sourceText,
+      ],
+    },
+    {
+      title: "Ce qui reste à suivre",
+      paragraphs: [
+        "La rédaction continue de suivre les arbitrages publics et leurs effets concrets.",
+        updatedText || "Cette publication sera mise à jour en cas d'évolution factuelle.",
+      ],
+    },
+  ];
+}
+
+function renderArticleBody() {
+  if (!articleBody || !articleToc || !articleTocList) return;
+
+  const sections = article.sections?.length ? article.sections : buildFallbackSections(article);
+  articleBody.innerHTML = "";
+  articleTocList.innerHTML = "";
+
+  sections.forEach((section, index) => {
+    const sectionId = slugify(section.title, index);
+    const articleSection = document.createElement("section");
+    articleSection.className = "article-body__section";
+    articleSection.id = sectionId;
+
+    const heading = document.createElement("h2");
+    heading.textContent = section.title;
+    articleSection.appendChild(heading);
+
+    section.paragraphs.forEach((paragraph) => {
+      const p = document.createElement("p");
+      p.textContent = paragraph;
+      articleSection.appendChild(p);
+    });
+
+    articleBody.appendChild(articleSection);
+
+    const tocItem = document.createElement("li");
+    const tocLink = document.createElement("a");
+    tocLink.href = `#${sectionId}`;
+    tocLink.textContent = section.title;
+    tocItem.appendChild(tocLink);
+    articleTocList.appendChild(tocItem);
+  });
+
+  articleToc.hidden = sections.length < 2;
+}
+
+function renderMethodology() {
+  if (!articleMethodList || !articleMethodLimits) return;
+  articleMethodList.innerHTML = "";
+
+  const methodSteps =
+    article.methodology?.steps?.length
+      ? article.methodology.steps
+      : [
+          `${article.sources?.length ?? 0} document(s) public(s) analysé(s) pour cette enquête.`,
+          "Vérification croisée des données administratives et des déclarations publiques.",
+          `Relecture éditoriale interne avant publication par ${article.author}.`,
+        ];
+
+  methodSteps.forEach((step) => {
+    const item = document.createElement("li");
+    item.textContent = step;
+    articleMethodList.appendChild(item);
+  });
+
+  articleMethodLimits.textContent =
+    article.methodology?.limits ??
+    "Limites: certaines données évoluent entre publication et mise à jour, les articles sont révisés en conséquence.";
+}
+
 function setupActiveCategoryNav() {
-  let hasActiveCategory = false;
   nav?.querySelectorAll("a").forEach((link) => {
     const linkUrl = new URL(link.href, window.location.origin);
     const linkTag = linkUrl.searchParams.get("tag");
     const isActive = linkTag === primaryTag;
     link.classList.toggle("is-active", isActive);
-    if (isActive) hasActiveCategory = true;
   });
-
-  const subnav = nav?.querySelector(".site-subnav");
-  if (hasActiveCategory) {
-    subnav?.setAttribute("open", "");
-  } else {
-    subnav?.removeAttribute("open");
-  }
 }
 
 function buildRelatedArticleCard(relatedArticle) {
@@ -174,6 +275,8 @@ breadcrumbCategoryLink.textContent = primaryTag;
 breadcrumbCurrent.textContent = article.title;
 setupActiveCategoryNav();
 updateSocialMeta();
+renderArticleBody();
+renderMethodology();
 renderSources();
 renderRelatedArticles();
 

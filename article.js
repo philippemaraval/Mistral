@@ -48,11 +48,21 @@ function formatAuthorLine(entry) {
 }
 
 function setupActiveCategoryNav() {
+  let hasActiveCategory = false;
   nav?.querySelectorAll("a").forEach((link) => {
     const linkUrl = new URL(link.href, window.location.origin);
     const linkTag = linkUrl.searchParams.get("tag");
-    link.classList.toggle("is-active", linkTag === primaryTag);
+    const isActive = linkTag === primaryTag;
+    link.classList.toggle("is-active", isActive);
+    if (isActive) hasActiveCategory = true;
   });
+
+  const subnav = nav?.querySelector(".site-subnav");
+  if (hasActiveCategory) {
+    subnav?.setAttribute("open", "");
+  } else {
+    subnav?.removeAttribute("open");
+  }
 }
 
 function buildRelatedArticleCard(relatedArticle) {

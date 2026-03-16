@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>À propos | Mistral</title>
+    <title>Documents | Mistral</title>
     <meta
       name="description"
-      content="Qui sommes-nous : ligne éditoriale, méthode de travail et engagements du média Mistral."
+      content="Sources et documents publics publiés par Mistral pour vérification des enquêtes."
     />
     <link rel="icon" type="image/png" href="./logo_mistral.png" />
     <link rel="stylesheet" href="./styles.css" />
@@ -46,15 +46,15 @@
                 </ul>
               </details>
             </li>
-            <li><a href="./documents.html">Documents</a></li>
-            <li><a href="./about.html" aria-current="page">Méthode</a></li>
+            <li><a href="./documents.html" aria-current="page">Documents</a></li>
+            <li><a href="./about.html">Méthode</a></li>
             <li><a href="./contact.html">Contact</a></li>
             <li><a class="site-nav__weather" href="./weather.html">Météo</a></li>
           </ul>
         </nav>
 
-        <a class="search-bar category-home-link" href="./contact.html" aria-label="Aller à la page contact">
-          Contact
+        <a class="search-bar category-home-link" href="./index.html" aria-label="Retour à l'accueil">
+          Retour à l'accueil
         </a>
       </div>
     </header>
@@ -63,75 +63,45 @@
       <nav class="breadcrumb" aria-label="Fil d'Ariane">
         <ol>
           <li><a href="./index.html">Accueil</a></li>
-          <li aria-current="page">À propos</li>
+          <li aria-current="page">Documents</li>
         </ol>
       </nav>
 
       <header class="info-page__head">
-        <p class="eyebrow">À PROPOS</p>
-        <h1>Mistral, média local d'enquêtes à Marseille</h1>
+        <p class="eyebrow">DOCUMENTS</p>
+        <h1>Sources publiques de la rédaction</h1>
         <p>
-          Nous publions des enquêtes courtes, sourcées et lisibles pour documenter les décisions
-          publiques qui touchent le quotidien des Marseillaises et des Marseillais.
+          Chaque document référencé ici a servi à documenter un article. Tu peux les télécharger et
+          vérifier nos affirmations.
         </p>
       </header>
 
-      <section class="info-page__section" id="ligne-editoriale">
-        <h2>Ligne éditoriale</h2>
-        <p>
-          Notre angle est simple : suivre l'argent public, rendre les délibérations compréhensibles
-          et confronter les annonces aux effets de terrain. Chaque sujet est traité avec un ton
-          critique, sans parti pris partisan.
-        </p>
-      </section>
-
-      <section class="info-page__section" id="methode">
-        <h2>Méthode de travail</h2>
-        <p>
-          Nous croisons documents administratifs, entretiens, observations de terrain et données
-          ouvertes. Quand une information repose sur un document, nous affichons le lien de source
-          pour permettre la vérification.
-        </p>
-      </section>
-
-      <section class="info-page__section" id="engagements">
-        <h2>Nos engagements</h2>
-        <ul class="info-page__list">
-          <li>Transparence sur les sources et les limites de l'enquête.</li>
-          <li>Correction publique rapide en cas d'erreur factuelle.</li>
-          <li>Indépendance éditoriale vis-à-vis des acteurs politiques et économiques.</li>
-        </ul>
+      <section class="info-page__section">
+        <h2>Documents disponibles</h2>
+        <div class="source-links">
+          <a class="source-link" href="./documents/convention-velodrome-avenant-2.txt" download>
+            Convention d'occupation Vélodrome - avenant 2
+          </a>
+          <a
+            class="source-link"
+            href="./documents/subventions-associations-marseille-2024.csv"
+            download
+          >
+            Subventions associations Marseille 2024
+          </a>
+          <a class="source-link" href="./documents/arrete-circulation-vieux-port-2024.txt" download>
+            Arrêté circulation Vieux-Port 2024
+          </a>
+        </div>
       </section>
 
       <section class="info-page__section">
-        <h2>Nous contacter</h2>
-        <p>
-          Une question, une alerte locale, un droit de réponse ? Écris-nous via la page
-          <a href="./contact.html">Contact</a>.
-        </p>
-      </section>
-
-      <section class="newsletter-panel">
-        <h2>Recevoir la newsletter</h2>
-        <p>Une synthèse hebdomadaire de nos enquêtes et des documents publiés.</p>
-        <form class="newsletter-form" data-newsletter-form novalidate>
-          <label class="sr-only" for="newsletter-email-about">Email newsletter</label>
-          <input
-            id="newsletter-email-about"
-            data-newsletter-email
-            type="email"
-            name="email"
-            placeholder="Votre email"
-            autocomplete="email"
-            required
-          />
-          <label class="newsletter-consent">
-            <input data-newsletter-consent type="checkbox" required />
-            J'accepte de recevoir les emails de Mistral.
-          </label>
-          <button type="submit">S'inscrire</button>
-          <p class="newsletter-feedback" data-newsletter-feedback aria-live="polite"></p>
-        </form>
+        <h2>Règles de publication des sources</h2>
+        <ul class="info-page__list">
+          <li>Nous publions les pièces administratives non protégées par des obligations légales.</li>
+          <li>Les données sensibles ou nominatives sont retirées avant mise en ligne.</li>
+          <li>Si un document est incomplet, nous le signalons explicitement dans l'article.</li>
+        </ul>
       </section>
     </main>
 
@@ -164,6 +134,5 @@
     </button>
 
     <script type="module" src="./static-page.js"></script>
-    <script type="module" src="./newsletter.js"></script>
   </body>
 </html>

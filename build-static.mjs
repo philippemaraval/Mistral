@@ -12,6 +12,8 @@ const entries = [
   "category.html",
   "about.html",
   "contact.html",
+  "documents.html",
+  "legal.html",
   "404.html",
   "weather.html",
   "styles.css",

@@ -50,13 +50,6 @@ let markerLayer;
 let markerRegistry = new Map();
 let activeCategory = "";
 
-const POPUP_EDGE_PADDING = 14;
-const POPUP_HALF_WIDTH = 132;
-const POPUP_TOP_THRESHOLD = 124;
-const POPUP_BOTTOM_THRESHOLD = 120;
-const POPUP_OFFSET_ABOVE = -28;
-const POPUP_OFFSET_BELOW = 56;
-
 function escapeHtml(value) {
   return value
     .replaceAll("&", "&amp;")
@@ -483,54 +476,11 @@ function initMap() {
     .addTo(map);
 
   markerLayer = leaflet.layerGroup().addTo(map);
-
-  map.on("moveend zoomend resize", () => {
-    syncOpenPopupsPosition();
-  });
 }
 
 function clearMarkers() {
   markerLayer?.clearLayers();
   markerRegistry = new Map();
-}
-
-function getVisiblePopupOffset(latLng) {
-  if (!map || !leaflet) return leaflet.point(0, POPUP_OFFSET_ABOVE);
-
-  const point = map.latLngToContainerPoint(latLng);
-  const size = map.getSize();
-  const minX = POPUP_HALF_WIDTH + POPUP_EDGE_PADDING;
-  const maxX = size.x - POPUP_HALF_WIDTH - POPUP_EDGE_PADDING;
-
-  let offsetX = 0;
-  if (point.x < minX) {
-    offsetX = minX - point.x;
-  } else if (point.x > maxX) {
-    offsetX = maxX - point.x;
-  }
-
-  const nearTop = point.y < POPUP_TOP_THRESHOLD;
-  const nearBottom = point.y > size.y - POPUP_BOTTOM_THRESHOLD;
-  const offsetY = nearTop && !nearBottom ? POPUP_OFFSET_BELOW : POPUP_OFFSET_ABOVE;
-
-  return leaflet.point(Math.round(offsetX), offsetY);
-}
-
-function openMarkerPopupVisible(marker) {
-  const popup = marker.getPopup();
-  if (popup) {
-    popup.options.offset = getVisiblePopupOffset(marker.getLatLng());
-  }
-  marker.openPopup();
-}
-
-function syncOpenPopupsPosition() {
-  if (!markerLayer) return;
-  markerLayer.eachLayer((layer) => {
-    if (typeof layer.isPopupOpen === "function" && layer.isPopupOpen()) {
-      openMarkerPopupVisible(layer);
-    }
-  });
 }
 
 function createMarker(category, config, latestArticle, status) {
@@ -556,11 +506,11 @@ function createMarker(category, config, latestArticle, status) {
     closeOnClick: false,
   });
 
-  marker.on("mouseover", () => openMarkerPopupVisible(marker));
+  marker.on("mouseover", () => marker.openPopup());
   marker.on("mouseout", () => marker.closePopup());
   marker.on("click", () => {
     focusCategory(category);
-    openMarkerPopupVisible(marker);
+    marker.openPopup();
   });
 
   return marker;

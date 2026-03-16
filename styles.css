@@ -156,9 +156,9 @@ input {
 }
 
 .brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
+  display: inline-grid;
+  justify-items: center;
+  gap: 0.16rem;
   min-width: 0;
   transform: translateX(clamp(1.5rem, 4vw, 2.8rem));
   transition: opacity 160ms ease;
@@ -177,7 +177,16 @@ input {
 }
 
 .brand__name {
-  display: none;
+  display: block;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: #5c7084;
+  white-space: nowrap;
 }
 
 .site-nav {
@@ -362,28 +371,6 @@ input {
   min-width: 0;
   max-width: 920px;
   justify-self: start;
-}
-
-.editorial-promise {
-  margin-bottom: 0.95rem;
-  padding: 0.72rem 0.86rem;
-  border: 1px solid #d3dfeb;
-  border-left: 4px solid var(--accent-warm);
-  border-radius: 12px;
-  background:
-    linear-gradient(120deg, rgba(159, 188, 222, 0.22) 0%, rgba(60, 88, 117, 0.14) 100%),
-    rgba(247, 251, 255, 0.9);
-  box-shadow: 0 14px 24px -26px rgba(16, 28, 41, 0.48);
-}
-
-.editorial-promise p {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 0.97rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--accent-strong);
 }
 
 .featured-story {
@@ -2756,6 +2743,11 @@ mark {
   .brand__logo {
     width: 70px;
     height: 42px;
+  }
+
+  .brand__name {
+    font-size: 0.49rem;
+    letter-spacing: 0.06em;
   }
 
   .search-bar {

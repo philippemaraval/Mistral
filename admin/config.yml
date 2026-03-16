@@ -1,0 +1,172 @@
+backend:
+  name: github
+  repo: philippemaraval/Mistral
+  branch: main
+  base_url: https://auth.decapbridge.com
+  auth_endpoint: auth
+
+local_backend: true
+publish_mode: editorial_workflow
+
+media_folder: "uploads"
+public_folder: "./uploads"
+
+collections:
+  - name: "configuration"
+    label: "Configuration"
+    files:
+      - label: "Page d'accueil"
+        name: "homepage"
+        file: "content/site.json"
+        format: "json"
+        editor:
+          preview: false
+        fields:
+          - label: "Article a la une (ID)"
+            name: "featuredArticleId"
+            widget: "string"
+
+  - name: "articles"
+    label: "Articles"
+    label_singular: "Article"
+    folder: "content/articles"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{fields.id}}"
+    identifier_field: "title"
+    summary: "{{title}} - {{date}}"
+    editor:
+      preview: false
+    fields:
+      - label: "ID unique (slug)"
+        name: "id"
+        widget: "string"
+        hint: "Exemple: tramway-est-hypotheses"
+        pattern:
+          - "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          - "Utilise uniquement lettres minuscules, chiffres et tirets"
+
+      - label: "Titre"
+        name: "title"
+        widget: "string"
+
+      - label: "Chapô"
+        name: "excerpt"
+        widget: "text"
+
+      - label: "Legende image"
+        name: "caption"
+        widget: "text"
+
+      - label: "Image (URL)"
+        name: "image"
+        widget: "image"
+        hint: "Tu peux coller une URL externe ou uploader une image"
+
+      - label: "Date de publication"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+
+      - label: "Date de mise a jour"
+        name: "updatedDate"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+
+      - label: "Auteur"
+        name: "author"
+        widget: "string"
+
+      - label: "Temps de lecture (minutes)"
+        name: "readTimeMinutes"
+        widget: "number"
+        min: 1
+        value_type: "int"
+
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        min: 1
+        field:
+          label: "Tag"
+          name: "tag"
+          widget: "select"
+          options:
+            - "Politique"
+            - "Économie"
+            - "Urbanisme"
+            - "Mobilités"
+            - "Culture"
+            - "Quartiers"
+
+      - label: "Sections (optionnel)"
+        name: "sections"
+        widget: "list"
+        required: false
+        collapsed: true
+        summary: "{{fields.title}}"
+        fields:
+          - label: "Titre section"
+            name: "title"
+            widget: "string"
+          - label: "Paragraphes"
+            name: "paragraphs"
+            widget: "list"
+            min: 1
+            field:
+              label: "Paragraphe"
+              name: "paragraph"
+              widget: "text"
+
+      - label: "Sources (optionnel)"
+        name: "sources"
+        widget: "list"
+        required: false
+        collapsed: true
+        summary: "{{fields.label}}"
+        fields:
+          - label: "Libelle"
+            name: "label"
+            widget: "string"
+          - label: "Fichier (dans /documents)"
+            name: "file"
+            widget: "file"
+            media_folder: "documents"
+            public_folder: "./documents"
+          - label: "Type"
+            name: "type"
+            widget: "string"
+            required: false
+          - label: "Date"
+            name: "date"
+            widget: "datetime"
+            required: false
+            format: "YYYY-MM-DD"
+            date_format: "YYYY-MM-DD"
+            time_format: false
+          - label: "Contexte"
+            name: "context"
+            widget: "text"
+            required: false
+
+      - label: "Corrections (optionnel)"
+        name: "corrections"
+        widget: "list"
+        required: false
+        collapsed: true
+        summary: "{{fields.date}}"
+        fields:
+          - label: "Date"
+            name: "date"
+            widget: "datetime"
+            format: "YYYY-MM-DD"
+            date_format: "YYYY-MM-DD"
+            time_format: false
+          - label: "Detail"
+            name: "detail"
+            widget: "text"

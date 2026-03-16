@@ -1,0 +1,24 @@
+{
+  "id": "ecoles-renovees-marches",
+  "title": "Écoles rénovées : les marchés publics passés au crible",
+  "excerpt": "Un relevé ligne par ligne des appels d'offres fait ressortir des écarts de coûts non expliqués.",
+  "caption": "Documents consolidés sur douze établissements.",
+  "image": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
+  "date": "2026-02-26",
+  "updatedDate": "2026-03-01",
+  "author": "Amel Chabane",
+  "readTimeMinutes": 9,
+  "sources": [
+    {
+      "label": "Subventions associations Marseille 2024",
+      "file": "subventions-associations-marseille-2024.csv",
+      "type": "Jeu de données (CSV)",
+      "date": "2026-02-27",
+      "context": "Permet de contrôler les écarts entre montants votés et montants effectivement versés."
+    }
+  ],
+  "tags": [
+    "Urbanisme",
+    "Économie"
+  ]
+}

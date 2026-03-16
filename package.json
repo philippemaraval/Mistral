@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Static homepage for Mistral media",
   "scripts": {
-    "build": "node build-static.mjs"
+    "content:generate": "node scripts/generate-articles-content.mjs",
+    "build": "npm run content:generate && node build-static.mjs"
   }
 }

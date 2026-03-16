@@ -25,10 +25,13 @@ const entries = [
   "newsletter.js",
   "404.js",
   "articles-data.js",
+  "articles-content.js",
   "social-preview.svg",
   "logo_mistral.png",
   "logo-mistral.svg",
   "favicon_mistral.ico",
+  "admin",
+  "uploads",
   "documents",
 ];
 

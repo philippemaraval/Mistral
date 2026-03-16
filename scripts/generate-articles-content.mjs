@@ -1,0 +1,148 @@
+import { readdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, "..");
+
+const siteConfigPath = path.join(projectRoot, "content", "site.json");
+const articlesDir = path.join(projectRoot, "content", "articles");
+const outputPath = path.join(projectRoot, "articles-content.js");
+
+function parseJsonFile(raw, sourcePath) {
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`JSON invalide: ${sourcePath}\n${error.message}`);
+  }
+}
+
+function requireNonEmptyString(value, fieldPath, sourcePath) {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw new Error(`Champ requis invalide (${fieldPath}) dans ${sourcePath}`);
+  }
+}
+
+function requireArray(value, fieldPath, sourcePath) {
+  if (!Array.isArray(value)) {
+    throw new Error(`Champ requis invalide (${fieldPath}) dans ${sourcePath}: attendu un tableau`);
+  }
+}
+
+function validateArticle(article, sourcePath) {
+  requireNonEmptyString(article.id, "id", sourcePath);
+  requireNonEmptyString(article.title, "title", sourcePath);
+  requireNonEmptyString(article.excerpt, "excerpt", sourcePath);
+  requireNonEmptyString(article.caption, "caption", sourcePath);
+  requireNonEmptyString(article.image, "image", sourcePath);
+  requireNonEmptyString(article.date, "date", sourcePath);
+  requireNonEmptyString(article.updatedDate, "updatedDate", sourcePath);
+  requireNonEmptyString(article.author, "author", sourcePath);
+
+  if (!Number.isFinite(article.readTimeMinutes) || article.readTimeMinutes <= 0) {
+    throw new Error(`Champ requis invalide (readTimeMinutes) dans ${sourcePath}`);
+  }
+
+  requireArray(article.tags, "tags", sourcePath);
+  article.tags.forEach((tag, index) => {
+    requireNonEmptyString(tag, `tags[${index}]`, sourcePath);
+  });
+
+  if (article.sections !== undefined) {
+    requireArray(article.sections, "sections", sourcePath);
+    article.sections.forEach((section, index) => {
+      requireNonEmptyString(section.title, `sections[${index}].title`, sourcePath);
+      requireArray(section.paragraphs, `sections[${index}].paragraphs`, sourcePath);
+      section.paragraphs.forEach((paragraph, paragraphIndex) => {
+        requireNonEmptyString(
+          paragraph,
+          `sections[${index}].paragraphs[${paragraphIndex}]`,
+          sourcePath
+        );
+      });
+    });
+  }
+
+  if (article.sources !== undefined) {
+    requireArray(article.sources, "sources", sourcePath);
+    article.sources.forEach((source, index) => {
+      requireNonEmptyString(source.label, `sources[${index}].label`, sourcePath);
+      requireNonEmptyString(source.file, `sources[${index}].file`, sourcePath);
+    });
+  }
+
+  if (article.corrections !== undefined) {
+    requireArray(article.corrections, "corrections", sourcePath);
+    article.corrections.forEach((correction, index) => {
+      requireNonEmptyString(correction.date, `corrections[${index}].date`, sourcePath);
+      requireNonEmptyString(correction.detail, `corrections[${index}].detail`, sourcePath);
+    });
+  }
+}
+
+function sortByDateDesc(a, b) {
+  return new Date(b.date).getTime() - new Date(a.date).getTime();
+}
+
+async function loadArticles() {
+  const entries = await readdir(articlesDir, { withFileTypes: true });
+  const files = entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, "fr"));
+
+  if (files.length === 0) {
+    throw new Error(`Aucun article trouvé dans ${articlesDir}`);
+  }
+
+  const seenIds = new Set();
+  const articles = [];
+
+  for (const filename of files) {
+    const filePath = path.join(articlesDir, filename);
+    const raw = await readFile(filePath, "utf8");
+    const article = parseJsonFile(raw, filePath);
+    validateArticle(article, filePath);
+
+    if (seenIds.has(article.id)) {
+      throw new Error(`ID d'article dupliqué (${article.id}) dans ${filePath}`);
+    }
+
+    seenIds.add(article.id);
+    articles.push(article);
+  }
+
+  return articles.sort(sortByDateDesc);
+}
+
+async function loadSiteConfig() {
+  const raw = await readFile(siteConfigPath, "utf8");
+  const siteConfig = parseJsonFile(raw, siteConfigPath);
+  requireNonEmptyString(siteConfig.featuredArticleId, "featuredArticleId", siteConfigPath);
+  return siteConfig;
+}
+
+function toModuleLiteral(value) {
+  return JSON.stringify(value, null, 2);
+}
+
+async function main() {
+  const [siteConfig, articles] = await Promise.all([loadSiteConfig(), loadArticles()]);
+
+  if (!articles.some((entry) => entry.id === siteConfig.featuredArticleId)) {
+    throw new Error(
+      `featuredArticleId (${siteConfig.featuredArticleId}) ne correspond à aucun fichier dans ${articlesDir}`
+    );
+  }
+
+  const output = `// This file is auto-generated by scripts/generate-articles-content.mjs.\n// Do not edit manually.\n\nexport const featuredArticleId = ${toModuleLiteral(siteConfig.featuredArticleId)};\n\nexport const articles = ${toModuleLiteral(articles)};\n`;
+
+  await writeFile(outputPath, output, "utf8");
+  console.log(`Generated ${path.basename(outputPath)} with ${articles.length} article(s).`);
+}
+
+main().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});

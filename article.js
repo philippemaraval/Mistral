@@ -19,8 +19,6 @@ const tags = document.querySelector("#article-tags");
 const articleToc = document.querySelector("#article-toc");
 const articleTocList = document.querySelector("#article-toc-list");
 const articleBody = document.querySelector("#article-body");
-const articleMethodList = document.querySelector("#article-method-list");
-const articleMethodLimits = document.querySelector("#article-method-limits");
 const articleSources = document.querySelector("#article-sources");
 const articleSourceLinks = document.querySelector("#article-source-links");
 const relatedArticlesSection = document.querySelector("#related-articles");
@@ -131,30 +129,6 @@ function renderArticleBody() {
   });
 
   articleToc.hidden = sections.length < 2;
-}
-
-function renderMethodology() {
-  if (!articleMethodList || !articleMethodLimits) return;
-  articleMethodList.innerHTML = "";
-
-  const methodSteps =
-    article.methodology?.steps?.length
-      ? article.methodology.steps
-      : [
-          `${article.sources?.length ?? 0} document(s) public(s) analysé(s) pour cette enquête.`,
-          "Vérification croisée des données administratives et des déclarations publiques.",
-          `Relecture éditoriale interne avant publication par ${article.author}.`,
-        ];
-
-  methodSteps.forEach((step) => {
-    const item = document.createElement("li");
-    item.textContent = step;
-    articleMethodList.appendChild(item);
-  });
-
-  articleMethodLimits.textContent =
-    article.methodology?.limits ??
-    "Limites: certaines données évoluent entre publication et mise à jour, les articles sont révisés en conséquence.";
 }
 
 function setupActiveCategoryNav() {
@@ -276,7 +250,6 @@ breadcrumbCurrent.textContent = article.title;
 setupActiveCategoryNav();
 updateSocialMeta();
 renderArticleBody();
-renderMethodology();
 renderSources();
 renderRelatedArticles();
 

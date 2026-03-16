@@ -61,7 +61,6 @@
             type="search"
             placeholder="Rechercher un article..."
             aria-label="Rechercher un article"
-            list="search-suggestions"
           />
           <button type="submit" aria-label="Lancer la recherche">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -69,8 +68,10 @@
               <path d="M16.2 16.2 21 21"></path>
             </svg>
           </button>
+          <div class="search-suggest" id="search-suggest" hidden>
+            <ul class="search-suggest__list" id="search-suggest-list"></ul>
+          </div>
         </form>
-        <datalist id="search-suggestions"></datalist>
       </div>
     </header>
 

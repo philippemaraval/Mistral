@@ -18,7 +18,8 @@ const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
 const searchForm = document.querySelector(".search-bar");
 const searchInput = document.querySelector("#site-search");
-const searchSuggestions = document.querySelector("#search-suggestions");
+const searchSuggestPanel = document.querySelector("#search-suggest");
+const searchSuggestList = document.querySelector("#search-suggest-list");
 const searchStatus = document.querySelector("#search-status");
 const filterTag = document.querySelector("#filter-tag");
 const filterAuthor = document.querySelector("#filter-author");
@@ -51,6 +52,7 @@ let selectedTagFilter = "";
 let selectedAuthorFilter = "";
 let loadTimeout;
 let viewMode = "grid";
+let suggestionValues = [];
 
 function normalizeSearchValue(value) {
   return value
@@ -189,25 +191,56 @@ function renderFeaturedSources() {
   });
 }
 
-function populateSearchSuggestions() {
-  if (!searchSuggestions) return;
-  searchSuggestions.innerHTML = "";
+function hideSuggestionPanel() {
+  if (!searchSuggestPanel) return;
+  searchSuggestPanel.hidden = true;
+}
 
+function populateSearchSuggestions() {
   const suggestions = new Set();
   feedArticles.forEach((article) => {
     suggestions.add(article.title);
     suggestions.add(article.author);
     article.tags.forEach((tag) => suggestions.add(`#${tag}`));
   });
+  suggestionValues = [...suggestions].sort((a, b) => a.localeCompare(b, "fr"));
+}
 
-  [...suggestions]
-    .sort((a, b) => a.localeCompare(b, "fr"))
-    .slice(0, 80)
-    .forEach((value) => {
-      const option = document.createElement("option");
-      option.value = value;
-      searchSuggestions.appendChild(option);
+function updateSuggestionPanel(rawValue) {
+  if (!searchSuggestPanel || !searchSuggestList) return;
+  const query = normalizeSearchValue(rawValue);
+
+  if (query.length < 2) {
+    hideSuggestionPanel();
+    return;
+  }
+
+  const matches = suggestionValues
+    .filter((value) => normalizeSearchValue(value).includes(query))
+    .slice(0, 6);
+
+  if (matches.length === 0) {
+    hideSuggestionPanel();
+    return;
+  }
+
+  searchSuggestList.innerHTML = "";
+  matches.forEach((value) => {
+    const item = document.createElement("li");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "search-suggest__item";
+    button.textContent = value;
+    button.addEventListener("click", () => {
+      if (searchInput) searchInput.value = value;
+      hideSuggestionPanel();
+      applySearchAndFilters(value);
     });
+    item.appendChild(button);
+    searchSuggestList.appendChild(item);
+  });
+
+  searchSuggestPanel.hidden = false;
 }
 
 function populateFilterControls() {
@@ -431,14 +464,34 @@ renderFeaturedSources();
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   window.clearTimeout(searchDebounce);
+  hideSuggestionPanel();
   applySearchAndFilters(searchInput?.value ?? "");
 });
 
 searchInput?.addEventListener("input", () => {
   window.clearTimeout(searchDebounce);
+  updateSuggestionPanel(searchInput.value);
   searchDebounce = window.setTimeout(() => {
     applySearchAndFilters(searchInput.value);
   }, 260);
+});
+
+searchInput?.addEventListener("focus", () => {
+  updateSuggestionPanel(searchInput.value);
+});
+
+searchInput?.addEventListener("blur", () => {
+  window.setTimeout(() => {
+    hideSuggestionPanel();
+  }, 120);
+});
+
+document.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Node)) return;
+  if (!searchForm?.contains(target)) {
+    hideSuggestionPanel();
+  }
 });
 
 filterTag?.addEventListener("change", () => {

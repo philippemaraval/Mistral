@@ -66,10 +66,23 @@ export const articles = [
       {
         label: "Convention d'occupation Vélodrome - avenant 2",
         file: "convention-velodrome-avenant-2.txt",
+        type: "Convention publique",
+        date: "2026-03-10",
+        context: "Utilisée pour vérifier les clauses financières et les obligations de la collectivité.",
       },
       {
         label: "Subventions associations Marseille 2024",
         file: "subventions-associations-marseille-2024.csv",
+        type: "Jeu de données (CSV)",
+        date: "2026-03-09",
+        context: "Croisée avec les montants annoncés pour reconstituer les lignes budgétaires citées.",
+      },
+    ],
+    corrections: [
+      {
+        date: "2026-03-13",
+        detail:
+          "Correction d'une précision sur l'échéancier de versement, sans impact sur la conclusion de l'enquête.",
       },
     ],
     tags: ["Politique", "Économie", "Urbanisme"],
@@ -132,6 +145,9 @@ export const articles = [
       {
         label: "Subventions associations Marseille 2024",
         file: "subventions-associations-marseille-2024.csv",
+        type: "Jeu de données (CSV)",
+        date: "2026-02-27",
+        context: "Permet de contrôler les écarts entre montants votés et montants effectivement versés.",
       },
     ],
     tags: ["Urbanisme", "Économie"],
@@ -152,6 +168,9 @@ export const articles = [
       {
         label: "Arrêté municipal circulation Vieux-Port 2024",
         file: "arrete-circulation-vieux-port-2024.txt",
+        type: "Arrêté municipal",
+        date: "2026-02-20",
+        context: "Texte de référence cité pour vérifier les décisions réellement applicables sur le terrain.",
       },
     ],
     tags: ["Urbanisme", "Politique"],

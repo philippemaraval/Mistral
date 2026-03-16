@@ -21,6 +21,8 @@ const articleTocList = document.querySelector("#article-toc-list");
 const articleBody = document.querySelector("#article-body");
 const articleSources = document.querySelector("#article-sources");
 const articleSourceLinks = document.querySelector("#article-source-links");
+const articleRevisions = document.querySelector("#article-revisions");
+const articleRevisionList = document.querySelector("#article-revision-list");
 const relatedArticlesSection = document.querySelector("#related-articles");
 const relatedArticlesList = document.querySelector("#related-articles-list");
 const breadcrumbCategoryLink = document.querySelector("#breadcrumb-category-link");
@@ -95,10 +97,51 @@ function buildFallbackSections(entry) {
   ];
 }
 
+function inferSourceType(source) {
+  if (source.type) return source.type;
+  const file = source.file?.toLowerCase() ?? "";
+  if (file.endsWith(".csv")) return "Jeu de données (CSV)";
+  if (file.endsWith(".pdf")) return "Document PDF";
+  if (file.endsWith(".txt")) return "Document administratif";
+  return "Document source";
+}
+
+function formatSourceDate(source) {
+  const candidate = source.date || article.updatedDate || article.date;
+  return formatDateFr(candidate);
+}
+
+function buildSourceItem(source) {
+  const item = document.createElement("article");
+  item.className = "source-item";
+
+  const heading = document.createElement("h3");
+  const link = document.createElement("a");
+  link.className = "source-link";
+  link.href = buildDocumentUrl(source.file);
+  link.textContent = source.label;
+  link.setAttribute("download", "");
+  heading.appendChild(link);
+
+  const meta = document.createElement("p");
+  meta.className = "source-item__meta";
+  meta.textContent = `${inferSourceType(source)} · Référence du ${formatSourceDate(source)}`;
+
+  const context = document.createElement("p");
+  context.className = "source-item__context";
+  context.textContent =
+    source.context ??
+    "Pièce utilisée pour vérifier les faits, les montants ou les décisions publiques mentionnées dans l'article.";
+
+  item.append(heading, meta, context);
+  return item;
+}
+
 function renderArticleBody() {
   if (!articleBody || !articleToc || !articleTocList) return;
 
   const sections = article.sections?.length ? article.sections : buildFallbackSections(article);
+  const internalTargets = getRelatedArticles(article.id, 6);
   articleBody.innerHTML = "";
   articleTocList.innerHTML = "";
 
@@ -117,6 +160,37 @@ function renderArticleBody() {
       p.textContent = paragraph;
       articleSection.appendChild(p);
     });
+
+    const categoryTag = article.tags[index % article.tags.length];
+    const relatedTarget =
+      internalTargets.length > 0 ? internalTargets[index % internalTargets.length] : null;
+    if (categoryTag || relatedTarget) {
+      const linksLine = document.createElement("p");
+      linksLine.className = "article-body__context-links";
+      linksLine.append("À lire dans le même fil: ");
+
+      if (categoryTag) {
+        const categoryLink = document.createElement("a");
+        categoryLink.href = buildCategoryUrl(categoryTag);
+        categoryLink.textContent = `#${categoryTag}`;
+        categoryLink.setAttribute("aria-label", `Voir plus sur ${categoryTag}`);
+        linksLine.appendChild(categoryLink);
+      }
+
+      if (categoryTag && relatedTarget) {
+        linksLine.append(" · ");
+      }
+
+      if (relatedTarget) {
+        const relatedLink = document.createElement("a");
+        relatedLink.href = buildArticleUrl(relatedTarget.id);
+        relatedLink.textContent = relatedTarget.title;
+        relatedLink.setAttribute("aria-label", `Lire l'article: ${relatedTarget.title}`);
+        linksLine.appendChild(relatedLink);
+      }
+
+      articleSection.appendChild(linksLine);
+    }
 
     articleBody.appendChild(articleSection);
 
@@ -182,13 +256,59 @@ function renderSources() {
   }
 
   article.sources.forEach((source) => {
-    const link = document.createElement("a");
-    link.className = "source-link";
-    link.href = buildDocumentUrl(source.file);
-    link.textContent = source.label;
-    link.setAttribute("download", "");
-    articleSourceLinks.appendChild(link);
+    articleSourceLinks.appendChild(buildSourceItem(source));
   });
+}
+
+function renderRevisionHistory() {
+  if (!articleRevisions || !articleRevisionList) return;
+  articleRevisionList.innerHTML = "";
+
+  const events = [
+    {
+      date: article.date,
+      label: "Publication initiale",
+      detail: `Mise en ligne par ${article.author}.`,
+    },
+  ];
+
+  if (article.updatedDate && article.updatedDate !== article.date) {
+    events.push({
+      date: article.updatedDate,
+      label: "Mise à jour éditoriale",
+      detail: "Actualisation des éléments de contexte et de vérification.",
+    });
+  }
+
+  article.corrections?.forEach((correction) => {
+    events.push({
+      date: correction.date,
+      label: "Correction",
+      detail: correction.detail,
+    });
+  });
+
+  events
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .forEach((event) => {
+      const item = document.createElement("li");
+      item.className = "revision-item";
+
+      const heading = document.createElement("p");
+      heading.className = "revision-item__heading";
+      heading.textContent = `${formatDateFr(event.date)} · ${event.label}`;
+
+      const detail = document.createElement("p");
+      detail.className = "revision-item__detail";
+      detail.textContent = event.detail;
+
+      item.append(heading, detail);
+      articleRevisionList.appendChild(item);
+    });
+
+  if (events.length === 0) {
+    articleRevisions.remove();
+  }
 }
 
 function updateReadingProgress() {
@@ -251,6 +371,7 @@ setupActiveCategoryNav();
 updateSocialMeta();
 renderArticleBody();
 renderSources();
+renderRevisionHistory();
 renderRelatedArticles();
 
 article.tags.forEach((tag) => {

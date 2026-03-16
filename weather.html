@@ -33,6 +33,8 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Aller au contenu principal</a>
+
     <header class="site-header">
       <div class="site-header__inner">
         <a class="brand" href="./index.html" aria-label="Accueil Mistral">
@@ -69,7 +71,7 @@
       </div>
     </header>
 
-    <main class="weather-page">
+    <main class="weather-page" id="main-content">
       <section class="weather-map-section" aria-label="Carte de vigilance de Marseille">
         <div class="weather-map-section__intro">
           <p class="eyebrow">MÉTÉO DE LA VIGILANCE</p>
@@ -122,6 +124,21 @@
               </div>
             </article>
           </aside>
+        </div>
+      </section>
+
+      <section class="weather-hub-section" aria-label="Derniers signaux éditoriaux">
+        <div class="weather-hub-section__inner">
+          <header class="weather-hub-section__header">
+            <p class="eyebrow">HUB ÉDITORIAL</p>
+            <h2>Les derniers signaux de chaque rubrique</h2>
+            <p>
+              Un point unique pour comparer les thèmes les plus actifs, accéder aux dernières
+              publications et basculer vers la carte météo.
+            </p>
+          </header>
+
+          <div class="weather-hub-grid" id="weather-hub-grid" aria-live="polite"></div>
         </div>
       </section>
     </main>

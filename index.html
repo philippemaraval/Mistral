@@ -24,6 +24,8 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Aller au contenu principal</a>
+
     <header class="site-header">
       <div class="site-header__inner">
         <a class="brand" href="./index.html" aria-label="Accueil Mistral">
@@ -61,6 +63,9 @@
             type="search"
             placeholder="Rechercher un article..."
             aria-label="Rechercher un article"
+            aria-controls="search-suggest"
+            aria-expanded="false"
+            autocomplete="off"
           />
           <button type="submit" aria-label="Lancer la recherche">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -68,14 +73,14 @@
               <path d="M16.2 16.2 21 21"></path>
             </svg>
           </button>
-          <div class="search-suggest" id="search-suggest" hidden>
+          <div class="search-suggest" id="search-suggest" aria-label="Suggestions de recherche" hidden>
             <ul class="search-suggest__list" id="search-suggest-list"></ul>
           </div>
         </form>
       </div>
     </header>
 
-    <main class="layout">
+    <main class="layout" id="main-content">
       <section class="content-flow" aria-label="Flux d'articles">
         <section class="editorial-promise" aria-label="Promesse éditoriale">
           <p>Enquêtes marseillaises sourcées, vérifiables, sans langue de bois.</p>

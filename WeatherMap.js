@@ -20,6 +20,7 @@ const sideMeta = document.querySelector("#weather-side-meta");
 const sideImage = document.querySelector("#weather-side-image");
 const sideRead = document.querySelector("#weather-side-read");
 const sideCategoryLink = document.querySelector("#weather-side-category-link");
+const hubGrid = document.querySelector("#weather-hub-grid");
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STATUS_LABELS = {
@@ -46,6 +47,8 @@ const MARSEILLE_MAX_BOUNDS = {
 
 let map;
 let markerLayer;
+let markerRegistry = new Map();
+let activeCategory = "";
 
 function escapeHtml(value) {
   return value
@@ -127,6 +130,23 @@ function formatPublishedUpdated(article) {
   return `${published} · Mis à jour le ${formatDateFr(article.updatedDate)}`;
 }
 
+function formatRecency(article) {
+  if (!article) return "Pas encore de publication";
+  const ageDays = Math.floor((Date.now() - getArticleDate(article).getTime()) / DAY_MS);
+  if (ageDays <= 0) return "Mis à jour aujourd'hui";
+  if (ageDays === 1) return "Mis à jour hier";
+  return `Mis à jour il y a ${ageDays} jours`;
+}
+
+function getCategorySnapshot(category) {
+  const config = getConfigForCategory(category);
+  const latestArticle = getLatestArticleByCategory(category);
+  const status = resolveWeatherStatus(config.status, latestArticle);
+  const statusLabel = STATUS_LABELS[status] ?? "Variable";
+
+  return { category, config, latestArticle, status, statusLabel };
+}
+
 function renderLatestPanel(category, latestArticle, status) {
   const statusLabel = STATUS_LABELS[status] ?? "Variable";
 
@@ -167,6 +187,117 @@ function renderLatestPanel(category, latestArticle, status) {
   sideImage.alt = latestArticle.title;
   sideRead.href = buildArticleUrl(latestArticle.id);
   sideCategoryLink.href = buildCategoryUrl(category);
+}
+
+function setActiveHubCard(category) {
+  if (!hubGrid) return;
+  hubGrid.querySelectorAll(".weather-hub-card").forEach((card) => {
+    const isActive = card.getAttribute("data-category") === category;
+    card.classList.toggle("is-active", isActive);
+    card.setAttribute("aria-selected", String(isActive));
+  });
+}
+
+function focusCategory(category, options = {}) {
+  const { panToMarker = false } = options;
+  const snapshot = getCategorySnapshot(category);
+  activeCategory = category;
+  renderLatestPanel(category, snapshot.latestArticle, snapshot.status);
+  setActiveHubCard(category);
+
+  if (panToMarker) {
+    const marker = markerRegistry.get(category);
+    if (marker && map) {
+      marker.openPopup();
+      map.flyTo(marker.getLatLng(), Math.max(map.getZoom(), 12.2), {
+        animate: true,
+        duration: 0.65,
+      });
+    }
+  }
+}
+
+function buildHubCard(snapshot) {
+  const { category, config, latestArticle, status, statusLabel } = snapshot;
+  const card = document.createElement("article");
+  card.className = "weather-hub-card";
+  card.setAttribute("data-category", category);
+  card.setAttribute("aria-selected", "false");
+
+  const head = document.createElement("div");
+  head.className = "weather-hub-card__head";
+
+  const categoryLabel = document.createElement("p");
+  categoryLabel.className = "weather-hub-card__category";
+  categoryLabel.textContent = `#${category}`;
+
+  const statusElement = document.createElement("p");
+  statusElement.className = "weather-hub-card__status";
+  statusElement.textContent = statusLabel;
+  statusElement.setAttribute("data-weather", status);
+
+  head.append(categoryLabel, statusElement);
+
+  const anchor = document.createElement("p");
+  anchor.className = "weather-hub-card__anchor";
+  anchor.textContent = `Point d'ancrage: ${config.anchor}`;
+  card.append(head, anchor);
+
+  if (latestArticle) {
+    const titleLink = document.createElement("a");
+    titleLink.className = "weather-hub-card__title";
+    titleLink.href = buildArticleUrl(latestArticle.id);
+    titleLink.textContent = latestArticle.title;
+    titleLink.setAttribute("aria-label", `Lire l'article: ${latestArticle.title}`);
+
+    const excerpt = document.createElement("p");
+    excerpt.className = "weather-hub-card__excerpt";
+    excerpt.textContent = latestArticle.excerpt;
+
+    const meta = document.createElement("p");
+    meta.className = "weather-hub-card__meta";
+    meta.textContent = `${formatRecency(latestArticle)} · ${formatPublishedUpdated(latestArticle)}`;
+
+    card.append(titleLink, excerpt, meta);
+  } else {
+    const empty = document.createElement("p");
+    empty.className = "weather-hub-card__empty";
+    empty.textContent = "Aucun article publié pour cette rubrique pour le moment.";
+    card.appendChild(empty);
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "weather-hub-card__actions";
+
+  const openButton = document.createElement("button");
+  openButton.className = "weather-hub-card__button";
+  openButton.type = "button";
+  openButton.textContent = "Afficher dans le panneau";
+  openButton.addEventListener("click", () => focusCategory(category, { panToMarker: true }));
+
+  const categoryLink = document.createElement("a");
+  categoryLink.className = "weather-hub-card__link";
+  categoryLink.href = buildCategoryUrl(category);
+  categoryLink.textContent = "Voir la rubrique";
+
+  actions.append(openButton, categoryLink);
+  card.appendChild(actions);
+
+  return card;
+}
+
+function renderWeatherHub(snapshots) {
+  if (!hubGrid) return;
+  hubGrid.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+  snapshots.forEach((snapshot) => {
+    fragment.appendChild(buildHubCard(snapshot));
+  });
+  hubGrid.appendChild(fragment);
+
+  if (activeCategory) {
+    setActiveHubCard(activeCategory);
+  }
 }
 
 function resolveWeatherStatus(baseStatus, latestArticle) {
@@ -349,6 +480,7 @@ function initMap() {
 
 function clearMarkers() {
   markerLayer?.clearLayers();
+  markerRegistry = new Map();
 }
 
 function createMarker(category, config, latestArticle, status) {
@@ -377,7 +509,7 @@ function createMarker(category, config, latestArticle, status) {
   marker.on("mouseover", () => marker.openPopup());
   marker.on("mouseout", () => marker.closePopup());
   marker.on("click", () => {
-    renderLatestPanel(category, latestArticle, status);
+    focusCategory(category);
     marker.openPopup();
   });
 
@@ -388,12 +520,34 @@ function updateWeather() {
   if (!map || !markerLayer) return;
 
   clearMarkers();
-  categories.forEach((category) => {
-    const config = getConfigForCategory(category);
-    const latestArticle = getLatestArticleByCategory(category);
-    const status = resolveWeatherStatus(config.status, latestArticle);
-    markerLayer.addLayer(createMarker(category, config, latestArticle, status));
+  const snapshots = categories.map((category) => getCategorySnapshot(category));
+
+  snapshots.forEach((snapshot) => {
+    const marker = createMarker(
+      snapshot.category,
+      snapshot.config,
+      snapshot.latestArticle,
+      snapshot.status
+    );
+    markerLayer.addLayer(marker);
+    markerRegistry.set(snapshot.category, marker);
   });
+
+  renderWeatherHub(snapshots);
+
+  if (activeCategory) {
+    const activeSnapshot = snapshots.find((snapshot) => snapshot.category === activeCategory);
+    if (activeSnapshot) {
+      renderLatestPanel(
+        activeSnapshot.category,
+        activeSnapshot.latestArticle,
+        activeSnapshot.status
+      );
+      setActiveHubCard(activeSnapshot.category);
+    } else {
+      activeCategory = "";
+    }
+  }
 }
 
 if (mapContainer) {

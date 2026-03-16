@@ -32,6 +32,10 @@ const nav = document.querySelector(".site-nav");
 const readingProgressBar = document.querySelector("#reading-progress-bar");
 const backToTopButton = document.querySelector("#back-to-top");
 const articlePage = document.querySelector(".article-page");
+const mobileReadingBar = document.querySelector("#mobile-reading-bar");
+const mobileReadingToc = document.querySelector("#mobile-reading-toc");
+const mobileReadingSources = document.querySelector("#mobile-reading-sources");
+const mobileReadingTop = document.querySelector("#mobile-reading-top");
 
 const searchParams = new URLSearchParams(window.location.search);
 const requestedId = searchParams.get("id");
@@ -330,6 +334,27 @@ function syncScrollUI() {
   updateBackToTopVisibility();
 }
 
+function toggleMobileShortcut(element, visible) {
+  if (!element) return;
+  element.classList.toggle("is-hidden", !visible);
+  if (visible) {
+    element.removeAttribute("aria-hidden");
+    element.removeAttribute("tabindex");
+  } else {
+    element.setAttribute("aria-hidden", "true");
+    element.setAttribute("tabindex", "-1");
+  }
+}
+
+function syncMobileReadingBar() {
+  if (!mobileReadingBar) return;
+  const hasToc = Boolean(articleToc && !articleToc.hidden);
+  const hasSources = Boolean(article.sources?.length && articleSources?.isConnected);
+
+  toggleMobileShortcut(mobileReadingToc, hasToc);
+  toggleMobileShortcut(mobileReadingSources, hasSources);
+}
+
 function setMetaTag(selector, content) {
   const element = document.querySelector(selector);
   if (!element) return;
@@ -373,6 +398,7 @@ renderArticleBody();
 renderSources();
 renderRevisionHistory();
 renderRelatedArticles();
+syncMobileReadingBar();
 
 article.tags.forEach((tag) => {
   const link = document.createElement("a");
@@ -395,6 +421,10 @@ nav?.querySelectorAll("a").forEach((link) => {
 });
 
 backToTopButton?.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+mobileReadingTop?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 

@@ -194,6 +194,7 @@ function renderFeaturedSources() {
 function hideSuggestionPanel() {
   if (!searchSuggestPanel) return;
   searchSuggestPanel.hidden = true;
+  searchInput?.setAttribute("aria-expanded", "false");
 }
 
 function populateSearchSuggestions() {
@@ -241,6 +242,7 @@ function updateSuggestionPanel(rawValue) {
   });
 
   searchSuggestPanel.hidden = false;
+  searchInput?.setAttribute("aria-expanded", "true");
 }
 
 function populateFilterControls() {

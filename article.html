@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Aller au contenu principal</a>
+
     <div class="reading-progress" aria-hidden="true">
       <div class="reading-progress__bar" id="reading-progress-bar"></div>
     </div>
@@ -60,7 +62,7 @@
       </div>
     </header>
 
-    <main class="article-page">
+    <main class="article-page" id="main-content">
       <nav class="breadcrumb" aria-label="Fil d'Ariane">
         <ol>
           <li><a href="./index.html">Accueil</a></li>
@@ -137,6 +139,14 @@
         </form>
       </section>
     </main>
+
+    <nav class="mobile-reading-bar" id="mobile-reading-bar" aria-label="Actions de lecture rapide">
+      <a class="mobile-reading-bar__item" id="mobile-reading-toc" href="#article-toc">Sommaire</a>
+      <a class="mobile-reading-bar__item" id="mobile-reading-sources" href="#article-sources">
+        Sources
+      </a>
+      <button class="mobile-reading-bar__item" id="mobile-reading-top" type="button">Haut</button>
+    </nav>
 
     <footer class="site-footer" aria-label="Pied de page éditorial">
       <div class="site-footer__inner">

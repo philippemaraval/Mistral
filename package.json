@@ -5,6 +5,7 @@
   "description": "Static homepage for Mistral media",
   "scripts": {
     "content:generate": "node scripts/generate-articles-content.mjs",
-    "build": "npm run content:generate && node build-static.mjs"
+    "build": "npm run content:generate && node build-static.mjs",
+    "test:front": "node scripts/test-front-regressions.mjs"
   }
 }

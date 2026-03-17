@@ -32,6 +32,17 @@ Cette commande:
 2. copie les fichiers dans `dist/`
 3. valide les contraintes editoriales (IDs uniques, references, dates, tags, etc.)
 
+## Tests de non-regression front
+
+```bash
+npm run test:front
+```
+
+Ce test smoke verifie notamment:
+- la presence des scripts attendus sur les pages critiques
+- la coherence des IDs utilises par le JS avec le DOM HTML
+- la presence des formulaires newsletter sur les pages qui chargent `newsletter.js`
+
 ## Cloudflare Pages
 
 Configuration recommandee:

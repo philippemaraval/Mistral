@@ -21,3 +21,6 @@ jobs:
 
       - name: Validate and build static site
         run: npm run build
+
+      - name: Front regression smoke tests
+        run: npm run test:front

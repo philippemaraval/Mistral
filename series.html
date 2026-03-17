@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Catégorie | Mistral</title>
-    <meta name="description" content="Articles Mistral classés par catégorie" />
+    <title>Dossier | Mistral</title>
+    <meta name="description" content="Dossiers et séries éditoriales Mistral" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:title" content="Catégorie | Mistral" />
-    <meta property="og:description" content="Articles classés par catégorie sur Mistral." />
+    <meta property="og:title" content="Dossier | Mistral" />
+    <meta property="og:description" content="Toutes les publications d'un dossier Mistral." />
     <meta property="og:image" content="./social-preview.svg" />
-    <meta property="og:url" content="./category.html" />
+    <meta property="og:url" content="./series.html" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Catégorie | Mistral" />
-    <meta name="twitter:description" content="Articles classés par catégorie sur Mistral." />
+    <meta name="twitter:title" content="Dossier | Mistral" />
+    <meta name="twitter:description" content="Toutes les publications d'un dossier Mistral." />
     <meta name="twitter:image" content="./social-preview.svg" />
-    <link rel="canonical" id="canonical-link" href="./category.html" />
+    <link rel="canonical" id="canonical-link" href="./series.html" />
     <link rel="apple-touch-icon" sizes="180x180" href="./favicon_mistral.ico/apple-icon-180x180.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon_mistral.ico/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon_mistral.ico/favicon-16x16.png" />
@@ -64,47 +64,46 @@
       </div>
     </header>
 
-    <main class="category-page" id="main-content">
+    <main class="series-page category-page" id="main-content">
       <nav class="breadcrumb" aria-label="Fil d'Ariane">
         <ol>
           <li><a href="./index.html">Accueil</a></li>
-          <li id="breadcrumb-current" aria-current="page">Catégorie</li>
+          <li id="series-breadcrumb-current" aria-current="page">Dossier</li>
         </ol>
       </nav>
 
-      <div class="category-page__head">
-        <p class="eyebrow">CATÉGORIE</p>
-        <h1 id="category-title">#Catégorie</h1>
-        <p class="category-page__lead" id="category-lead"></p>
-      </div>
-
-      <div class="category-controls">
-        <div class="view-toggle" role="group" aria-label="Mode d'affichage des articles">
-          <button type="button" data-view-option="grid" aria-pressed="true">Vue grille</button>
-          <button type="button" data-view-option="list" aria-pressed="false">Vue liste</button>
+      <section class="series-hero" aria-label="Présentation du dossier">
+        <div class="series-hero__media">
+          <img
+            id="series-cover"
+            class="series-hero__cover"
+            src="./social-preview.svg"
+            alt="Illustration dossier"
+            width="1600"
+            height="900"
+            decoding="async"
+          />
         </div>
+        <div class="series-hero__content">
+          <p class="eyebrow">DOSSIER</p>
+          <h1 id="series-title">Dossier</h1>
+          <p class="series-hero__description" id="series-description"></p>
+          <p class="series-hero__stats" id="series-stats"></p>
+        </div>
+      </section>
 
-        <section class="tag-filters" aria-label="Filtres par tags">
-          <p class="tag-filters__title">Affiner par tags</p>
-          <div class="tag-filters__chips" id="tag-filters-chips"></div>
-          <button class="tag-filters__reset" id="tag-filters-reset" type="button">Effacer filtres</button>
-        </section>
-      </div>
+      <section class="series-topics" id="series-topics" aria-label="Rubriques du dossier"></section>
 
-      <section class="article-grid" id="category-grid" aria-live="polite"></section>
-
-      <div class="loading-indicator" id="category-loading" aria-hidden="true">
-        Chargement des articles...
-      </div>
-      <div class="sentinel" id="category-sentinel" aria-hidden="true"></div>
+      <section class="article-grid" id="series-grid" aria-live="polite"></section>
+      <p class="series-empty" id="series-empty" hidden>Aucun article publié dans ce dossier.</p>
 
       <section class="newsletter-panel">
         <h2>Recevoir la newsletter</h2>
-        <p>Chaque semaine, notre sélection d'articles et de sources officielles.</p>
+        <p>Une sélection hebdomadaire de nos enquêtes, sources et décryptages.</p>
         <form class="newsletter-form" data-newsletter-form novalidate>
-          <label class="sr-only" for="newsletter-email-category">Email newsletter</label>
+          <label class="sr-only" for="newsletter-email-series">Email newsletter</label>
           <input
-            id="newsletter-email-category"
+            id="newsletter-email-series"
             data-newsletter-email
             type="email"
             name="email"
@@ -177,7 +176,7 @@
       </article>
     </template>
 
-    <script type="module" src="./category.js"></script>
+    <script type="module" src="./series.js"></script>
     <script type="module" src="./newsletter.js"></script>
   </body>
 </html>

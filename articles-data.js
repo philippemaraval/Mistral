@@ -1,6 +1,6 @@
-import { featuredArticleId, articles } from "./articles-content.js";
+import { featuredArticleId, articles, authors, series } from "./articles-content.js";
 
-export { featuredArticleId, articles };
+export { featuredArticleId, articles, authors, series };
 
 export const categories = [
   "Politique",
@@ -70,6 +70,14 @@ export function buildArticleUrl(id) {
   return `./article.html?id=${encodeURIComponent(id)}`;
 }
 
+export function buildAuthorUrl(id) {
+  return `./author.html?id=${encodeURIComponent(id)}`;
+}
+
+export function buildSeriesUrl(id) {
+  return `./series.html?id=${encodeURIComponent(id)}`;
+}
+
 export function buildDocumentUrl(file) {
   const raw = String(file ?? "").trim();
   if (!raw) return "./documents/";
@@ -112,6 +120,44 @@ export function buildOptimizedImageSrcSet(
 
 export function getArticleById(id) {
   return articles.find((article) => article.id === id) ?? null;
+}
+
+export function getAuthorById(id) {
+  return authors.find((author) => author.id === id) ?? null;
+}
+
+export function getSeriesById(id) {
+  return series.find((entry) => entry.id === id) ?? null;
+}
+
+export function resolveAuthorId(article) {
+  if (!article) return null;
+  if (article.authorId && getAuthorById(article.authorId)) return article.authorId;
+  const matchByName = authors.find((entry) => entry.name === article.author);
+  return matchByName?.id ?? null;
+}
+
+export function getArticlesByAuthor(authorId) {
+  return articles
+    .filter((article) => resolveAuthorId(article) === authorId)
+    .sort(sortByDateDesc);
+}
+
+export function getArticlesBySeries(seriesId) {
+  return articles.filter((article) => article.series === seriesId).sort(sortByDateDesc);
+}
+
+export function getPrevNextArticles(articleId) {
+  const sorted = [...articles].sort(sortByDateDesc);
+  const index = sorted.findIndex((entry) => entry.id === articleId);
+  if (index === -1) {
+    return { previous: null, next: null };
+  }
+
+  return {
+    previous: sorted[index - 1] ?? null,
+    next: sorted[index + 1] ?? null,
+  };
 }
 
 export function getRelatedArticles(articleId, limit = 3) {

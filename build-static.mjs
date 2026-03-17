@@ -9,6 +9,8 @@ const distDir = path.join(__dirname, "dist");
 const entries = [
   "index.html",
   "article.html",
+  "author.html",
+  "series.html",
   "category.html",
   "about.html",
   "contact.html",
@@ -18,6 +20,8 @@ const entries = [
   "styles.css",
   "script.js",
   "article.js",
+  "author.js",
+  "series.js",
   "category.js",
   "WeatherMap.js",
   "static-page.js",

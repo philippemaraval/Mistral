@@ -81,8 +81,17 @@
       <h1 class="article-page__title" id="article-title">Article</h1>
       <p class="article-page__excerpt" id="article-excerpt"></p>
       <div class="article-meta">
-        <p class="article-meta__line" id="article-meta-primary"></p>
+        <p class="article-meta__line" id="article-meta-primary">
+          <span>Par </span>
+          <a id="article-author-link" class="article-author-link" href="./author.html">Auteur</a>
+          <span aria-hidden="true"> · </span>
+          <span id="article-read-time"></span>
+        </p>
         <p class="article-meta__line article-meta__line--muted" id="article-meta-secondary"></p>
+        <p class="article-meta__line article-meta__line--series" id="article-meta-series" hidden>
+          Dossier:
+          <a id="article-series-link" class="article-series-link" href="./series.html">Nom du dossier</a>
+        </p>
         <button
           class="article-share-button"
           id="article-share-button"
@@ -158,6 +167,20 @@
           <section class="related-articles" id="related-articles">
             <h2>Articles liés</h2>
             <div class="related-articles__list" id="related-articles-list"></div>
+          </section>
+
+          <section class="article-pagination" id="article-pagination" hidden>
+            <h2>Poursuivre la lecture</h2>
+            <div class="article-pagination__grid">
+              <a class="article-pagination__item" id="article-prev-link" href="#">
+                <p class="article-pagination__label" id="article-prev-label">Article plus récent</p>
+                <h3 class="article-pagination__title" id="article-prev-title">Titre</h3>
+              </a>
+              <a class="article-pagination__item" id="article-next-link" href="#">
+                <p class="article-pagination__label" id="article-next-label">Article plus ancien</p>
+                <h3 class="article-pagination__title" id="article-next-title">Titre</h3>
+              </a>
+            </div>
           </section>
 
           <section class="newsletter-panel">

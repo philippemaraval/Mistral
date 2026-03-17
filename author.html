@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Catégorie | Mistral</title>
-    <meta name="description" content="Articles Mistral classés par catégorie" />
-    <meta property="og:type" content="website" />
+    <title>Auteur | Mistral</title>
+    <meta name="description" content="Articles Mistral classés par auteur" />
+    <meta property="og:type" content="profile" />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:title" content="Catégorie | Mistral" />
-    <meta property="og:description" content="Articles classés par catégorie sur Mistral." />
+    <meta property="og:title" content="Auteur | Mistral" />
+    <meta property="og:description" content="Portrait et publications d'auteur sur Mistral." />
     <meta property="og:image" content="./social-preview.svg" />
-    <meta property="og:url" content="./category.html" />
+    <meta property="og:url" content="./author.html" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Catégorie | Mistral" />
-    <meta name="twitter:description" content="Articles classés par catégorie sur Mistral." />
+    <meta name="twitter:title" content="Auteur | Mistral" />
+    <meta name="twitter:description" content="Portrait et publications d'auteur sur Mistral." />
     <meta name="twitter:image" content="./social-preview.svg" />
-    <link rel="canonical" id="canonical-link" href="./category.html" />
+    <link rel="canonical" id="canonical-link" href="./author.html" />
     <link rel="apple-touch-icon" sizes="180x180" href="./favicon_mistral.ico/apple-icon-180x180.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon_mistral.ico/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon_mistral.ico/favicon-16x16.png" />
@@ -64,47 +64,49 @@
       </div>
     </header>
 
-    <main class="category-page" id="main-content">
+    <main class="author-page category-page" id="main-content">
       <nav class="breadcrumb" aria-label="Fil d'Ariane">
         <ol>
           <li><a href="./index.html">Accueil</a></li>
-          <li id="breadcrumb-current" aria-current="page">Catégorie</li>
+          <li id="author-breadcrumb-current" aria-current="page">Auteur</li>
         </ol>
       </nav>
 
-      <div class="category-page__head">
-        <p class="eyebrow">CATÉGORIE</p>
-        <h1 id="category-title">#Catégorie</h1>
-        <p class="category-page__lead" id="category-lead"></p>
-      </div>
-
-      <div class="category-controls">
-        <div class="view-toggle" role="group" aria-label="Mode d'affichage des articles">
-          <button type="button" data-view-option="grid" aria-pressed="true">Vue grille</button>
-          <button type="button" data-view-option="list" aria-pressed="false">Vue liste</button>
+      <section class="author-profile" aria-label="Profil auteur">
+        <div class="author-profile__media">
+          <img
+            id="author-avatar"
+            class="author-profile__avatar"
+            src="./logo_mistral.png"
+            alt="Portrait auteur"
+            width="220"
+            height="220"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
 
-        <section class="tag-filters" aria-label="Filtres par tags">
-          <p class="tag-filters__title">Affiner par tags</p>
-          <div class="tag-filters__chips" id="tag-filters-chips"></div>
-          <button class="tag-filters__reset" id="tag-filters-reset" type="button">Effacer filtres</button>
-        </section>
-      </div>
+        <div class="author-profile__content">
+          <p class="eyebrow">AUTEUR</p>
+          <h1 id="author-name">Auteur</h1>
+          <p class="author-profile__role" id="author-role"></p>
+          <p class="author-profile__bio" id="author-bio"></p>
+          <p class="author-profile__stats" id="author-stats"></p>
+        </div>
+      </section>
 
-      <section class="article-grid" id="category-grid" aria-live="polite"></section>
+      <section class="author-topics" id="author-topics" aria-label="Thématiques suivies"></section>
 
-      <div class="loading-indicator" id="category-loading" aria-hidden="true">
-        Chargement des articles...
-      </div>
-      <div class="sentinel" id="category-sentinel" aria-hidden="true"></div>
+      <section class="article-grid" id="author-grid" aria-live="polite"></section>
+      <p class="author-empty" id="author-empty" hidden>Aucun article publié pour cet auteur.</p>
 
       <section class="newsletter-panel">
         <h2>Recevoir la newsletter</h2>
-        <p>Chaque semaine, notre sélection d'articles et de sources officielles.</p>
+        <p>Une sélection hebdomadaire de nos enquêtes, sources et décryptages.</p>
         <form class="newsletter-form" data-newsletter-form novalidate>
-          <label class="sr-only" for="newsletter-email-category">Email newsletter</label>
+          <label class="sr-only" for="newsletter-email-author">Email newsletter</label>
           <input
-            id="newsletter-email-category"
+            id="newsletter-email-author"
             data-newsletter-email
             type="email"
             name="email"
@@ -177,7 +179,7 @@
       </article>
     </template>
 
-    <script type="module" src="./category.js"></script>
+    <script type="module" src="./author.js"></script>
     <script type="module" src="./newsletter.js"></script>
   </body>
 </html>

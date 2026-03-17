@@ -8,6 +8,7 @@ import {
   buildDocumentUrl,
   buildOptimizedImageUrl,
   buildOptimizedImageSrcSet,
+  getSeriesById,
 } from "./articles-data.js";
 
 const grid = document.querySelector("#article-grid");
@@ -228,8 +229,22 @@ function formatReadingTime(minutes) {
   return `${minutes} min de lecture`;
 }
 
-function formatCardByline(article) {
-  return `Par ${article.author} · ${formatReadingTime(article.readTimeMinutes)}`;
+function renderCardByline(container, article) {
+  if (!container) return;
+  container.textContent = `Par ${article.author} · ${formatReadingTime(article.readTimeMinutes)}`;
+}
+
+function renderSeriesLine(container, article) {
+  if (!container) return;
+  const seriesEntry = article.series ? getSeriesById(article.series) : null;
+
+  if (!seriesEntry) {
+    container.hidden = true;
+    return;
+  }
+
+  container.textContent = `Dossier: ${seriesEntry.title}`;
+  container.hidden = false;
 }
 
 function formatPublishedUpdated(article) {
@@ -240,8 +255,8 @@ function formatPublishedUpdated(article) {
 
 function renderFeaturedMeta() {
   if (!featuredStoryMeta || !featuredArticle) return;
-
-  featuredStoryMeta.textContent = `${formatCardByline(featuredArticle)} · ${formatPublishedUpdated(featuredArticle)}`;
+  renderCardByline(featuredStoryMeta, featuredArticle);
+  featuredStoryMeta.append(` · ${formatPublishedUpdated(featuredArticle)}`);
 }
 
 function renderFeaturedSources() {
@@ -401,6 +416,7 @@ function buildCard(article) {
   const tags = fragment.querySelector(".article-card__tags");
   const byline = fragment.querySelector(".article-card__byline");
   const date = fragment.querySelector(".article-card__date");
+  const seriesLine = fragment.querySelector(".article-card__series");
   const title = fragment.querySelector(".article-card__title");
   const excerpt = fragment.querySelector(".article-card__excerpt");
   const caption = fragment.querySelector(".article-card__caption");
@@ -408,8 +424,9 @@ function buildCard(article) {
   title.innerHTML = highlightText(article.title);
   excerpt.innerHTML = highlightText(article.excerpt);
   caption.innerHTML = highlightText(article.caption);
-  byline.textContent = formatCardByline(article);
+  renderCardByline(byline, article);
   date.textContent = formatPublishedUpdated(article);
+  renderSeriesLine(seriesLine, article);
 
   image.src = buildOptimizedImageUrl(article.image, 640, 72);
   image.srcset = buildOptimizedImageSrcSet(article.image, [320, 480, 640, 800, 960], 72);

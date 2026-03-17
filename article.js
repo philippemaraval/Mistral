@@ -2,17 +2,27 @@ import {
   formatDateFr,
   buildCategoryUrl,
   buildArticleUrl,
+  buildAuthorUrl,
+  buildSeriesUrl,
   buildDocumentUrl,
   buildOptimizedImageUrl,
   buildOptimizedImageSrcSet,
   getArticleById,
+  getAuthorById,
+  getSeriesById,
+  resolveAuthorId,
+  getPrevNextArticles,
   getRelatedArticles,
 } from "./articles-data.js";
 
 const title = document.querySelector("#article-title");
 const excerpt = document.querySelector("#article-excerpt");
 const metaPrimary = document.querySelector("#article-meta-primary");
+const articleAuthorLink = document.querySelector("#article-author-link");
+const articleReadTime = document.querySelector("#article-read-time");
 const metaSecondary = document.querySelector("#article-meta-secondary");
+const metaSeries = document.querySelector("#article-meta-series");
+const articleSeriesLink = document.querySelector("#article-series-link");
 const image = document.querySelector("#article-image");
 const caption = document.querySelector("#article-caption");
 const tags = document.querySelector("#article-tags");
@@ -41,6 +51,13 @@ const readingSizeToggle = document.querySelector("#reading-size-toggle");
 const readingSpacingToggle = document.querySelector("#reading-spacing-toggle");
 const articleContentGrid = document.querySelector(".article-content-grid");
 const articleShareButton = document.querySelector("#article-share-button");
+const articlePagination = document.querySelector("#article-pagination");
+const articlePrevLink = document.querySelector("#article-prev-link");
+const articlePrevLabel = document.querySelector("#article-prev-label");
+const articlePrevTitle = document.querySelector("#article-prev-title");
+const articleNextLink = document.querySelector("#article-next-link");
+const articleNextLabel = document.querySelector("#article-next-label");
+const articleNextTitle = document.querySelector("#article-next-title");
 
 const searchParams = new URLSearchParams(window.location.search);
 const requestedId = searchParams.get("id");
@@ -66,6 +83,31 @@ function formatPublishedUpdated(entry) {
 
 function formatAuthorLine(entry) {
   return `Par ${entry.author} · ${formatReadingTime(entry.readTimeMinutes)}`;
+}
+
+function renderPrimaryMeta(entry) {
+  const authorId = resolveAuthorId(entry);
+  const authorEntry = authorId ? getAuthorById(authorId) : null;
+
+  if (articleAuthorLink && articleReadTime) {
+    articleAuthorLink.textContent = authorEntry?.name || entry.author;
+    const resolvedAuthorId = authorEntry?.id || authorId || "";
+    articleAuthorLink.href = resolvedAuthorId ? buildAuthorUrl(resolvedAuthorId) : "#";
+    articleReadTime.textContent = formatReadingTime(entry.readTimeMinutes);
+  } else if (metaPrimary) {
+    metaPrimary.textContent = formatAuthorLine(entry);
+  }
+
+  if (!metaSeries || !articleSeriesLink) return;
+  const seriesEntry = entry.series ? getSeriesById(entry.series) : null;
+  if (!seriesEntry) {
+    metaSeries.hidden = true;
+    return;
+  }
+
+  articleSeriesLink.textContent = seriesEntry.title;
+  articleSeriesLink.href = buildSeriesUrl(seriesEntry.id);
+  metaSeries.hidden = false;
 }
 
 function slugify(value, index) {
@@ -308,6 +350,39 @@ function renderRelatedArticles() {
   relatedArticles.forEach((relatedArticle) => {
     relatedArticlesList.appendChild(buildRelatedArticleCard(relatedArticle));
   });
+}
+
+function setPaginationItem(linkElement, labelElement, titleElement, target, fallbackLabel) {
+  if (!linkElement || !labelElement || !titleElement) return;
+
+  labelElement.textContent = fallbackLabel;
+
+  if (!target) {
+    linkElement.classList.add("is-empty");
+    linkElement.removeAttribute("href");
+    linkElement.setAttribute("aria-disabled", "true");
+    titleElement.textContent = `Aucun ${fallbackLabel.toLowerCase()}`;
+    return;
+  }
+
+  linkElement.classList.remove("is-empty");
+  linkElement.href = buildArticleUrl(target.id);
+  linkElement.removeAttribute("aria-disabled");
+  titleElement.textContent = target.title;
+}
+
+function renderPrevNextNavigation() {
+  if (!articlePagination) return;
+
+  const { previous, next } = getPrevNextArticles(article.id);
+  if (!previous && !next) {
+    articlePagination.remove();
+    return;
+  }
+
+  setPaginationItem(articlePrevLink, articlePrevLabel, articlePrevTitle, previous, "Article plus récent");
+  setPaginationItem(articleNextLink, articleNextLabel, articleNextTitle, next, "Article plus ancien");
+  articlePagination.hidden = false;
 }
 
 function renderSources() {
@@ -559,7 +634,7 @@ function updateSocialMeta() {
 document.title = `${article.seoTitle || article.title} | Mistral`;
 title.textContent = article.title;
 excerpt.textContent = article.excerpt;
-metaPrimary.textContent = formatAuthorLine(article);
+renderPrimaryMeta(article);
 metaSecondary.textContent = formatPublishedUpdated(article);
 image.src = buildOptimizedImageUrl(article.image, 960, 72);
 image.srcset = buildOptimizedImageSrcSet(article.image, [480, 720, 960, 1200, 1600], 74);
@@ -577,6 +652,7 @@ renderArticleBody();
 renderSources();
 renderRevisionHistory();
 renderRelatedArticles();
+renderPrevNextNavigation();
 setupReadingPreferences();
 syncMobileReadingBar();
 bindShareButtons();

@@ -11,6 +11,14 @@ import {
   getArticlesBySeries,
 } from "./articles-data.js";
 import { trackEvent } from "./analytics.js";
+import {
+  formatReadingTime,
+  markImageLoading,
+  setMetaTag,
+  setupNavigation,
+  createBackToTopVisibilityUpdater,
+  bindBackToTopButton,
+} from "./ui-utils.js";
 
 const title = document.querySelector("#series-title");
 const description = document.querySelector("#series-description");
@@ -30,45 +38,7 @@ const requestedId = searchParams.get("id") ?? "";
 const fallbackSeries = series.find((entry) => getArticlesBySeries(entry.id).length > 0) ?? series[0];
 const currentSeries = getSeriesById(requestedId) ?? fallbackSeries ?? null;
 const seriesArticles = currentSeries ? getArticlesBySeries(currentSeries.id) : [];
-
-function formatReadingTime(minutes) {
-  return `${minutes} min de lecture`;
-}
-
-function markImageLoading(image, options = {}) {
-  if (!image) return;
-  const { eager = false } = options;
-  image.loading = eager ? "eager" : "lazy";
-  image.decoding = "async";
-  image.fetchPriority = eager ? "high" : "low";
-  image.dataset.imgState = "loading";
-
-  if (image.complete && image.naturalWidth > 0) {
-    image.dataset.imgState = "loaded";
-    return;
-  }
-
-  image.addEventListener(
-    "load",
-    () => {
-      image.dataset.imgState = "loaded";
-    },
-    { once: true }
-  );
-  image.addEventListener(
-    "error",
-    () => {
-      image.dataset.imgState = "error";
-    },
-    { once: true }
-  );
-}
-
-function setMetaTag(selector, content) {
-  const element = document.querySelector(selector);
-  if (!element) return;
-  element.setAttribute("content", content);
-}
+const updateBackToTopVisibility = createBackToTopVisibilityUpdater(backToTopButton);
 
 function formatPublishedUpdated(article) {
   const published = `Publié le ${formatDateFr(article.date)}`;
@@ -162,25 +132,6 @@ function renderTopics() {
   topics.append(heading, list);
 }
 
-function setupNavigation() {
-  navToggle?.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("is-open");
-    navToggle.setAttribute("aria-expanded", String(isOpen));
-  });
-
-  nav?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      nav.classList.remove("is-open");
-      navToggle?.setAttribute("aria-expanded", "false");
-    });
-  });
-}
-
-function updateBackToTopVisibility() {
-  if (!backToTopButton) return;
-  backToTopButton.classList.toggle("is-visible", window.scrollY > 480);
-}
-
 if (!currentSeries || !title || !description || !stats || !cover) {
   document.title = "Dossier introuvable | Mistral";
 } else {
@@ -241,13 +192,10 @@ if (!currentSeries || !title || !description || !stats || !cover) {
   }
 }
 
-setupNavigation();
+setupNavigation(navToggle, nav);
 window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
 updateBackToTopVisibility();
-
-backToTopButton?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+bindBackToTopButton(backToTopButton);
 
 grid?.addEventListener("click", (event) => {
   const target = event.target;

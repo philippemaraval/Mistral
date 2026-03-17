@@ -17,6 +17,14 @@ import {
   slugRedirects,
 } from "./articles-data.js";
 import { trackEvent } from "./analytics.js";
+import {
+  formatReadingTime,
+  markImageLoading,
+  setMetaTag,
+  setupNavigation,
+  createBackToTopVisibilityUpdater,
+  bindBackToTopButton,
+} from "./ui-utils.js";
 
 const title = document.querySelector("#article-title");
 const excerpt = document.querySelector("#article-excerpt");
@@ -82,6 +90,7 @@ const readingPrefs = {
   largeText: false,
   relaxedSpacing: false,
 };
+const updateBackToTopVisibility = createBackToTopVisibilityUpdater(backToTopButton);
 
 function normalizeArticleUrl() {
   if (!article) return;
@@ -92,10 +101,6 @@ function normalizeArticleUrl() {
 
   if (!hasLegacyQuery && !hasMismatchId && !hasRedirectAlias) return;
   window.history.replaceState({}, "", canonicalRelative);
-}
-
-function formatReadingTime(minutes) {
-  return `${minutes} min de lecture`;
 }
 
 function formatPublishedUpdated(entry) {
@@ -112,35 +117,6 @@ function shortSocialTitle(value, maxLength = 72) {
   const source = String(value ?? "").trim();
   if (source.length <= maxLength) return source;
   return `${source.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
-}
-
-function markImageLoading(target, options = {}) {
-  if (!target) return;
-  const { eager = false } = options;
-  target.loading = eager ? "eager" : "lazy";
-  target.decoding = "async";
-  target.fetchPriority = eager ? "high" : "low";
-  target.dataset.imgState = "loading";
-
-  if (target.complete && target.naturalWidth > 0) {
-    target.dataset.imgState = "loaded";
-    return;
-  }
-
-  target.addEventListener(
-    "load",
-    () => {
-      target.dataset.imgState = "loaded";
-    },
-    { once: true }
-  );
-  target.addEventListener(
-    "error",
-    () => {
-      target.dataset.imgState = "error";
-    },
-    { once: true }
-  );
 }
 
 function renderPrimaryMeta(entry) {
@@ -729,11 +705,6 @@ function updateReadingProgress() {
   trackReadMilestones(progress);
 }
 
-function updateBackToTopVisibility() {
-  if (!backToTopButton) return;
-  backToTopButton.classList.toggle("is-visible", window.scrollY > 480);
-}
-
 function updateActiveTocEntry() {
   if (!tocEntries.length || articleToc?.hidden) return;
 
@@ -859,12 +830,6 @@ function bindReportErrorButton() {
     });
     window.location.href = buildReportErrorMailto();
   });
-}
-
-function setMetaTag(selector, content) {
-  const element = document.querySelector(selector);
-  if (!element) return;
-  element.setAttribute("content", content);
 }
 
 function upsertMetaTagByProperty(property, content) {
@@ -1127,21 +1092,8 @@ article.tags.forEach((tag) => {
   tags.appendChild(link);
 });
 
-navToggle?.addEventListener("click", () => {
-  const isOpen = nav.classList.toggle("is-open");
-  navToggle.setAttribute("aria-expanded", String(isOpen));
-});
-
-nav?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    nav.classList.remove("is-open");
-    navToggle?.setAttribute("aria-expanded", "false");
-  });
-});
-
-backToTopButton?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+setupNavigation(navToggle, nav);
+bindBackToTopButton(backToTopButton);
 
 mobileReadingTop?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });

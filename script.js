@@ -12,6 +12,14 @@ import {
   getSeriesById,
 } from "./articles-data.js";
 import { trackEvent } from "./analytics.js";
+import {
+  formatReadingTime,
+  markImageLoading,
+  setMetaTag,
+  setupNavigation,
+  createBackToTopVisibilityUpdater,
+  bindBackToTopButton,
+} from "./ui-utils.js";
 
 const grid = document.querySelector("#article-grid");
 const template = document.querySelector("#article-card-template");
@@ -61,6 +69,7 @@ let suggestionValues = [];
 let activeSuggestionIndex = -1;
 let hasTrackedHomeView = false;
 let lastSearchSignature = "";
+const updateBackToTopVisibility = createBackToTopVisibilityUpdater(backToTopButton);
 
 function normalizeSearchValue(value) {
   return value
@@ -75,12 +84,6 @@ function shortSocialTitle(value, maxLength = 72) {
   const source = String(value ?? "").trim();
   if (source.length <= maxLength) return source;
   return `${source.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
-}
-
-function setMetaTag(selector, content) {
-  const element = document.querySelector(selector);
-  if (!element) return;
-  element.setAttribute("content", content);
 }
 
 function getCanonicalHomeUrl() {
@@ -155,35 +158,6 @@ function getFeaturedSharePayload() {
     text: featuredArticle.seoDescription || featuredArticle.excerpt,
     url: new URL(buildArticleUrl(featuredArticle.id), window.location.href).toString(),
   };
-}
-
-function markImageLoading(image, options = {}) {
-  if (!image) return;
-  const { eager = false } = options;
-  image.loading = eager ? "eager" : "lazy";
-  image.decoding = "async";
-  image.fetchPriority = eager ? "high" : "low";
-  image.dataset.imgState = "loading";
-
-  if (image.complete && image.naturalWidth > 0) {
-    image.dataset.imgState = "loaded";
-    return;
-  }
-
-  image.addEventListener(
-    "load",
-    () => {
-      image.dataset.imgState = "loaded";
-    },
-    { once: true }
-  );
-  image.addEventListener(
-    "error",
-    () => {
-      image.dataset.imgState = "error";
-    },
-    { once: true }
-  );
 }
 
 async function copyShareUrl(url) {
@@ -316,10 +290,6 @@ function buildTags(tags, parent) {
     link.setAttribute("aria-label", `Voir la catégorie ${tag}`);
     parent.appendChild(link);
   });
-}
-
-function formatReadingTime(minutes) {
-  return `${minutes} min de lecture`;
 }
 
 function renderCardByline(container, article) {
@@ -683,11 +653,6 @@ function applySearchAndFilters(value) {
   }
 }
 
-function updateBackToTopVisibility() {
-  if (!backToTopButton) return;
-  backToTopButton.classList.toggle("is-visible", window.scrollY > 480);
-}
-
 if (grid && template) {
   observer = new IntersectionObserver(
     (entries) => {
@@ -832,21 +797,8 @@ viewButtons.forEach((button) => {
   });
 });
 
-navToggle?.addEventListener("click", () => {
-  const isOpen = nav.classList.toggle("is-open");
-  navToggle.setAttribute("aria-expanded", String(isOpen));
-});
-
-nav?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    nav.classList.remove("is-open");
-    navToggle?.setAttribute("aria-expanded", "false");
-  });
-});
-
-backToTopButton?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+setupNavigation(navToggle, nav);
+bindBackToTopButton(backToTopButton);
 
 window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
 updateBackToTopVisibility();

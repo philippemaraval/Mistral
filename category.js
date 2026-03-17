@@ -11,6 +11,14 @@ import {
   getSeriesById,
 } from "./articles-data.js";
 import { trackEvent } from "./analytics.js";
+import {
+  formatReadingTime,
+  markImageLoading,
+  setMetaTag,
+  setupNavigation,
+  createBackToTopVisibilityUpdater,
+  bindBackToTopButton,
+} from "./ui-utils.js";
 
 const grid = document.querySelector("#category-grid");
 const template = document.querySelector("#article-card-template");
@@ -49,39 +57,7 @@ let loadTimeout;
 let viewMode = "grid";
 let hasTrackedCategoryView = false;
 let lastFilterSignature = "";
-
-function formatReadingTime(minutes) {
-  return `${minutes} min de lecture`;
-}
-
-function markImageLoading(image, options = {}) {
-  if (!image) return;
-  const { eager = false } = options;
-  image.loading = eager ? "eager" : "lazy";
-  image.decoding = "async";
-  image.fetchPriority = eager ? "high" : "low";
-  image.dataset.imgState = "loading";
-
-  if (image.complete && image.naturalWidth > 0) {
-    image.dataset.imgState = "loaded";
-    return;
-  }
-
-  image.addEventListener(
-    "load",
-    () => {
-      image.dataset.imgState = "loaded";
-    },
-    { once: true }
-  );
-  image.addEventListener(
-    "error",
-    () => {
-      image.dataset.imgState = "error";
-    },
-    { once: true }
-  );
-}
+const updateBackToTopVisibility = createBackToTopVisibilityUpdater(backToTopButton);
 
 function renderCardByline(container, article) {
   if (!container) return;
@@ -170,12 +146,6 @@ function buildCard(article) {
   buildTags(article.tags, tags);
 
   return fragment;
-}
-
-function setMetaTag(selector, content) {
-  const element = document.querySelector(selector);
-  if (!element) return;
-  element.setAttribute("content", content);
 }
 
 function upsertMetaTagByProperty(property, content) {
@@ -379,28 +349,9 @@ function applyFilters() {
   }
 }
 
-function setupNavigation() {
-  navToggle?.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("is-open");
-    navToggle.setAttribute("aria-expanded", String(isOpen));
-  });
-
-  nav?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      nav.classList.remove("is-open");
-      navToggle?.setAttribute("aria-expanded", "false");
-    });
-  });
-}
-
-function updateBackToTopVisibility() {
-  if (!backToTopButton) return;
-  backToTopButton.classList.toggle("is-visible", window.scrollY > 480);
-}
-
 setupCategoryHeader();
 setupActiveCategoryNav();
-setupNavigation();
+setupNavigation(navToggle, nav);
 updateSocialMeta();
 setViewMode(readViewMode());
 renderTagFilters();
@@ -428,9 +379,7 @@ if (grid && template) {
   applyFilters();
 }
 
-backToTopButton?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+bindBackToTopButton(backToTopButton);
 
 viewButtons.forEach((button) => {
   button.addEventListener("click", () => {

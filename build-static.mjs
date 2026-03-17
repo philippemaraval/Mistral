@@ -30,6 +30,7 @@ const entries = [
   "category.js",
   "WeatherMap.js",
   "static-page.js",
+  "ui-utils.js",
   "contact.js",
   "newsletter.js",
   "404.js",

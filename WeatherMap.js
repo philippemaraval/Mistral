@@ -11,6 +11,7 @@ import {
   getSeriesById,
 } from "./articles-data.js";
 import { trackEvent } from "./analytics.js";
+import { markImageLoading } from "./ui-utils.js";
 
 const mapContainer = document.querySelector("#map-container");
 const leaflet = window.L;
@@ -121,35 +122,6 @@ function getArticleDate(article) {
   const updated = article.updatedDate ? new Date(article.updatedDate) : null;
   if (updated && !Number.isNaN(updated.getTime()) && updated > published) return updated;
   return published;
-}
-
-function markImageLoading(target, options = {}) {
-  if (!target) return;
-  const { eager = false } = options;
-  target.loading = eager ? "eager" : "lazy";
-  target.decoding = "async";
-  target.fetchPriority = eager ? "high" : "low";
-  target.dataset.imgState = "loading";
-
-  if (target.complete && target.naturalWidth > 0) {
-    target.dataset.imgState = "loaded";
-    return;
-  }
-
-  target.addEventListener(
-    "load",
-    () => {
-      target.dataset.imgState = "loaded";
-    },
-    { once: true }
-  );
-  target.addEventListener(
-    "error",
-    () => {
-      target.dataset.imgState = "error";
-    },
-    { once: true }
-  );
 }
 
 function getLatestArticleByCategory(category) {

@@ -35,10 +35,12 @@ const articlePage = document.querySelector(".article-page");
 const mobileReadingBar = document.querySelector("#mobile-reading-bar");
 const mobileReadingToc = document.querySelector("#mobile-reading-toc");
 const mobileReadingSources = document.querySelector("#mobile-reading-sources");
+const mobileReadingShare = document.querySelector("#mobile-reading-share");
 const mobileReadingTop = document.querySelector("#mobile-reading-top");
 const readingSizeToggle = document.querySelector("#reading-size-toggle");
 const readingSpacingToggle = document.querySelector("#reading-spacing-toggle");
 const articleContentGrid = document.querySelector(".article-content-grid");
+const articleShareButton = document.querySelector("#article-share-button");
 
 const searchParams = new URLSearchParams(window.location.search);
 const requestedId = searchParams.get("id");
@@ -463,6 +465,74 @@ function setMetaTag(selector, content) {
   element.setAttribute("content", content);
 }
 
+function resolveArticleShareUrl() {
+  const fallback = new URL(buildArticleUrl(article.id), window.location.href).toString();
+  if (!article.canonicalUrl) return fallback;
+  try {
+    return new URL(article.canonicalUrl, window.location.href).toString();
+  } catch {
+    return fallback;
+  }
+}
+
+function getArticleSharePayload() {
+  return {
+    title: article.seoTitle || article.title,
+    text: article.seoDescription || article.excerpt,
+    url: resolveArticleShareUrl(),
+  };
+}
+
+async function copyShareUrl(url) {
+  if (!navigator.clipboard?.writeText) return false;
+  try {
+    await navigator.clipboard.writeText(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function setShareFeedback(button, message) {
+  if (!button) return;
+  const previousLabel = button.textContent;
+  button.textContent = message;
+  window.setTimeout(() => {
+    button.textContent = previousLabel;
+  }, 1800);
+}
+
+async function handleNativeShare(button) {
+  const payload = getArticleSharePayload();
+
+  if (typeof navigator.share === "function") {
+    try {
+      await navigator.share(payload);
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+    }
+  }
+
+  const copied = await copyShareUrl(payload.url);
+  if (copied) {
+    setShareFeedback(button, "Lien copié");
+    return;
+  }
+
+  const subject = encodeURIComponent(payload.title || "Partager");
+  const body = encodeURIComponent(`${payload.text || ""}\n${payload.url}`.trim());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function bindShareButtons() {
+  [articleShareButton, mobileReadingShare].forEach((button) => {
+    button?.addEventListener("click", () => {
+      void handleNativeShare(button);
+    });
+  });
+}
+
 function updateSocialMeta() {
   const pageUrl = new URL(buildArticleUrl(article.id), window.location.href).toString();
   const canonicalUrl = article.canonicalUrl || pageUrl;
@@ -506,6 +576,7 @@ renderRevisionHistory();
 renderRelatedArticles();
 setupReadingPreferences();
 syncMobileReadingBar();
+bindShareButtons();
 
 article.tags.forEach((tag) => {
   const link = document.createElement("a");

@@ -27,6 +27,8 @@ const backToTopButton = document.querySelector("#back-to-top");
 const viewButtons = Array.from(document.querySelectorAll("[data-view-option]"));
 const featuredStoryMeta = document.querySelector("#featured-story-meta");
 const featuredStorySources = document.querySelector("#featured-story-sources");
+const featuredNativeShareButton = document.querySelector('[data-share-action="featured-native"]');
+const siteNativeShareButton = document.querySelector('[data-share-action="site-native"]');
 
 const featuredArticle = articles.find((article) => article.id === featuredArticleId) ?? null;
 
@@ -88,6 +90,75 @@ function highlightText(value) {
   });
 
   return output;
+}
+
+function getSiteSharePayload() {
+  return {
+    title: "Mistral",
+    text: "Le vent de l'actualité",
+    url: new URL("./", window.location.href).toString(),
+  };
+}
+
+function getFeaturedSharePayload() {
+  if (!featuredArticle) return getSiteSharePayload();
+  return {
+    title: featuredArticle.seoTitle || featuredArticle.title,
+    text: featuredArticle.seoDescription || featuredArticle.excerpt,
+    url: new URL(buildArticleUrl(featuredArticle.id), window.location.href).toString(),
+  };
+}
+
+async function copyShareUrl(url) {
+  if (!navigator.clipboard?.writeText) return false;
+  try {
+    await navigator.clipboard.writeText(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function setShareFeedback(button, message) {
+  if (!button) return;
+  const previousTitle = button.dataset.shareTitle || button.getAttribute("title") || "";
+  if (!button.dataset.shareTitle && previousTitle) {
+    button.dataset.shareTitle = previousTitle;
+  }
+  button.setAttribute("title", message);
+  window.setTimeout(() => {
+    button.setAttribute("title", button.dataset.shareTitle || previousTitle || message);
+  }, 1800);
+}
+
+async function handleNativeShare(button, payloadBuilder) {
+  const payload = payloadBuilder();
+
+  if (typeof navigator.share === "function") {
+    try {
+      await navigator.share(payload);
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+    }
+  }
+
+  const copied = await copyShareUrl(payload.url);
+  if (copied) {
+    setShareFeedback(button, "Lien copié");
+    return;
+  }
+
+  const subject = encodeURIComponent(payload.title || "Partager");
+  const body = encodeURIComponent(`${payload.text || ""}\n${payload.url}`.trim());
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function bindNativeShareButton(button, payloadBuilder) {
+  if (!button) return;
+  button.addEventListener("click", () => {
+    void handleNativeShare(button, payloadBuilder);
+  });
 }
 
 function readViewMode() {
@@ -505,6 +576,8 @@ setViewMode(readViewMode());
 
 renderFeaturedMeta();
 renderFeaturedSources();
+bindNativeShareButton(featuredNativeShareButton, getFeaturedSharePayload);
+bindNativeShareButton(siteNativeShareButton, getSiteSharePayload);
 
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();

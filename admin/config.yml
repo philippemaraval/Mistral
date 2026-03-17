@@ -40,9 +40,13 @@ collections:
         editor:
           preview: false
         fields:
-          - label: "Article a la une (ID)"
+          - label: "Article a la une"
             name: "featuredArticleId"
-            widget: "string"
+            widget: "relation"
+            collection: "articles"
+            search_fields: ["title", "id"]
+            display_fields: ["title", "id"]
+            value_field: "id"
 
   - name: "articles"
     label: "Articles"

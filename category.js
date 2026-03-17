@@ -1,3 +1,4 @@
+import "./pwa.js";
 import {
   articles,
   categories,
@@ -9,6 +10,7 @@ import {
   buildOptimizedImageSrcSet,
   getSeriesById,
 } from "./articles-data.js";
+import { trackEvent } from "./analytics.js";
 
 const grid = document.querySelector("#category-grid");
 const template = document.querySelector("#article-card-template");
@@ -45,9 +47,40 @@ let isLoading = false;
 let observer;
 let loadTimeout;
 let viewMode = "grid";
+let hasTrackedCategoryView = false;
+let lastFilterSignature = "";
 
 function formatReadingTime(minutes) {
   return `${minutes} min de lecture`;
+}
+
+function markImageLoading(image, options = {}) {
+  if (!image) return;
+  const { eager = false } = options;
+  image.loading = eager ? "eager" : "lazy";
+  image.decoding = "async";
+  image.fetchPriority = eager ? "high" : "low";
+  image.dataset.imgState = "loading";
+
+  if (image.complete && image.naturalWidth > 0) {
+    image.dataset.imgState = "loaded";
+    return;
+  }
+
+  image.addEventListener(
+    "load",
+    () => {
+      image.dataset.imgState = "loaded";
+    },
+    { once: true }
+  );
+  image.addEventListener(
+    "error",
+    () => {
+      image.dataset.imgState = "error";
+    },
+    { once: true }
+  );
 }
 
 function renderCardByline(container, article) {
@@ -130,7 +163,9 @@ function buildCard(article) {
   image.srcset = buildOptimizedImageSrcSet(article.image, [320, 480, 640, 800, 960], 72);
   image.sizes = "(max-width: 767px) 100vw, (max-width: 980px) 50vw, 33vw";
   image.alt = article.heroImageAlt || article.title;
+  markImageLoading(image);
   link.href = buildArticleUrl(article.id);
+  link.dataset.articleId = article.id;
   link.setAttribute("aria-label", `Lire l'article : ${article.title}`);
   buildTags(article.tags, tags);
 
@@ -140,6 +175,26 @@ function buildCard(article) {
 function setMetaTag(selector, content) {
   const element = document.querySelector(selector);
   if (!element) return;
+  element.setAttribute("content", content);
+}
+
+function upsertMetaTagByProperty(property, content) {
+  let element = document.querySelector(`meta[property="${property}"]`);
+  if (!element) {
+    element = document.createElement("meta");
+    element.setAttribute("property", property);
+    document.head.appendChild(element);
+  }
+  element.setAttribute("content", content);
+}
+
+function upsertMetaTagByName(name, content) {
+  let element = document.querySelector(`meta[name="${name}"]`);
+  if (!element) {
+    element = document.createElement("meta");
+    element.setAttribute("name", name);
+    document.head.appendChild(element);
+  }
   element.setAttribute("content", content);
 }
 
@@ -156,10 +211,12 @@ function updateSocialMeta() {
   setMetaTag('meta[property="og:title"]', `${tag} | Mistral`);
   setMetaTag('meta[property="og:description"]', description);
   setMetaTag('meta[property="og:image"]', previewImage);
+  upsertMetaTagByProperty("og:image:alt", `Aperçu de la rubrique ${tag}`);
   setMetaTag('meta[property="og:url"]', pageUrl);
   setMetaTag('meta[name="twitter:title"]', `${tag} | Mistral`);
   setMetaTag('meta[name="twitter:description"]', description);
   setMetaTag('meta[name="twitter:image"]', previewImage);
+  upsertMetaTagByName("twitter:image:alt", `Aperçu de la rubrique ${tag}`);
 
   const canonical = document.querySelector("#canonical-link");
   if (canonical) canonical.setAttribute("href", pageUrl);
@@ -308,6 +365,18 @@ function applyFilters() {
   renderBatch(BATCH_SIZE);
   renderTagFilters();
   updateCategoryLead();
+
+  const signature = `${[...selectedTags].sort((a, b) => a.localeCompare(b, "fr")).join("|")}::${
+    activeArticles.length
+  }`;
+  if (signature !== lastFilterSignature) {
+    lastFilterSignature = signature;
+    trackEvent("category_filter_apply", {
+      category: tag,
+      filters: [...selectedTags],
+      resultCount: activeArticles.length,
+    });
+  }
 }
 
 function setupNavigation() {
@@ -335,6 +404,15 @@ setupNavigation();
 updateSocialMeta();
 setViewMode(readViewMode());
 renderTagFilters();
+
+if (!hasTrackedCategoryView) {
+  hasTrackedCategoryView = true;
+  trackEvent("category_view", {
+    category: tag,
+    articleCount: baseArticles.length,
+  });
+}
+
 window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
 updateBackToTopVisibility();
 
@@ -358,10 +436,28 @@ viewButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const mode = button.dataset.viewOption === "list" ? "list" : "grid";
     setViewMode(mode);
+    trackEvent("feed_view_mode", {
+      page: "category",
+      mode,
+      category: tag,
+    });
   });
 });
 
 tagFiltersReset?.addEventListener("click", () => {
   selectedTags = new Set();
   applyFilters();
+});
+
+grid?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const link = target.closest(".article-card__link");
+  if (!link) return;
+  const articleId = link.getAttribute("data-article-id");
+  if (!articleId) return;
+  trackEvent("article_card_click", {
+    articleId,
+    context: `category:${tag}`,
+  });
 });

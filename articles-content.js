@@ -146,8 +146,12 @@ export const articles = [
     "status": "published",
     "publishAt": "2026-03-11T06:00:00.000Z",
     "seoTitle": "OM : Les chiffres cachés du nouveau stade",
+    "socialTitle": "OM stade: les chiffres clés",
     "seoDescription": "Notre enquête révèle les montants réels du partenariat public-privé pour le Vélodrome. Un dossier qui bouscule les certitudes municipales.",
     "ogImage": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80",
+    "redirectFrom": [
+      "om-velodrome-chiffres-caches"
+    ],
     "factCheckedBy": "Léa Martin",
     "legalReviewedBy": "Léa Martin",
     "sensitiveTopic": false,
@@ -161,6 +165,62 @@ export const articles = [
       "dockers-port-autonome"
     ],
     "sourceLinks": [],
+    "dataHighlights": [
+      {
+        "title": "Répartition des montants engagés",
+        "type": "bar",
+        "unit": "M€",
+        "note": "Montants consolidés à partir des avenants et documents budgétaires cités dans les sources.",
+        "items": [
+          {
+            "label": "Travaux initiaux",
+            "value": 42
+          },
+          {
+            "label": "Maintenance",
+            "value": 17
+          },
+          {
+            "label": "Compensations",
+            "value": 9
+          }
+        ]
+      },
+      {
+        "title": "Chronologie des décisions",
+        "type": "timeline",
+        "items": [
+          {
+            "label": "Vote de l'avenant",
+            "date": "2024-09",
+            "detail": "Le conseil municipal valide la nouvelle trajectoire financière."
+          },
+          {
+            "label": "Mise à jour des lignes budgétaires",
+            "date": "2025-04",
+            "detail": "Les engagements apparaissent dans le budget primitif."
+          },
+          {
+            "label": "Publication de l'enquête",
+            "date": "2026-03",
+            "detail": "Mistral recoupe contrats, délibérations et flux financiers."
+          }
+        ]
+      },
+      {
+        "title": "Écart entre annoncé et constaté",
+        "type": "comparison",
+        "unit": "M€",
+        "items": [
+          {
+            "label": "Coût global",
+            "value": 68,
+            "valueSecondary": 74,
+            "detail": "Annonce publique vs total reconstitué documents en main."
+          }
+        ]
+      }
+    ],
     "authorId": "lea-martin",
     "factCheckedById": "lea-martin",
     "legalReviewedById": "lea-martin",
@@ -202,7 +262,9 @@ export const articles = [
     "factCheckedById": "nassim-belkacem",
     "sections": [],
     "sources": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   },
   {
     "id": "retards-nord-ville",
@@ -240,7 +302,9 @@ export const articles = [
     "factCheckedById": "sarah-cadi",
     "sections": [],
     "sources": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   },
   {
     "id": "mediterranee-argument-politique",
@@ -278,7 +342,9 @@ export const articles = [
     "factCheckedById": "paul-ferrand",
     "sections": [],
     "sources": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   },
   {
     "id": "ecoles-renovees-marches",
@@ -326,7 +392,9 @@ export const articles = [
     "factCheckedById": "amel-chabane",
     "legalReviewedById": "lea-martin",
     "sections": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   },
   {
     "id": "arretes-municipaux-riverains",
@@ -374,7 +442,9 @@ export const articles = [
     "factCheckedById": "lea-martin",
     "legalReviewedById": "lea-martin",
     "sections": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   },
   {
     "id": "memoire-belle-de-mai",
@@ -412,7 +482,9 @@ export const articles = [
     "factCheckedById": "yanis-gherbi",
     "sections": [],
     "sources": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   },
   {
     "id": "tramway-est-hypotheses",
@@ -451,7 +523,9 @@ export const articles = [
     "factCheckedById": "sarah-cadi",
     "sections": [],
     "sources": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   },
   {
     "id": "friches-culturelles-sud",
@@ -490,6 +564,8 @@ export const articles = [
     "factCheckedById": "paul-ferrand",
     "sections": [],
     "sources": [],
-    "corrections": []
+    "corrections": [],
+    "redirectFrom": [],
+    "dataHighlights": []
   }
 ];

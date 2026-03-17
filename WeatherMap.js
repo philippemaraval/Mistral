@@ -1,12 +1,16 @@
+import "./pwa.js";
 import {
   articles,
   categories,
   weatherConfig,
   buildCategoryUrl,
   buildArticleUrl,
+  buildSeriesUrl,
   formatDateFr,
   buildOptimizedImageUrl,
+  getSeriesById,
 } from "./articles-data.js";
+import { trackEvent } from "./analytics.js";
 
 const mapContainer = document.querySelector("#map-container");
 const leaflet = window.L;
@@ -20,6 +24,9 @@ const sideMeta = document.querySelector("#weather-side-meta");
 const sideImage = document.querySelector("#weather-side-image");
 const sideRead = document.querySelector("#weather-side-read");
 const sideCategoryLink = document.querySelector("#weather-side-category-link");
+const sideTrend = document.querySelector("#weather-side-trend");
+const sideSeriesLinks = document.querySelector("#weather-side-series-links");
+const sideRecentLinks = document.querySelector("#weather-side-recent-links");
 const hubGrid = document.querySelector("#weather-hub-grid");
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -116,12 +123,98 @@ function getArticleDate(article) {
   return published;
 }
 
+function markImageLoading(target, options = {}) {
+  if (!target) return;
+  const { eager = false } = options;
+  target.loading = eager ? "eager" : "lazy";
+  target.decoding = "async";
+  target.fetchPriority = eager ? "high" : "low";
+  target.dataset.imgState = "loading";
+
+  if (target.complete && target.naturalWidth > 0) {
+    target.dataset.imgState = "loaded";
+    return;
+  }
+
+  target.addEventListener(
+    "load",
+    () => {
+      target.dataset.imgState = "loaded";
+    },
+    { once: true }
+  );
+  target.addEventListener(
+    "error",
+    () => {
+      target.dataset.imgState = "error";
+    },
+    { once: true }
+  );
+}
+
 function getLatestArticleByCategory(category) {
   return (
     articles
       .filter((article) => article.tags.includes(category))
       .sort((a, b) => getArticleDate(b).getTime() - getArticleDate(a).getTime())[0] ?? null
   );
+}
+
+function getRecentArticlesByCategory(category, limit = 3) {
+  return articles
+    .filter((article) => article.tags.includes(category))
+    .sort((a, b) => getArticleDate(b).getTime() - getArticleDate(a).getTime())
+    .slice(0, limit);
+}
+
+function computeCategoryTrend(category) {
+  const now = Date.now();
+  const currentWindowStart = now - 14 * DAY_MS;
+  const previousWindowStart = now - 28 * DAY_MS;
+
+  let currentCount = 0;
+  let previousCount = 0;
+
+  articles.forEach((article) => {
+    if (!article.tags.includes(category)) return;
+    const articleTime = getArticleDate(article).getTime();
+    if (articleTime >= currentWindowStart) {
+      currentCount += 1;
+    } else if (articleTime >= previousWindowStart && articleTime < currentWindowStart) {
+      previousCount += 1;
+    }
+  });
+
+  if (currentCount > previousCount) {
+    return {
+      direction: "up",
+      label: "Tendance: hausse",
+      detail: `${currentCount} publication(s) sur 14 jours`,
+    };
+  }
+  if (currentCount < previousCount) {
+    return {
+      direction: "down",
+      label: "Tendance: baisse",
+      detail: `${currentCount} publication(s) sur 14 jours`,
+    };
+  }
+  return {
+    direction: "stable",
+    label: "Tendance: stable",
+    detail: `${currentCount} publication(s) sur 14 jours`,
+  };
+}
+
+function getCategorySeries(category, limit = 3) {
+  const seriesIds = [];
+  getRecentArticlesByCategory(category, 8).forEach((entry) => {
+    if (!entry.series || seriesIds.includes(entry.series)) return;
+    if (getSeriesById(entry.series)) {
+      seriesIds.push(entry.series);
+    }
+  });
+  return seriesIds.slice(0, limit).map((seriesId) => getSeriesById(seriesId));
 }
 
 function formatPublishedUpdated(article) {
@@ -140,14 +233,18 @@ function formatRecency(article) {
 
 function getCategorySnapshot(category) {
   const config = getConfigForCategory(category);
-  const latestArticle = getLatestArticleByCategory(category);
+  const recentArticles = getRecentArticlesByCategory(category, 3);
+  const latestArticle = recentArticles[0] ?? null;
   const status = resolveWeatherStatus(config.status, latestArticle);
   const statusLabel = STATUS_LABELS[status] ?? "Variable";
+  const trend = computeCategoryTrend(category);
+  const relatedSeries = getCategorySeries(category);
 
-  return { category, config, latestArticle, status, statusLabel };
+  return { category, config, latestArticle, recentArticles, status, statusLabel, trend, relatedSeries };
 }
 
-function renderLatestPanel(category, latestArticle, status) {
+function renderLatestPanel(snapshot) {
+  const { category, latestArticle, status, trend, relatedSeries, recentArticles } = snapshot;
   const statusLabel = STATUS_LABELS[status] ?? "Variable";
 
   if (
@@ -160,7 +257,10 @@ function renderLatestPanel(category, latestArticle, status) {
     !sideMeta ||
     !sideImage ||
     !sideRead ||
-    !sideCategoryLink
+    !sideCategoryLink ||
+    !sideTrend ||
+    !sideSeriesLinks ||
+    !sideRecentLinks
   ) {
     return;
   }
@@ -171,6 +271,9 @@ function renderLatestPanel(category, latestArticle, status) {
     sideArticle.hidden = true;
     sideStatus.textContent = "";
     sideStatus.removeAttribute("data-weather");
+    sideTrend.textContent = "";
+    sideSeriesLinks.innerHTML = "";
+    sideRecentLinks.innerHTML = "";
     return;
   }
 
@@ -185,8 +288,37 @@ function renderLatestPanel(category, latestArticle, status) {
   sideMeta.textContent = `${formatPublishedUpdated(latestArticle)} · Par ${latestArticle.author}`;
   sideImage.src = buildOptimizedImageUrl(latestArticle.image, 960, 74);
   sideImage.alt = latestArticle.title;
+  markImageLoading(sideImage, { eager: true });
   sideRead.href = buildArticleUrl(latestArticle.id);
   sideCategoryLink.href = buildCategoryUrl(category);
+  sideTrend.textContent = `${trend.label} · ${trend.detail}`;
+
+  sideSeriesLinks.innerHTML = "";
+  if (relatedSeries.length > 0) {
+    relatedSeries.forEach((entry) => {
+      const link = document.createElement("a");
+      link.className = "weather-side-article__chip";
+      link.href = buildSeriesUrl(entry.id);
+      link.textContent = entry.title;
+      link.setAttribute("aria-label", `Voir le dossier ${entry.title}`);
+      sideSeriesLinks.appendChild(link);
+    });
+  } else {
+    const empty = document.createElement("span");
+    empty.className = "weather-side-article__chip weather-side-article__chip--empty";
+    empty.textContent = "Aucun dossier lié";
+    sideSeriesLinks.appendChild(empty);
+  }
+
+  sideRecentLinks.innerHTML = "";
+  recentArticles.forEach((entry) => {
+    const link = document.createElement("a");
+    link.className = "weather-side-article__recent-link";
+    link.href = buildArticleUrl(entry.id);
+    link.textContent = entry.title;
+    link.setAttribute("aria-label", `Lire ${entry.title}`);
+    sideRecentLinks.appendChild(link);
+  });
 }
 
 function setActiveHubCard(category) {
@@ -202,8 +334,13 @@ function focusCategory(category, options = {}) {
   const { panToMarker = false } = options;
   const snapshot = getCategorySnapshot(category);
   activeCategory = category;
-  renderLatestPanel(category, snapshot.latestArticle, snapshot.status);
+  renderLatestPanel(snapshot);
   setActiveHubCard(category);
+  trackEvent("weather_focus_category", {
+    category,
+    status: snapshot.status,
+    trend: snapshot.trend.direction,
+  });
 
   if (panToMarker) {
     const marker = markerRegistry.get(category);
@@ -218,7 +355,7 @@ function focusCategory(category, options = {}) {
 }
 
 function buildHubCard(snapshot) {
-  const { category, config, latestArticle, status, statusLabel } = snapshot;
+  const { category, config, latestArticle, status, statusLabel, trend, relatedSeries } = snapshot;
   const card = document.createElement("article");
   card.className = "weather-hub-card";
   card.setAttribute("data-category", category);
@@ -257,13 +394,32 @@ function buildHubCard(snapshot) {
     const meta = document.createElement("p");
     meta.className = "weather-hub-card__meta";
     meta.textContent = `${formatRecency(latestArticle)} · ${formatPublishedUpdated(latestArticle)}`;
-
     card.append(titleLink, excerpt, meta);
   } else {
     const empty = document.createElement("p");
     empty.className = "weather-hub-card__empty";
     empty.textContent = "Aucun article publié pour cette rubrique pour le moment.";
     card.appendChild(empty);
+  }
+
+  const trendLine = document.createElement("p");
+  trendLine.className = "weather-hub-card__trend";
+  trendLine.textContent = `${trend.label} · ${trend.detail}`;
+  trendLine.setAttribute("data-trend", trend.direction);
+  card.appendChild(trendLine);
+
+  if (relatedSeries.length > 0) {
+    const seriesLine = document.createElement("div");
+    seriesLine.className = "weather-hub-card__series";
+    relatedSeries.forEach((entry) => {
+      const link = document.createElement("a");
+      link.className = "weather-hub-card__series-link";
+      link.href = buildSeriesUrl(entry.id);
+      link.textContent = entry.title;
+      link.setAttribute("aria-label", `Voir le dossier ${entry.title}`);
+      seriesLine.appendChild(link);
+    });
+    card.appendChild(seriesLine);
   }
 
   const actions = document.createElement("div");
@@ -428,15 +584,65 @@ function buildPointHtml(category, latestTitle, status) {
   `;
 }
 
-function buildPopupHtml(category, statusLabel, latestTitle) {
+function buildPopupHtml(snapshot) {
+  const { category, statusLabel, trend, latestArticle, recentArticles, relatedSeries } = snapshot;
+  const title = latestArticle?.title ?? "Aucun article récent";
+  const recentItems = recentArticles
+    .map(
+      (entry) => `
+        <li>
+          <a
+            class="weather-popup-link__article"
+            href="${buildArticleUrl(entry.id)}"
+            data-weather-action="article"
+            data-weather-category="${escapeHtml(category)}"
+            data-weather-target="${escapeHtml(entry.id)}"
+          >
+            ${escapeHtml(entry.title)}
+          </a>
+        </li>
+      `
+    )
+    .join("");
+
+  const seriesItems = relatedSeries
+    .map(
+      (entry) => `
+        <a
+          class="weather-popup-link__chip"
+          href="${buildSeriesUrl(entry.id)}"
+          data-weather-action="series"
+          data-weather-category="${escapeHtml(category)}"
+          data-weather-target="${escapeHtml(entry.id)}"
+        >
+          ${escapeHtml(entry.title)}
+        </a>
+      `
+    )
+    .join("");
+
   return `
-    <a class="weather-popup-link" href="${buildCategoryUrl(category)}" aria-label="Voir la catégorie ${escapeHtml(
-    category
-  )}">
-      <strong>${escapeHtml(category)}</strong>
-      <span>${escapeHtml(statusLabel)}</span>
-      <span>${escapeHtml(latestTitle)}</span>
-    </a>
+    <div class="weather-popup-link">
+      <p class="weather-popup-link__head">
+        <strong>#${escapeHtml(category)}</strong>
+        <span>${escapeHtml(statusLabel)}</span>
+      </p>
+      <p class="weather-popup-link__trend">${escapeHtml(trend.label)} · ${escapeHtml(trend.detail)}</p>
+      <p class="weather-popup-link__latest">${escapeHtml(title)}</p>
+      <ul class="weather-popup-link__articles">${recentItems}</ul>
+      <div class="weather-popup-link__chips">
+        <a
+          class="weather-popup-link__chip weather-popup-link__chip--primary"
+          href="${buildCategoryUrl(category)}"
+          data-weather-action="category"
+          data-weather-category="${escapeHtml(category)}"
+          data-weather-target="${escapeHtml(category)}"
+        >
+          Voir la rubrique
+        </a>
+        ${seriesItems}
+      </div>
+    </div>
   `;
 }
 
@@ -483,7 +689,8 @@ function clearMarkers() {
   markerRegistry = new Map();
 }
 
-function createMarker(category, config, latestArticle, status) {
+function createMarker(snapshot) {
+  const { category, config, latestArticle, status } = snapshot;
   const statusLabel = STATUS_LABELS[status] ?? "Variable";
   const latestTitle = latestArticle?.title ?? "Aucun article récent";
 
@@ -499,7 +706,7 @@ function createMarker(category, config, latestArticle, status) {
     title: `${category} (${config.anchor}) - ${latestTitle}`,
   });
 
-  marker.bindPopup(buildPopupHtml(category, statusLabel, latestTitle), {
+  marker.bindPopup(buildPopupHtml({ ...snapshot, statusLabel }), {
     className: "weather-tooltip-popup",
     autoPan: false,
     closeButton: false,
@@ -509,6 +716,7 @@ function createMarker(category, config, latestArticle, status) {
   marker.on("mouseover", () => marker.openPopup());
   marker.on("mouseout", () => marker.closePopup());
   marker.on("click", () => {
+    trackEvent("weather_point_click", { category });
     focusCategory(category);
     marker.openPopup();
   });
@@ -523,12 +731,7 @@ function updateWeather() {
   const snapshots = categories.map((category) => getCategorySnapshot(category));
 
   snapshots.forEach((snapshot) => {
-    const marker = createMarker(
-      snapshot.category,
-      snapshot.config,
-      snapshot.latestArticle,
-      snapshot.status
-    );
+    const marker = createMarker(snapshot);
     markerLayer.addLayer(marker);
     markerRegistry.set(snapshot.category, marker);
   });
@@ -538,17 +741,49 @@ function updateWeather() {
   if (activeCategory) {
     const activeSnapshot = snapshots.find((snapshot) => snapshot.category === activeCategory);
     if (activeSnapshot) {
-      renderLatestPanel(
-        activeSnapshot.category,
-        activeSnapshot.latestArticle,
-        activeSnapshot.status
-      );
+      renderLatestPanel(activeSnapshot);
       setActiveHubCard(activeSnapshot.category);
     } else {
       activeCategory = "";
     }
   }
 }
+
+mapContainer?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const actionLink = target.closest("[data-weather-action]");
+  if (!actionLink) return;
+  trackEvent("weather_popup_action", {
+    action: actionLink.getAttribute("data-weather-action"),
+    category: actionLink.getAttribute("data-weather-category"),
+    target: actionLink.getAttribute("data-weather-target"),
+  });
+});
+
+hubGrid?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const link = target.closest("a");
+  if (!link) return;
+  const card = link.closest(".weather-hub-card");
+  const category = card?.getAttribute("data-category") || "";
+  trackEvent("weather_hub_link_click", {
+    category,
+    href: link.getAttribute("href") || "",
+  });
+});
+
+sideArticle?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const link = target.closest("a");
+  if (!link) return;
+  trackEvent("weather_side_link_click", {
+    category: activeCategory || null,
+    href: link.getAttribute("href") || "",
+  });
+});
 
 if (mapContainer) {
   renderMapSkeleton();

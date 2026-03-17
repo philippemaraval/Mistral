@@ -1,5 +1,12 @@
 {
-  "name": "App",
+  "name": "Mistral",
+  "short_name": "Mistral",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "Média local indépendant à Marseille.",
   "icons": [
     {
       "src": "android-icon-36x36.png",

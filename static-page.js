@@ -1,3 +1,5 @@
+import "./pwa.js";
+
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
 const backToTopButton = document.querySelector("#back-to-top");

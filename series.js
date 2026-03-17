@@ -1,3 +1,4 @@
+import "./pwa.js";
 import {
   series,
   formatDateFr,
@@ -9,6 +10,7 @@ import {
   getSeriesById,
   getArticlesBySeries,
 } from "./articles-data.js";
+import { trackEvent } from "./analytics.js";
 
 const title = document.querySelector("#series-title");
 const description = document.querySelector("#series-description");
@@ -31,6 +33,35 @@ const seriesArticles = currentSeries ? getArticlesBySeries(currentSeries.id) : [
 
 function formatReadingTime(minutes) {
   return `${minutes} min de lecture`;
+}
+
+function markImageLoading(image, options = {}) {
+  if (!image) return;
+  const { eager = false } = options;
+  image.loading = eager ? "eager" : "lazy";
+  image.decoding = "async";
+  image.fetchPriority = eager ? "high" : "low";
+  image.dataset.imgState = "loading";
+
+  if (image.complete && image.naturalWidth > 0) {
+    image.dataset.imgState = "loaded";
+    return;
+  }
+
+  image.addEventListener(
+    "load",
+    () => {
+      image.dataset.imgState = "loaded";
+    },
+    { once: true }
+  );
+  image.addEventListener(
+    "error",
+    () => {
+      image.dataset.imgState = "error";
+    },
+    { once: true }
+  );
 }
 
 function setMetaTag(selector, content) {
@@ -80,7 +111,9 @@ function buildCard(article) {
   image.srcset = buildOptimizedImageSrcSet(article.image, [320, 480, 640, 800, 960], 72);
   image.sizes = "(max-width: 767px) 100vw, (max-width: 980px) 50vw, 33vw";
   image.alt = article.heroImageAlt || article.title;
+  markImageLoading(image);
   link.href = buildArticleUrl(article.id);
+  link.dataset.articleId = article.id;
   link.setAttribute("aria-label", `Lire l'article : ${article.title}`);
   buildTags(article.tags, tags);
 
@@ -177,7 +210,13 @@ if (!currentSeries || !title || !description || !stats || !cover) {
   );
   cover.sizes = "(max-width: 980px) 100vw, 720px";
   cover.alt = `Illustration du dossier ${currentSeries.title}`;
+  markImageLoading(cover, { eager: true });
   if (breadcrumbCurrent) breadcrumbCurrent.textContent = currentSeries.title;
+
+  trackEvent("series_view", {
+    seriesId: currentSeries.id,
+    articleCount: publicationCount,
+  });
 
   setMetaTag('meta[name="description"]', seoDescription);
   setMetaTag('meta[property="og:title"]', `${currentSeries.title} | Mistral`);
@@ -208,4 +247,17 @@ updateBackToTopVisibility();
 
 backToTopButton?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+grid?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const link = target.closest(".article-card__link");
+  if (!link) return;
+  const articleId = link.getAttribute("data-article-id");
+  if (!articleId) return;
+  trackEvent("article_card_click", {
+    articleId,
+    context: `series:${currentSeries?.id || "unknown"}`,
+  });
 });

@@ -1,6 +1,6 @@
-import { featuredArticleId, articles, authors, series } from "./articles-content.js";
+import { featuredArticleId, articles, authors, series, documents } from "./articles-content.js";
 
-export { featuredArticleId, articles, authors, series };
+export { featuredArticleId, articles, authors, series, documents };
 
 export const categories = [
   "Politique",
@@ -98,10 +98,13 @@ export function buildOptimizedImageUrl(source, width = 960, quality = 72) {
   try {
     const url = new URL(source);
     if (!url.hostname.includes("unsplash.com")) return source;
+    const sanitizedWidth = Math.max(240, Math.min(2200, Math.round(width)));
+    const sanitizedQuality = Math.max(40, Math.min(88, Math.round(quality)));
     url.searchParams.set("auto", "format");
+    url.searchParams.set("fm", "webp");
     url.searchParams.set("fit", "crop");
-    url.searchParams.set("w", String(width));
-    url.searchParams.set("q", String(quality));
+    url.searchParams.set("w", String(sanitizedWidth));
+    url.searchParams.set("q", String(sanitizedQuality));
     return url.toString();
   } catch {
     return source;
@@ -113,13 +116,57 @@ export function buildOptimizedImageSrcSet(
   widths = [320, 480, 640, 800, 960, 1200],
   quality = 72
 ) {
-  return widths
+  const sanitizedWidths = [...new Set(widths.filter((width) => Number.isFinite(width) && width >= 240))]
+    .map((width) => Math.round(width))
+    .sort((a, b) => a - b);
+
+  return sanitizedWidths
     .map((width) => `${buildOptimizedImageUrl(source, width, quality)} ${width}w`)
     .join(", ");
 }
 
+function normalizeSlugAlias(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\.html$/g, "")
+    .replace(/^\//, "")
+    .replace(/^article\//, "")
+    .replace(/^article\.html\?id=/, "")
+    .replace(/^article\.html\?slug=/, "")
+    .replace(/\/$/, "");
+}
+
+function buildSlugRedirects() {
+  const redirects = {};
+
+  articles.forEach((article) => {
+    const canonical = normalizeSlugAlias(article.id);
+    if (!canonical) return;
+    redirects[canonical] = article.id;
+
+    if (Array.isArray(article.redirectFrom)) {
+      article.redirectFrom.forEach((alias) => {
+        const normalizedAlias = normalizeSlugAlias(alias);
+        if (!normalizedAlias || normalizedAlias === canonical) return;
+        redirects[normalizedAlias] = article.id;
+      });
+    }
+  });
+
+  return redirects;
+}
+
+export const slugRedirects = Object.freeze(buildSlugRedirects());
+
 export function getArticleById(id) {
   return articles.find((article) => article.id === id) ?? null;
+}
+
+export function resolveArticleIdFromAlias(alias) {
+  const normalizedAlias = normalizeSlugAlias(alias);
+  if (!normalizedAlias) return null;
+  return slugRedirects[normalizedAlias] ?? null;
 }
 
 export function getAuthorById(id) {

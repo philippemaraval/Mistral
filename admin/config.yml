@@ -255,6 +255,12 @@ collections:
         required: false
         hint: "Optionnel: titre spécifique pour Google et réseaux"
 
+      - label: "Titre social court"
+        name: "socialTitle"
+        widget: "string"
+        required: false
+        hint: "Optionnel: version courte pour Open Graph et partages"
+
       - label: "Chapô"
         name: "excerpt"
         widget: "text"
@@ -304,6 +310,20 @@ collections:
         widget: "string"
         required: false
         hint: "Exemple: https://mistral-media.fr/article/..."
+
+      - label: "Redirections depuis anciens slugs"
+        name: "redirectFrom"
+        widget: "list"
+        required: false
+        collapsed: true
+        hint: "Permet de rediriger automatiquement d'anciens slugs vers cet article"
+        field:
+          label: "Ancien slug"
+          name: "slug"
+          widget: "string"
+          pattern:
+            - "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            - "Utilise uniquement lettres minuscules, chiffres et tirets"
 
       - label: "Date de publication"
         name: "date"
@@ -411,6 +431,58 @@ collections:
           label: "URL"
           name: "url"
           widget: "string"
+
+      - label: "Blocs visuels de données"
+        name: "dataHighlights"
+        widget: "list"
+        required: false
+        collapsed: true
+        summary: "{{fields.title}} ({{fields.type}})"
+        fields:
+          - label: "Titre du bloc"
+            name: "title"
+            widget: "string"
+          - label: "Type"
+            name: "type"
+            widget: "select"
+            options:
+              - { label: "Barres", value: "bar" }
+              - { label: "Timeline", value: "timeline" }
+              - { label: "Comparatif", value: "comparison" }
+          - label: "Unité (optionnel)"
+            name: "unit"
+            widget: "string"
+            required: false
+          - label: "Note (optionnel)"
+            name: "note"
+            widget: "text"
+            required: false
+          - label: "Éléments"
+            name: "items"
+            widget: "list"
+            min: 1
+            fields:
+              - label: "Libellé"
+                name: "label"
+                widget: "string"
+              - label: "Valeur (barres/comparatif)"
+                name: "value"
+                widget: "number"
+                required: false
+                value_type: "float"
+              - label: "Valeur secondaire (comparatif)"
+                name: "valueSecondary"
+                widget: "number"
+                required: false
+                value_type: "float"
+              - label: "Date (timeline)"
+                name: "date"
+                widget: "string"
+                required: false
+              - label: "Détail (optionnel)"
+                name: "detail"
+                widget: "text"
+                required: false
 
       - label: "Sections"
         name: "sections"

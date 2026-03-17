@@ -8,6 +8,7 @@ const distDir = path.join(__dirname, "dist");
 
 const entries = [
   "index.html",
+  "dashboard.html",
   "article.html",
   "author.html",
   "series.html",
@@ -19,6 +20,10 @@ const entries = [
   "weather.html",
   "styles.css",
   "script.js",
+  "dashboard.js",
+  "analytics.js",
+  "pwa.js",
+  "sw.js",
   "article.js",
   "author.js",
   "series.js",
@@ -31,6 +36,8 @@ const entries = [
   "articles-data.js",
   "articles-content.js",
   "social-preview.svg",
+  "_headers",
+  "_redirects",
   "logo_mistral.png",
   "logo-mistral.svg",
   "favicon_mistral.ico",

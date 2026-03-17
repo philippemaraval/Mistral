@@ -1,3 +1,4 @@
+import "./pwa.js";
 import {
   articles,
   categories,
@@ -5,10 +6,36 @@ import {
   formatDateFr,
   buildCategoryUrl,
   buildArticleUrl,
+  slugRedirects,
+  getArticleById,
 } from "./articles-data.js";
 
 const categoriesContainer = document.querySelector("#notfound-categories");
 const latestContainer = document.querySelector("#notfound-latest");
+
+function normalizeId(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function resolveRedirectTarget() {
+  const url = new URL(window.location.href);
+  const idFromQuery = normalizeId(url.searchParams.get("id") || url.searchParams.get("slug") || "");
+  const pathSegments = url.pathname.split("/").filter(Boolean);
+  const tail = normalizeId(pathSegments[pathSegments.length - 1] || "");
+  const candidate = idFromQuery || tail;
+  if (!candidate) return null;
+
+  if (getArticleById(candidate)) {
+    return buildArticleUrl(candidate);
+  }
+
+  const redirectedId = slugRedirects[candidate];
+  if (redirectedId && getArticleById(redirectedId)) {
+    return buildArticleUrl(redirectedId);
+  }
+
+  return null;
+}
 
 function renderCategoryLinks() {
   if (!categoriesContainer) return;
@@ -47,3 +74,8 @@ function renderLatestArticles() {
 
 renderCategoryLinks();
 renderLatestArticles();
+
+const redirectTarget = resolveRedirectTarget();
+if (redirectTarget) {
+  window.location.replace(redirectTarget);
+}

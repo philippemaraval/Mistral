@@ -24,6 +24,7 @@ const ALLOWED_TAGS = new Set([
 
 const ALLOWED_TEMPLATES = new Set(["enquete", "breve", "portrait", "decryptage"]);
 const ALLOWED_STATUS = new Set(["idea", "draft", "review", "legal", "published", "archived"]);
+const ALLOWED_DATA_HIGHLIGHT_TYPES = new Set(["bar", "timeline", "comparison"]);
 
 function parseJsonFile(raw, sourcePath) {
   try {
@@ -242,6 +243,135 @@ function normalizeSourceLinks(sourceLinks, sourcePath) {
   });
 }
 
+function normalizeRedirectFrom(redirectFrom, currentArticleId, sourcePath) {
+  if (redirectFrom === undefined) return [];
+  requireArray(redirectFrom, "redirectFrom", sourcePath);
+
+  const normalized = redirectFrom.map((entry, index) => {
+    const candidate =
+      typeof entry === "string"
+        ? entry
+        : entry && typeof entry === "object"
+          ? entry.slug
+          : "";
+    requireNonEmptyString(candidate, `redirectFrom[${index}]`, sourcePath);
+    const slug = String(candidate).trim();
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+      throw new Error(`redirectFrom[${index}] invalide dans ${sourcePath}: ${slug}`);
+    }
+    return slug;
+  });
+
+  return [...new Set(normalized.filter((entry) => entry !== currentArticleId))];
+}
+
+function normalizeSocialTitle(value, sourcePath) {
+  if (value === undefined || value === null || String(value).trim().length === 0) return undefined;
+  requireStringLength(value, "socialTitle", sourcePath, 8, 90);
+  return String(value).trim();
+}
+
+function normalizeDataHighlights(dataHighlights, sourcePath) {
+  if (dataHighlights === undefined) return [];
+  requireArray(dataHighlights, "dataHighlights", sourcePath);
+
+  return dataHighlights.map((block, blockIndex) => {
+    requireStringLength(block.title, `dataHighlights[${blockIndex}].title`, sourcePath, 3, 90);
+    requireNonEmptyString(block.type, `dataHighlights[${blockIndex}].type`, sourcePath);
+    requireValueInSet(
+      block.type,
+      `dataHighlights[${blockIndex}].type`,
+      sourcePath,
+      ALLOWED_DATA_HIGHLIGHT_TYPES
+    );
+    requireArray(block.items, `dataHighlights[${blockIndex}].items`, sourcePath);
+
+    if (block.items.length < 1 || block.items.length > 12) {
+      throw new Error(
+        `Nombre d'éléments invalide (dataHighlights[${blockIndex}].items) dans ${sourcePath}: attendu entre 1 et 12`
+      );
+    }
+
+    const normalizedItems = block.items.map((item, itemIndex) => {
+      requireStringLength(
+        item.label,
+        `dataHighlights[${blockIndex}].items[${itemIndex}].label`,
+        sourcePath,
+        2,
+        90
+      );
+
+      if (block.type === "timeline") {
+        requireStringLength(
+          item.date,
+          `dataHighlights[${blockIndex}].items[${itemIndex}].date`,
+          sourcePath,
+          4,
+          40
+        );
+        if (item.detail !== undefined && String(item.detail).trim().length > 0) {
+          requireStringLength(
+            item.detail,
+            `dataHighlights[${blockIndex}].items[${itemIndex}].detail`,
+            sourcePath,
+            6,
+            280
+          );
+        }
+        return {
+          label: String(item.label).trim(),
+          date: String(item.date).trim(),
+          detail:
+            item.detail !== undefined && String(item.detail).trim().length > 0
+              ? String(item.detail).trim()
+              : undefined,
+        };
+      }
+
+      if (!Number.isFinite(item.value)) {
+        throw new Error(
+          `Valeur numérique invalide (dataHighlights[${blockIndex}].items[${itemIndex}].value) dans ${sourcePath}`
+        );
+      }
+      if (item.valueSecondary !== undefined && item.valueSecondary !== null && !Number.isFinite(item.valueSecondary)) {
+        throw new Error(
+          `Valeur numérique invalide (dataHighlights[${blockIndex}].items[${itemIndex}].valueSecondary) dans ${sourcePath}`
+        );
+      }
+      if (item.detail !== undefined && String(item.detail).trim().length > 0) {
+        requireStringLength(
+          item.detail,
+          `dataHighlights[${blockIndex}].items[${itemIndex}].detail`,
+          sourcePath,
+          6,
+          280
+        );
+      }
+
+      return {
+        label: String(item.label).trim(),
+        value: Number(item.value),
+        valueSecondary:
+          item.valueSecondary !== undefined && item.valueSecondary !== null
+            ? Number(item.valueSecondary)
+            : undefined,
+        detail:
+          item.detail !== undefined && String(item.detail).trim().length > 0
+            ? String(item.detail).trim()
+            : undefined,
+      };
+    });
+
+    return {
+      title: String(block.title).trim(),
+      type: block.type,
+      unit: block.unit !== undefined && String(block.unit).trim().length > 0 ? String(block.unit).trim() : undefined,
+      note: block.note !== undefined && String(block.note).trim().length > 0 ? String(block.note).trim() : undefined,
+      items: normalizedItems,
+    };
+  });
+}
+
 function normalizeRelatedArticles(relatedArticles, currentArticleId, sourcePath) {
   if (relatedArticles === undefined) return [];
   requireArray(relatedArticles, "relatedArticles", sourcePath);
@@ -449,6 +579,9 @@ function validateAndPrepareArticle(
   const corrections = normalizeCorrections(article.corrections, sourcePath);
   const sourceLinks = normalizeSourceLinks(article.sourceLinks, sourcePath);
   const relatedArticles = normalizeRelatedArticles(article.relatedArticles, article.id, sourcePath);
+  const redirectFrom = normalizeRedirectFrom(article.redirectFrom, article.id, sourcePath);
+  const socialTitle = normalizeSocialTitle(article.socialTitle, sourcePath);
+  const dataHighlights = normalizeDataHighlights(article.dataHighlights, sourcePath);
 
   relatedArticles.forEach((relatedId) => {
     if (!allArticleIds.has(relatedId)) {
@@ -491,6 +624,9 @@ function validateAndPrepareArticle(
     corrections,
     sourceLinks,
     relatedArticles,
+    redirectFrom,
+    socialTitle,
+    dataHighlights,
     isVisibleNow,
   };
 }
@@ -537,6 +673,20 @@ async function main() {
       now,
     })
   );
+
+  const redirectAliasOwners = new Map();
+  normalizedArticles.forEach((article) => {
+    const aliases = [article.id, ...(article.redirectFrom ?? [])];
+    aliases.forEach((alias) => {
+      const existingOwner = redirectAliasOwners.get(alias);
+      if (existingOwner && existingOwner !== article.id) {
+        throw new Error(
+          `Alias de redirection en conflit (${alias}) entre les articles ${existingOwner} et ${article.id}`
+        );
+      }
+      redirectAliasOwners.set(alias, article.id);
+    });
+  });
 
   const visibleArticles = normalizedArticles
     .filter((article) => article.isVisibleNow)

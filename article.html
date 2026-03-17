@@ -10,12 +10,15 @@
     <meta property="og:title" content="Article | Mistral" />
     <meta property="og:description" content="Lecture d'un article Mistral." />
     <meta property="og:image" content="./social-preview.svg" />
+    <meta property="og:image:alt" content="Aperçu de l'article Mistral" />
     <meta property="og:url" content="./article.html" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Article | Mistral" />
     <meta name="twitter:description" content="Lecture d'un article Mistral." />
     <meta name="twitter:image" content="./social-preview.svg" />
+    <meta name="twitter:image:alt" content="Aperçu de l'article Mistral" />
     <link rel="canonical" id="canonical-link" href="./article.html" />
+    <script type="application/ld+json" id="article-jsonld"></script>
     <link rel="apple-touch-icon" sizes="180x180" href="./favicon_mistral.ico/apple-icon-180x180.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon_mistral.ico/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon_mistral.ico/favicon-16x16.png" />
@@ -105,6 +108,14 @@
             />
           </svg>
           <span class="sr-only">Partager le lien de cet article</span>
+        </button>
+        <button
+          class="article-report-button"
+          id="article-report-error"
+          type="button"
+          aria-label="Signaler une erreur dans cet article"
+        >
+          Signaler une erreur
         </button>
         <div class="reading-preferences" aria-label="Confort de lecture">
           <span class="reading-preferences__label">Confort</span>

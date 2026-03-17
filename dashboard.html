@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Rédaction | Mistral</title>
+    <meta
+      name="description"
+      content="Dashboard local de pilotage éditorial: lectures, scroll, clics sources et partages."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="Dashboard Rédaction | Mistral" />
+    <meta property="og:description" content="Pilotage éditorial et produit de Mistral." />
+    <meta property="og:image" content="./social-preview.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dashboard Rédaction | Mistral" />
+    <meta name="twitter:description" content="Pilotage éditorial et produit de Mistral." />
+    <meta name="twitter:image" content="./social-preview.svg" />
+    <link rel="canonical" id="canonical-link" href="./dashboard.html" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./favicon_mistral.ico/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon_mistral.ico/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon_mistral.ico/favicon-16x16.png" />
+    <link rel="icon" type="image/x-icon" href="./favicon_mistral.ico/favicon.ico" />
+    <link rel="manifest" href="./favicon_mistral.ico/manifest.json" />
+    <meta name="msapplication-config" content="./favicon_mistral.ico/browserconfig.xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Aller au contenu principal</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="./index.html" aria-label="Accueil Mistral">
+          <img class="brand__logo" src="./logo_mistral.png" alt="Logo Mistral" />
+          <span class="brand__name">Le vent de l'actualité</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          aria-label="Ouvrir le menu"
+        >
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="site-nav" id="primary-nav" aria-label="Navigation principale">
+          <ul>
+            <li><a href="./category.html?tag=Politique">Politique</a></li>
+            <li><a href="./category.html?tag=%C3%89conomie">Économie</a></li>
+            <li><a href="./category.html?tag=Urbanisme">Urbanisme</a></li>
+            <li><a href="./category.html?tag=Mobilit%C3%A9s">Mobilités</a></li>
+            <li><a href="./category.html?tag=Culture">Culture</a></li>
+            <li><a href="./category.html?tag=Quartiers">Quartiers</a></li>
+            <li><a class="site-nav__weather" href="./weather.html">Météo</a></li>
+          </ul>
+        </nav>
+
+        <a class="search-bar category-home-link" href="./index.html" aria-label="Retour à l'accueil">
+          Retour à l'accueil
+        </a>
+      </div>
+    </header>
+
+    <main class="info-page dashboard-page" id="main-content">
+      <nav class="breadcrumb" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="./index.html">Accueil</a></li>
+          <li aria-current="page">Dashboard</li>
+        </ol>
+      </nav>
+
+      <header class="info-page__head">
+        <p class="eyebrow">RÉDACTION / PRODUIT</p>
+        <h1>Dashboard d'usage éditorial</h1>
+        <p>
+          Données locales collectées côté front pour orienter les décisions de formats, de diffusion
+          et de priorisation.
+        </p>
+      </header>
+
+      <section class="dashboard-summary" id="dashboard-summary"></section>
+
+      <section class="info-page__section">
+        <h2>Articles les plus consultés</h2>
+        <div class="related-articles__list" id="dashboard-top-views"></div>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Clics sur sources</h2>
+        <div class="related-articles__list" id="dashboard-top-sources"></div>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Partages</h2>
+        <div class="related-articles__list" id="dashboard-top-shares"></div>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Lecture profonde (75%+)</h2>
+        <div class="related-articles__list" id="dashboard-read-depth"></div>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Recherches fréquentes</h2>
+        <div class="related-articles__list" id="dashboard-top-searches"></div>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Interactions météo</h2>
+        <div class="related-articles__list" id="dashboard-top-weather"></div>
+      </section>
+
+      <section class="info-page__section">
+        <h2>Actions</h2>
+        <button class="tag-filters__reset" id="dashboard-clear" type="button">
+          Réinitialiser les données locales du dashboard
+        </button>
+        <p class="contact-feedback" id="dashboard-feedback" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <footer class="site-footer" aria-label="Pied de page éditorial">
+      <div class="site-footer__inner">
+        <section class="site-footer__brand">
+          <h2>Mistral</h2>
+          <p>Média local indépendant à Marseille. Enquêtes sourcées, vérifiables et accessibles.</p>
+        </section>
+
+        <nav class="site-footer__nav" aria-label="Liens éditoriaux">
+          <h3>Rédaction</h3>
+          <a href="./about.html#methode">Méthode</a>
+          <a href="./contact.html">Contact</a>
+          <a href="mailto:redaction@mistral-media.fr?subject=Correction%20factuelle">Corrections</a>
+          <a href="./contact.html">Droit de réponse</a>
+        </nav>
+
+        <nav class="site-footer__nav" aria-label="Liens de transparence">
+          <h3>Transparence</h3>
+          <a href="./about.html#ligne-editoriale">Charte éditoriale</a>
+          <a href="./about.html#engagements">Engagements</a>
+          <a href="mailto:partenariats@mistral-media.fr?subject=Transparence%20financement">Financement</a>
+          <a href="./dashboard.html">Dashboard</a>
+          <a href="./legal.html">Mentions légales</a>
+        </nav>
+      </div>
+    </footer>
+
+    <button class="back-to-top" id="back-to-top" type="button" aria-label="Retour en haut">
+      Retour en haut
+    </button>
+
+    <script type="module" src="./static-page.js"></script>
+    <script type="module" src="./dashboard.js"></script>
+  </body>
+</html>

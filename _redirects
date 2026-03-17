@@ -1,0 +1,4 @@
+/article/:slug /article.html?slug=:slug 200
+/author/:id /author.html?id=:id 200
+/series/:id /series.html?id=:id 200
+/rubrique/:tag /category.html?tag=:tag 200

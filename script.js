@@ -1,3 +1,4 @@
+import "./pwa.js";
 import {
   articles,
   featuredArticleId,
@@ -10,6 +11,7 @@ import {
   buildOptimizedImageSrcSet,
   getSeriesById,
 } from "./articles-data.js";
+import { trackEvent } from "./analytics.js";
 
 const grid = document.querySelector("#article-grid");
 const template = document.querySelector("#article-card-template");
@@ -57,6 +59,8 @@ let loadTimeout;
 let viewMode = "grid";
 let suggestionValues = [];
 let activeSuggestionIndex = -1;
+let hasTrackedHomeView = false;
+let lastSearchSignature = "";
 
 function normalizeSearchValue(value) {
   return value
@@ -65,6 +69,49 @@ function normalizeSearchValue(value) {
     .replace(/#/g, " ")
     .toLowerCase()
     .trim();
+}
+
+function shortSocialTitle(value, maxLength = 72) {
+  const source = String(value ?? "").trim();
+  if (source.length <= maxLength) return source;
+  return `${source.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
+}
+
+function setMetaTag(selector, content) {
+  const element = document.querySelector(selector);
+  if (!element) return;
+  element.setAttribute("content", content);
+}
+
+function getCanonicalHomeUrl() {
+  return new URL("./index.html", window.location.href).toString();
+}
+
+function updateHomeSocialMeta() {
+  const previewImage = featuredArticle
+    ? buildOptimizedImageUrl(featuredArticle.ogImage || featuredArticle.image, 1200, 76)
+    : new URL("./social-preview.svg", window.location.href).toString();
+  const socialTitle = featuredArticle
+    ? shortSocialTitle(featuredArticle.socialTitle || featuredArticle.seoTitle || featuredArticle.title)
+    : "Mistral | Le vent de l'actualité";
+  const socialDescription = featuredArticle
+    ? featuredArticle.seoDescription || featuredArticle.excerpt
+    : "Le vent de l'actualité à Marseille.";
+  const canonicalUrl = getCanonicalHomeUrl();
+
+  setMetaTag('meta[name="description"]', socialDescription);
+  setMetaTag('meta[property="og:title"]', `${socialTitle} | Mistral`);
+  setMetaTag('meta[property="og:description"]', socialDescription);
+  setMetaTag('meta[property="og:image"]', previewImage);
+  setMetaTag('meta[property="og:image:alt"]', featuredArticle?.heroImageAlt || socialTitle);
+  setMetaTag('meta[property="og:url"]', canonicalUrl);
+  setMetaTag('meta[name="twitter:title"]', `${socialTitle} | Mistral`);
+  setMetaTag('meta[name="twitter:description"]', socialDescription);
+  setMetaTag('meta[name="twitter:image"]', previewImage);
+  setMetaTag('meta[name="twitter:image:alt"]', featuredArticle?.heroImageAlt || socialTitle);
+
+  const canonical = document.querySelector("#canonical-link");
+  if (canonical) canonical.setAttribute("href", canonicalUrl);
 }
 
 function escapeHtml(value) {
@@ -104,10 +151,39 @@ function getSiteSharePayload() {
 function getFeaturedSharePayload() {
   if (!featuredArticle) return getSiteSharePayload();
   return {
-    title: featuredArticle.seoTitle || featuredArticle.title,
+    title: featuredArticle.socialTitle || featuredArticle.seoTitle || featuredArticle.title,
     text: featuredArticle.seoDescription || featuredArticle.excerpt,
     url: new URL(buildArticleUrl(featuredArticle.id), window.location.href).toString(),
   };
+}
+
+function markImageLoading(image, options = {}) {
+  if (!image) return;
+  const { eager = false } = options;
+  image.loading = eager ? "eager" : "lazy";
+  image.decoding = "async";
+  image.fetchPriority = eager ? "high" : "low";
+  image.dataset.imgState = "loading";
+
+  if (image.complete && image.naturalWidth > 0) {
+    image.dataset.imgState = "loaded";
+    return;
+  }
+
+  image.addEventListener(
+    "load",
+    () => {
+      image.dataset.imgState = "loaded";
+    },
+    { once: true }
+  );
+  image.addEventListener(
+    "error",
+    () => {
+      image.dataset.imgState = "error";
+    },
+    { once: true }
+  );
 }
 
 async function copyShareUrl(url) {
@@ -134,10 +210,17 @@ function setShareFeedback(button, message) {
 
 async function handleNativeShare(button, payloadBuilder) {
   const payload = payloadBuilder();
+  const scope = payloadBuilder === getSiteSharePayload ? "site" : "featured";
+  const articleId = scope === "featured" ? featuredArticle?.id : undefined;
 
   if (typeof navigator.share === "function") {
     try {
       await navigator.share(payload);
+      trackEvent("share_click", {
+        scope,
+        articleId,
+        via: "native",
+      });
       return;
     } catch (error) {
       if (error?.name === "AbortError") return;
@@ -147,11 +230,21 @@ async function handleNativeShare(button, payloadBuilder) {
   const copied = await copyShareUrl(payload.url);
   if (copied) {
     setShareFeedback(button, "Copié");
+    trackEvent("share_click", {
+      scope,
+      articleId,
+      via: "clipboard",
+    });
     return;
   }
 
   const subject = encodeURIComponent(payload.title || "Partager");
   const body = encodeURIComponent(`${payload.text || ""}\n${payload.url}`.trim());
+  trackEvent("share_click", {
+    scope,
+    articleId,
+    via: "mailto",
+  });
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
 }
 
@@ -274,6 +367,14 @@ function renderFeaturedSources() {
     link.href = buildDocumentUrl(source.file);
     link.textContent = `Source: ${source.label}`;
     link.setAttribute("download", "");
+    link.addEventListener("click", () => {
+      trackEvent("source_click", {
+        articleId: featuredArticle.id,
+        file: source.file,
+        label: source.label,
+        context: "featured",
+      });
+    });
     featuredStorySources.appendChild(link);
   });
 }
@@ -307,6 +408,7 @@ function setActiveSuggestion(index) {
 function selectSuggestion(value) {
   if (searchInput) searchInput.value = value;
   hideSuggestionPanel();
+  trackEvent("search_suggestion_select", { value });
   applySearchAndFilters(value);
 }
 
@@ -432,7 +534,9 @@ function buildCard(article) {
   image.srcset = buildOptimizedImageSrcSet(article.image, [320, 480, 640, 800, 960], 72);
   image.sizes = "(max-width: 767px) 100vw, (max-width: 980px) 50vw, 33vw";
   image.alt = article.heroImageAlt || article.title;
+  markImageLoading(image);
   link.href = buildArticleUrl(article.id);
+  link.dataset.articleId = article.id;
   link.setAttribute("aria-label", `Lire l'article : ${article.title}`);
   buildTags(article.tags, tags);
 
@@ -566,6 +670,17 @@ function applySearchAndFilters(value) {
   renderBatch(BATCH_SIZE);
   updateSearchStatus();
   syncSearchQueryParam();
+
+  const signature = `${searchTermRaw}::${selectedTagFilter}::${selectedAuthorFilter}::${activeArticles.length}`;
+  if (signature !== lastSearchSignature) {
+    lastSearchSignature = signature;
+    trackEvent("search_apply", {
+      query: searchTermRaw,
+      tag: selectedTagFilter,
+      author: selectedAuthorFilter,
+      resultCount: activeArticles.length,
+    });
+  }
 }
 
 function updateBackToTopVisibility() {
@@ -590,11 +705,31 @@ if (grid && template) {
 }
 
 setViewMode(readViewMode());
+updateHomeSocialMeta();
 
 renderFeaturedMeta();
 renderFeaturedSources();
 bindNativeShareButton(featuredNativeShareButton, getFeaturedSharePayload);
 bindNativeShareButton(siteNativeShareButton, getSiteSharePayload);
+
+if (!hasTrackedHomeView) {
+  hasTrackedHomeView = true;
+  trackEvent("home_view", {
+    featuredArticleId: featuredArticle?.id || null,
+    articleCount: feedArticles.length,
+  });
+}
+
+const featuredImage = document.querySelector(".featured-story__figure img");
+markImageLoading(featuredImage, { eager: true });
+
+document.querySelector("#featured-story .featured-story__link")?.addEventListener("click", () => {
+  if (!featuredArticle) return;
+  trackEvent("article_card_click", {
+    articleId: featuredArticle.id,
+    context: "featured",
+  });
+});
 
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -665,6 +800,19 @@ document.addEventListener("click", (event) => {
   }
 });
 
+grid?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const link = target.closest(".article-card__link");
+  if (!link) return;
+  const articleId = link.getAttribute("data-article-id");
+  if (!articleId) return;
+  trackEvent("article_card_click", {
+    articleId,
+    context: "home_feed",
+  });
+});
+
 filterTag?.addEventListener("change", () => {
   applySearchAndFilters(searchInput?.value ?? "");
 });
@@ -677,6 +825,10 @@ viewButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const mode = button.dataset.viewOption === "list" ? "list" : "grid";
     setViewMode(mode);
+    trackEvent("feed_view_mode", {
+      page: "home",
+      mode,
+    });
   });
 });
 

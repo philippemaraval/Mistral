@@ -1,3 +1,5 @@
+import "./pwa.js";
+
 const contactForm = document.querySelector("#contact-form");
 const contactFeedback = document.querySelector("#contact-feedback");
 

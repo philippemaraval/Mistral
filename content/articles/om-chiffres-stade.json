@@ -39,8 +39,12 @@
   "status": "published",
   "publishAt": "2026-03-11T06:00:00.000Z",
   "seoTitle": "OM : Les chiffres cachés du nouveau stade",
+  "socialTitle": "OM stade: les chiffres clés",
   "seoDescription": "Notre enquête révèle les montants réels du partenariat public-privé pour le Vélodrome. Un dossier qui bouscule les certitudes municipales.",
   "ogImage": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80",
+  "redirectFrom": [
+    "om-velodrome-chiffres-caches"
+  ],
   "factCheckedBy": "lea-martin",
   "legalReviewedBy": "lea-martin",
   "sensitiveTopic": false,
@@ -53,5 +57,61 @@
     "cantines-prix-qualite-quartiers",
     "dockers-port-autonome"
   ],
-  "sourceLinks": []
+  "sourceLinks": [],
+  "dataHighlights": [
+    {
+      "title": "Répartition des montants engagés",
+      "type": "bar",
+      "unit": "M€",
+      "note": "Montants consolidés à partir des avenants et documents budgétaires cités dans les sources.",
+      "items": [
+        {
+          "label": "Travaux initiaux",
+          "value": 42
+        },
+        {
+          "label": "Maintenance",
+          "value": 17
+        },
+        {
+          "label": "Compensations",
+          "value": 9
+        }
+      ]
+    },
+    {
+      "title": "Chronologie des décisions",
+      "type": "timeline",
+      "items": [
+        {
+          "date": "2024-09",
+          "label": "Vote de l'avenant",
+          "detail": "Le conseil municipal valide la nouvelle trajectoire financière."
+        },
+        {
+          "date": "2025-04",
+          "label": "Mise à jour des lignes budgétaires",
+          "detail": "Les engagements apparaissent dans le budget primitif."
+        },
+        {
+          "date": "2026-03",
+          "label": "Publication de l'enquête",
+          "detail": "Mistral recoupe contrats, délibérations et flux financiers."
+        }
+      ]
+    },
+    {
+      "title": "Écart entre annoncé et constaté",
+      "type": "comparison",
+      "unit": "M€",
+      "items": [
+        {
+          "label": "Coût global",
+          "value": 68,
+          "valueSecondary": 74,
+          "detail": "Annonce publique vs total reconstitué documents en main."
+        }
+      ]
+    }
+  ]
 }

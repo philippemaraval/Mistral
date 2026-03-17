@@ -516,7 +516,7 @@ async function handleNativeShare(button) {
 
   const copied = await copyShareUrl(payload.url);
   if (copied) {
-    setShareFeedback(button, "Lien copié");
+    setShareFeedback(button, "Copié");
     return;
   }
 

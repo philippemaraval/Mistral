@@ -118,6 +118,16 @@ export function getRelatedArticles(articleId, limit = 3) {
   const currentArticle = getArticleById(articleId);
   if (!currentArticle) return [];
 
+  if (Array.isArray(currentArticle.relatedArticles) && currentArticle.relatedArticles.length > 0) {
+    const manualTargets = currentArticle.relatedArticles
+      .map((id) => getArticleById(id))
+      .filter((entry) => entry && entry.id !== articleId);
+
+    if (manualTargets.length > 0) {
+      return manualTargets.slice(0, limit);
+    }
+  }
+
   return articles
     .filter((article) => article.id !== articleId)
     .map((article) => ({

@@ -6,11 +6,29 @@
   "image": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80",
   "date": "2026-02-11",
   "updatedDate": "2026-02-14",
-  "author": "Sarah Cadi",
+  "author": "sarah-cadi",
   "readTimeMinutes": 8,
   "tags": [
     "Mobilités",
     "Urbanisme",
     "Économie"
-  ]
+  ],
+  "editorialTemplate": "enquete",
+  "status": "published",
+  "publishAt": "2026-02-11T06:00:00.000Z",
+  "seoTitle": "Extension du tramway à l'est : les hypothèses sur la table",
+  "seoDescription": "Trois scénarios de tracé sont analysés avec leurs impacts budgétaires et leurs effets sur la desserte locale.",
+  "ogImage": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80",
+  "factCheckedBy": "sarah-cadi",
+  "sensitiveTopic": false,
+  "heroImageAlt": "Extension du tramway à l'est : les hypothèses sur la table",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "finances-publiques-marseille",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome"
+  ],
+  "sourceLinks": []
 }

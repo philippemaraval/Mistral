@@ -6,7 +6,7 @@
   "image": "https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=1400&q=80",
   "date": "2026-03-17",
   "updatedDate": "2026-03-17",
-  "author": "Nassim Belkacem",
+  "author": "nassim-belkacem",
   "readTimeMinutes": 11,
   "sections": [
     {
@@ -85,5 +85,24 @@
     "Économie",
     "Quartiers",
     "Politique"
-  ]
+  ],
+  "editorialTemplate": "enquete",
+  "status": "published",
+  "publishAt": "2026-03-17T06:00:00.000Z",
+  "seoTitle": "Cantines marseillaises : pourquoi la facture grimpe plus vite que la qualité",
+  "seoDescription": "Pendant six semaines, Mistral a comparé menus affichés, portions servies et prix facturés dans plusieurs secteurs de Marseille. Le constat est net : les écarts entre quartiers se creusent, alors que les familles paient de plus en plus.",
+  "ogImage": "https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=1400&q=80",
+  "factCheckedBy": "nassim-belkacem",
+  "legalReviewedBy": "lea-martin",
+  "sensitiveTopic": false,
+  "heroImageAlt": "Cantines marseillaises : pourquoi la facture grimpe plus vite que la qualité",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "finances-publiques-marseille",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "dockers-port-autonome",
+    "ecoles-renovees-marches"
+  ],
+  "sourceLinks": []
 }

@@ -6,11 +6,29 @@
   "image": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=900&q=80",
   "date": "2026-02-07",
   "updatedDate": "2026-02-10",
-  "author": "Paul Ferrand",
+  "author": "paul-ferrand",
   "readTimeMinutes": 7,
   "tags": [
     "Culture",
     "Politique",
     "Quartiers"
-  ]
+  ],
+  "editorialTemplate": "portrait",
+  "status": "published",
+  "publishAt": "2026-02-07T06:00:00.000Z",
+  "seoTitle": "Friches culturelles du sud : qui décide des occupations ?",
+  "seoDescription": "Derrière les projets temporaires, des arbitrages politiques tranchent entre programmation artistique et rentabilité.",
+  "ogImage": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=900&q=80",
+  "factCheckedBy": "paul-ferrand",
+  "sensitiveTopic": false,
+  "heroImageAlt": "Friches culturelles du sud : qui décide des occupations ?",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "finances-publiques-marseille",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome"
+  ],
+  "sourceLinks": []
 }

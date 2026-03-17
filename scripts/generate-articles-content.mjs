@@ -7,8 +7,23 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 
 const siteConfigPath = path.join(projectRoot, "content", "site.json");
+const authorsDir = path.join(projectRoot, "content", "authors");
+const seriesDir = path.join(projectRoot, "content", "series");
+const documentsDir = path.join(projectRoot, "content", "documents");
 const articlesDir = path.join(projectRoot, "content", "articles");
 const outputPath = path.join(projectRoot, "articles-content.js");
+
+const ALLOWED_TAGS = new Set([
+  "Politique",
+  "Économie",
+  "Urbanisme",
+  "Mobilités",
+  "Culture",
+  "Quartiers",
+]);
+
+const ALLOWED_TEMPLATES = new Set(["enquete", "breve", "portrait", "decryptage"]);
+const ALLOWED_STATUS = new Set(["idea", "draft", "review", "legal", "published", "archived"]);
 
 function parseJsonFile(raw, sourcePath) {
   try {
@@ -30,54 +45,55 @@ function requireArray(value, fieldPath, sourcePath) {
   }
 }
 
-function validateArticle(article, sourcePath) {
-  requireNonEmptyString(article.id, "id", sourcePath);
-  requireNonEmptyString(article.title, "title", sourcePath);
-  requireNonEmptyString(article.excerpt, "excerpt", sourcePath);
-  requireNonEmptyString(article.caption, "caption", sourcePath);
-  requireNonEmptyString(article.image, "image", sourcePath);
-  requireNonEmptyString(article.date, "date", sourcePath);
-  requireNonEmptyString(article.updatedDate, "updatedDate", sourcePath);
-  requireNonEmptyString(article.author, "author", sourcePath);
-
-  if (!Number.isFinite(article.readTimeMinutes) || article.readTimeMinutes <= 0) {
-    throw new Error(`Champ requis invalide (readTimeMinutes) dans ${sourcePath}`);
+function requireValueInSet(value, fieldPath, sourcePath, allowedValues) {
+  if (!allowedValues.has(value)) {
+    throw new Error(
+      `Valeur invalide (${fieldPath}) dans ${sourcePath}: ${value}. Valeurs attendues: ${[
+        ...allowedValues,
+      ].join(", ")}`
+    );
   }
+}
 
-  requireArray(article.tags, "tags", sourcePath);
-  article.tags.forEach((tag, index) => {
-    requireNonEmptyString(tag, `tags[${index}]`, sourcePath);
-  });
-
-  if (article.sections !== undefined) {
-    requireArray(article.sections, "sections", sourcePath);
-    article.sections.forEach((section, index) => {
-      requireNonEmptyString(section.title, `sections[${index}].title`, sourcePath);
-      requireArray(section.paragraphs, `sections[${index}].paragraphs`, sourcePath);
-      section.paragraphs.forEach((paragraph, paragraphIndex) => {
-        requireNonEmptyString(
-          paragraph,
-          `sections[${index}].paragraphs[${paragraphIndex}]`,
-          sourcePath
-        );
-      });
-    });
+function requireStringLength(value, fieldPath, sourcePath, min, max) {
+  requireNonEmptyString(value, fieldPath, sourcePath);
+  const length = value.trim().length;
+  if (length < min || length > max) {
+    throw new Error(
+      `Longueur invalide (${fieldPath}) dans ${sourcePath}: ${length}. Attendu entre ${min} et ${max}.`
+    );
   }
+}
 
-  if (article.sources !== undefined) {
-    requireArray(article.sources, "sources", sourcePath);
-    article.sources.forEach((source, index) => {
-      requireNonEmptyString(source.label, `sources[${index}].label`, sourcePath);
-      requireNonEmptyString(source.file, `sources[${index}].file`, sourcePath);
-    });
+function parseDateOrThrow(value, fieldPath, sourcePath) {
+  requireNonEmptyString(value, fieldPath, sourcePath);
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error(`Date invalide (${fieldPath}) dans ${sourcePath}: ${value}`);
   }
+  return parsed;
+}
 
-  if (article.corrections !== undefined) {
-    requireArray(article.corrections, "corrections", sourcePath);
-    article.corrections.forEach((correction, index) => {
-      requireNonEmptyString(correction.date, `corrections[${index}].date`, sourcePath);
-      requireNonEmptyString(correction.detail, `corrections[${index}].detail`, sourcePath);
-    });
+function normalizeDocumentFile(file) {
+  const raw = String(file ?? "").trim();
+  return raw
+    .replace(/^\.\//, "")
+    .replace(/^\//, "")
+    .replace(/^documents\//, "")
+    .trim();
+}
+
+function normalizeOptionalUrl(value) {
+  if (value === undefined || value === null) return "";
+  return String(value).trim();
+}
+
+function isValidHttpUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
   }
 }
 
@@ -85,42 +101,403 @@ function sortByDateDesc(a, b) {
   return new Date(b.date).getTime() - new Date(a.date).getTime();
 }
 
-async function loadArticles() {
-  const entries = await readdir(articlesDir, { withFileTypes: true });
+async function loadJsonCollection(directory, label) {
+  const entries = await readdir(directory, { withFileTypes: true });
   const files = entries
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
     .map((entry) => entry.name)
     .sort((a, b) => a.localeCompare(b, "fr"));
 
   if (files.length === 0) {
-    throw new Error(`Aucun article trouvé dans ${articlesDir}`);
+    throw new Error(`Aucun fichier trouvé dans ${directory} pour la collection ${label}`);
   }
 
-  const seenIds = new Set();
-  const articles = [];
-
+  const records = [];
   for (const filename of files) {
-    const filePath = path.join(articlesDir, filename);
+    const filePath = path.join(directory, filename);
     const raw = await readFile(filePath, "utf8");
-    const article = parseJsonFile(raw, filePath);
-    validateArticle(article, filePath);
+    const payload = parseJsonFile(raw, filePath);
+    records.push({ payload, sourcePath: filePath });
+  }
 
-    if (seenIds.has(article.id)) {
-      throw new Error(`ID d'article dupliqué (${article.id}) dans ${filePath}`);
+  return records;
+}
+
+function validateAuthors(records) {
+  const byId = new Map();
+  const byName = new Map();
+
+  records.forEach(({ payload, sourcePath }) => {
+    requireNonEmptyString(payload.id, "id", sourcePath);
+    requireStringLength(payload.name, "name", sourcePath, 2, 80);
+    requireNonEmptyString(payload.role, "role", sourcePath);
+    requireNonEmptyString(payload.bio, "bio", sourcePath);
+
+    if (byId.has(payload.id)) {
+      throw new Error(`ID auteur dupliqué (${payload.id}) dans ${sourcePath}`);
     }
 
-    seenIds.add(article.id);
-    articles.push(article);
+    if (byName.has(payload.name)) {
+      throw new Error(`Nom auteur dupliqué (${payload.name}) dans ${sourcePath}`);
+    }
+
+    byId.set(payload.id, payload);
+    byName.set(payload.name, payload);
+  });
+
+  return { byId, byName, ordered: [...byId.values()].sort((a, b) => a.name.localeCompare(b.name, "fr")) };
+}
+
+function validateSeries(records) {
+  const byId = new Map();
+
+  records.forEach(({ payload, sourcePath }) => {
+    requireNonEmptyString(payload.id, "id", sourcePath);
+    requireNonEmptyString(payload.title, "title", sourcePath);
+    requireNonEmptyString(payload.description, "description", sourcePath);
+
+    if (byId.has(payload.id)) {
+      throw new Error(`ID série dupliqué (${payload.id}) dans ${sourcePath}`);
+    }
+
+    byId.set(payload.id, payload);
+  });
+
+  return { byId, ordered: [...byId.values()].sort((a, b) => a.title.localeCompare(b.title, "fr")) };
+}
+
+function validateDocuments(records) {
+  const byId = new Map();
+  const byFile = new Map();
+
+  records.forEach(({ payload, sourcePath }) => {
+    requireNonEmptyString(payload.id, "id", sourcePath);
+    requireNonEmptyString(payload.title, "title", sourcePath);
+    requireNonEmptyString(payload.file, "file", sourcePath);
+    requireNonEmptyString(payload.type, "type", sourcePath);
+    parseDateOrThrow(payload.date, "date", sourcePath);
+
+    const normalizedFile = normalizeDocumentFile(payload.file);
+    if (!normalizedFile) {
+      throw new Error(`Chemin document invalide (file) dans ${sourcePath}`);
+    }
+
+    if (byId.has(payload.id)) {
+      throw new Error(`ID document dupliqué (${payload.id}) dans ${sourcePath}`);
+    }
+
+    if (byFile.has(normalizedFile)) {
+      throw new Error(`Fichier document dupliqué (${normalizedFile}) dans ${sourcePath}`);
+    }
+
+    const normalized = {
+      ...payload,
+      file: normalizedFile,
+      sourceUrl: normalizeOptionalUrl(payload.sourceUrl),
+    };
+
+    if (normalized.sourceUrl && !isValidHttpUrl(normalized.sourceUrl)) {
+      throw new Error(`URL document invalide (sourceUrl) dans ${sourcePath}: ${normalized.sourceUrl}`);
+    }
+
+    byId.set(normalized.id, normalized);
+    byFile.set(normalized.file, normalized);
+  });
+
+  return {
+    byId,
+    byFile,
+    ordered: [...byId.values()].sort((a, b) => a.title.localeCompare(b.title, "fr")),
+  };
+}
+
+function validateSiteConfig(siteConfig, featuredCandidates) {
+  requireNonEmptyString(siteConfig.featuredArticleId, "featuredArticleId", siteConfigPath);
+  if (!featuredCandidates.has(siteConfig.featuredArticleId)) {
+    throw new Error(
+      `featuredArticleId (${siteConfig.featuredArticleId}) ne correspond à aucun article publié actuel`
+    );
+  }
+}
+
+function normalizeSourceLinks(sourceLinks, sourcePath) {
+  if (sourceLinks === undefined) return [];
+  requireArray(sourceLinks, "sourceLinks", sourcePath);
+
+  return sourceLinks.map((entry, index) => {
+    const candidate =
+      typeof entry === "string"
+        ? entry
+        : entry && typeof entry === "object"
+          ? entry.url
+          : "";
+    const url = String(candidate ?? "").trim();
+    if (!url) {
+      throw new Error(`sourceLinks[${index}] vide dans ${sourcePath}`);
+    }
+    if (!isValidHttpUrl(url)) {
+      throw new Error(`sourceLinks[${index}] invalide dans ${sourcePath}: ${url}`);
+    }
+    return url;
+  });
+}
+
+function normalizeRelatedArticles(relatedArticles, currentArticleId, sourcePath) {
+  if (relatedArticles === undefined) return [];
+  requireArray(relatedArticles, "relatedArticles", sourcePath);
+
+  const sanitized = relatedArticles
+    .map((entry, index) => {
+      const candidate =
+        typeof entry === "string"
+          ? entry
+          : entry && typeof entry === "object"
+            ? entry.article
+            : "";
+      requireNonEmptyString(candidate, `relatedArticles[${index}]`, sourcePath);
+      return candidate;
+    })
+    .filter((entry) => entry !== currentArticleId);
+
+  return [...new Set(sanitized)];
+}
+
+function normalizeSections(sections, sourcePath) {
+  if (sections === undefined) return [];
+  requireArray(sections, "sections", sourcePath);
+
+  return sections.map((section, index) => {
+    requireStringLength(section.title, `sections[${index}].title`, sourcePath, 3, 90);
+    requireArray(section.paragraphs, `sections[${index}].paragraphs`, sourcePath);
+
+    const normalizedParagraphs = section.paragraphs.map((paragraph, paragraphIndex) => {
+      const candidate =
+        typeof paragraph === "string"
+          ? paragraph
+          : paragraph && typeof paragraph === "object"
+            ? paragraph.paragraph
+            : "";
+      requireStringLength(
+        candidate,
+        `sections[${index}].paragraphs[${paragraphIndex}]`,
+        sourcePath,
+        20,
+        2400
+      );
+      return candidate;
+    });
+
+    return {
+      ...section,
+      paragraphs: normalizedParagraphs,
+    };
+  });
+}
+
+function normalizeSources(sources, documentsByFile, sourcePath) {
+  if (sources === undefined) return [];
+  requireArray(sources, "sources", sourcePath);
+
+  return sources.map((source, index) => {
+    requireNonEmptyString(source.label, `sources[${index}].label`, sourcePath);
+    const rawFile =
+      typeof source.file === "string"
+        ? source.file
+        : source.file && typeof source.file === "object"
+          ? source.file.file
+          : source.file;
+    requireNonEmptyString(rawFile, `sources[${index}].file`, sourcePath);
+
+    const normalizedFile = normalizeDocumentFile(rawFile);
+    const doc = documentsByFile.get(normalizedFile);
+    if (!doc) {
+      throw new Error(
+        `sources[${index}].file (${normalizedFile}) dans ${sourcePath} ne correspond à aucun document référencé`
+      );
+    }
+
+    return {
+      ...source,
+      file: normalizedFile,
+      type: source.type || doc.type,
+      date: source.date || doc.date,
+    };
+  });
+}
+
+function normalizeCorrections(corrections, sourcePath) {
+  if (corrections === undefined) return [];
+  requireArray(corrections, "corrections", sourcePath);
+
+  corrections.forEach((correction, index) => {
+    parseDateOrThrow(correction.date, `corrections[${index}].date`, sourcePath);
+    requireStringLength(correction.detail, `corrections[${index}].detail`, sourcePath, 10, 500);
+  });
+
+  return corrections;
+}
+
+function validateAndPrepareArticle(
+  article,
+  sourcePath,
+  { authorsById, seriesById, documentsByFile, allArticleIds, now }
+) {
+  requireNonEmptyString(article.id, "id", sourcePath);
+  requireStringLength(article.title, "title", sourcePath, 12, 120);
+  requireStringLength(article.excerpt, "excerpt", sourcePath, 60, 600);
+  requireStringLength(article.caption, "caption", sourcePath, 8, 220);
+  requireNonEmptyString(article.image, "image", sourcePath);
+  requireStringLength(article.heroImageAlt, "heroImageAlt", sourcePath, 8, 200);
+  requireStringLength(article.imageCredit, "imageCredit", sourcePath, 3, 120);
+  requireNonEmptyString(article.location, "location", sourcePath);
+
+  parseDateOrThrow(article.date, "date", sourcePath);
+  parseDateOrThrow(article.updatedDate, "updatedDate", sourcePath);
+
+  if (new Date(article.updatedDate).getTime() < new Date(article.date).getTime()) {
+    throw new Error(`updatedDate doit être >= date dans ${sourcePath}`);
   }
 
-  return articles.sort(sortByDateDesc);
+  const authorId =
+    typeof article.author === "string"
+      ? article.author
+      : article.author && typeof article.author === "object"
+        ? article.author.id
+        : "";
+  requireNonEmptyString(authorId, "author", sourcePath);
+  const authorRecord = authorsById.get(authorId);
+  if (!authorRecord) {
+    throw new Error(`Auteur introuvable (${authorId}) dans ${sourcePath}`);
+  }
+
+  const factCheckedById =
+    typeof article.factCheckedBy === "string"
+      ? article.factCheckedBy
+      : article.factCheckedBy && typeof article.factCheckedBy === "object"
+        ? article.factCheckedBy.id
+        : article.factCheckedBy;
+
+  if (factCheckedById !== undefined && factCheckedById !== "") {
+    requireNonEmptyString(factCheckedById, "factCheckedBy", sourcePath);
+    if (!authorsById.has(factCheckedById)) {
+      throw new Error(`factCheckedBy introuvable (${factCheckedById}) dans ${sourcePath}`);
+    }
+  }
+
+  const legalReviewedById =
+    typeof article.legalReviewedBy === "string"
+      ? article.legalReviewedBy
+      : article.legalReviewedBy && typeof article.legalReviewedBy === "object"
+        ? article.legalReviewedBy.id
+        : article.legalReviewedBy;
+
+  if (legalReviewedById !== undefined && legalReviewedById !== "") {
+    requireNonEmptyString(legalReviewedById, "legalReviewedBy", sourcePath);
+    if (!authorsById.has(legalReviewedById)) {
+      throw new Error(`legalReviewedBy introuvable (${legalReviewedById}) dans ${sourcePath}`);
+    }
+  }
+
+  requireNonEmptyString(article.editorialTemplate, "editorialTemplate", sourcePath);
+  requireValueInSet(article.editorialTemplate, "editorialTemplate", sourcePath, ALLOWED_TEMPLATES);
+
+  requireNonEmptyString(article.status, "status", sourcePath);
+  requireValueInSet(article.status, "status", sourcePath, ALLOWED_STATUS);
+
+  if (!Number.isFinite(article.readTimeMinutes) || article.readTimeMinutes < 2 || article.readTimeMinutes > 45) {
+    throw new Error(`Champ requis invalide (readTimeMinutes) dans ${sourcePath}`);
+  }
+
+  requireArray(article.tags, "tags", sourcePath);
+  const normalizedTags = article.tags.map((entry) =>
+    typeof entry === "string" ? entry : entry && typeof entry === "object" ? entry.tag : ""
+  );
+
+  if (normalizedTags.length < 1 || normalizedTags.length > 4) {
+    throw new Error(`Nombre de tags invalide dans ${sourcePath}: attendu entre 1 et 4`);
+  }
+
+  normalizedTags.forEach((tag, index) => {
+    requireNonEmptyString(tag, `tags[${index}]`, sourcePath);
+    if (!ALLOWED_TAGS.has(tag)) {
+      throw new Error(`Tag non autorisé (${tag}) dans ${sourcePath}`);
+    }
+  });
+
+  const seriesId =
+    typeof article.series === "string"
+      ? article.series
+      : article.series && typeof article.series === "object"
+        ? article.series.id
+        : article.series;
+
+  if (seriesId !== undefined && seriesId !== "") {
+    requireNonEmptyString(seriesId, "series", sourcePath);
+    if (!seriesById.has(seriesId)) {
+      throw new Error(`Série introuvable (${seriesId}) dans ${sourcePath}`);
+    }
+  }
+
+  if (article.canonicalUrl !== undefined && String(article.canonicalUrl).trim().length > 0) {
+    if (!isValidHttpUrl(String(article.canonicalUrl).trim())) {
+      throw new Error(`canonicalUrl invalide dans ${sourcePath}: ${article.canonicalUrl}`);
+    }
+  }
+
+  const sections = normalizeSections(article.sections, sourcePath);
+  const sources = normalizeSources(article.sources, documentsByFile, sourcePath);
+  const corrections = normalizeCorrections(article.corrections, sourcePath);
+  const sourceLinks = normalizeSourceLinks(article.sourceLinks, sourcePath);
+  const relatedArticles = normalizeRelatedArticles(article.relatedArticles, article.id, sourcePath);
+
+  relatedArticles.forEach((relatedId) => {
+    if (!allArticleIds.has(relatedId)) {
+      throw new Error(`relatedArticles référence un ID inconnu (${relatedId}) dans ${sourcePath}`);
+    }
+  });
+
+  const publishAt = article.publishAt ? parseDateOrThrow(article.publishAt, "publishAt", sourcePath) : null;
+  const unpublishAt = article.unpublishAt
+    ? parseDateOrThrow(article.unpublishAt, "unpublishAt", sourcePath)
+    : null;
+
+  if (publishAt && unpublishAt && unpublishAt.getTime() <= publishAt.getTime()) {
+    throw new Error(`unpublishAt doit être > publishAt dans ${sourcePath}`);
+  }
+
+  const isPublished = article.status === "published";
+  const isAfterPublishWindow = !publishAt || now.getTime() >= publishAt.getTime();
+  const isBeforeUnpublishWindow = !unpublishAt || now.getTime() < unpublishAt.getTime();
+  const isVisibleNow = isPublished && isAfterPublishWindow && isBeforeUnpublishWindow;
+
+  return {
+    ...article,
+    author: authorRecord.name,
+    authorId: authorRecord.id,
+    factCheckedBy:
+      factCheckedById && authorsById.has(factCheckedById)
+        ? authorsById.get(factCheckedById).name
+        : undefined,
+    factCheckedById: factCheckedById || undefined,
+    legalReviewedBy:
+      legalReviewedById && authorsById.has(legalReviewedById)
+        ? authorsById.get(legalReviewedById).name
+        : undefined,
+    legalReviewedById: legalReviewedById || undefined,
+    series: seriesId || undefined,
+    tags: normalizedTags,
+    sections,
+    sources,
+    corrections,
+    sourceLinks,
+    relatedArticles,
+    isVisibleNow,
+  };
 }
 
 async function loadSiteConfig() {
   const raw = await readFile(siteConfigPath, "utf8");
-  const siteConfig = parseJsonFile(raw, siteConfigPath);
-  requireNonEmptyString(siteConfig.featuredArticleId, "featuredArticleId", siteConfigPath);
-  return siteConfig;
+  return parseJsonFile(raw, siteConfigPath);
 }
 
 function toModuleLiteral(value) {
@@ -128,18 +505,50 @@ function toModuleLiteral(value) {
 }
 
 async function main() {
-  const [siteConfig, articles] = await Promise.all([loadSiteConfig(), loadArticles()]);
+  const now = new Date();
 
-  if (!articles.some((entry) => entry.id === siteConfig.featuredArticleId)) {
-    throw new Error(
-      `featuredArticleId (${siteConfig.featuredArticleId}) ne correspond à aucun fichier dans ${articlesDir}`
-    );
-  }
+  const [siteConfig, authorRecords, seriesRecords, documentRecords, articleRecords] = await Promise.all([
+    loadSiteConfig(),
+    loadJsonCollection(authorsDir, "authors"),
+    loadJsonCollection(seriesDir, "series"),
+    loadJsonCollection(documentsDir, "documents"),
+    loadJsonCollection(articlesDir, "articles"),
+  ]);
 
-  const output = `// This file is auto-generated by scripts/generate-articles-content.mjs.\n// Do not edit manually.\n\nexport const featuredArticleId = ${toModuleLiteral(siteConfig.featuredArticleId)};\n\nexport const articles = ${toModuleLiteral(articles)};\n`;
+  const authors = validateAuthors(authorRecords);
+  const series = validateSeries(seriesRecords);
+  const documents = validateDocuments(documentRecords);
+
+  const allArticleIds = new Set();
+  articleRecords.forEach(({ payload, sourcePath }) => {
+    requireNonEmptyString(payload.id, "id", sourcePath);
+    if (allArticleIds.has(payload.id)) {
+      throw new Error(`ID d'article dupliqué (${payload.id}) dans ${sourcePath}`);
+    }
+    allArticleIds.add(payload.id);
+  });
+
+  const normalizedArticles = articleRecords.map(({ payload, sourcePath }) =>
+    validateAndPrepareArticle(payload, sourcePath, {
+      authorsById: authors.byId,
+      seriesById: series.byId,
+      documentsByFile: documents.byFile,
+      allArticleIds,
+      now,
+    })
+  );
+
+  const visibleArticles = normalizedArticles
+    .filter((article) => article.isVisibleNow)
+    .map(({ isVisibleNow, ...article }) => article)
+    .sort(sortByDateDesc);
+
+  validateSiteConfig(siteConfig, new Set(visibleArticles.map((entry) => entry.id)));
+
+  const output = `// This file is auto-generated by scripts/generate-articles-content.mjs.\n// Do not edit manually.\n\nexport const featuredArticleId = ${toModuleLiteral(siteConfig.featuredArticleId)};\n\nexport const authors = ${toModuleLiteral(authors.ordered)};\n\nexport const series = ${toModuleLiteral(series.ordered)};\n\nexport const documents = ${toModuleLiteral(documents.ordered)};\n\nexport const articles = ${toModuleLiteral(visibleArticles)};\n`;
 
   await writeFile(outputPath, output, "utf8");
-  console.log(`Generated ${path.basename(outputPath)} with ${articles.length} article(s).`);
+  console.log(`Generated ${path.basename(outputPath)} with ${visibleArticles.length} visible article(s).`);
 }
 
 main().catch((error) => {

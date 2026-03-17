@@ -30,6 +30,125 @@ media_folder: "uploads"
 public_folder: "./uploads"
 
 collections:
+  - name: "authors"
+    label: "Auteurs"
+    label_singular: "Auteur"
+    folder: "content/authors"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{fields.id}}"
+    identifier_field: "name"
+    summary: "{{name}}"
+    editor:
+      preview: false
+    fields:
+      - label: "ID auteur"
+        name: "id"
+        widget: "string"
+        pattern:
+          - "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          - "Utilise uniquement lettres minuscules, chiffres et tirets"
+      - label: "Nom affiché"
+        name: "name"
+        widget: "string"
+        pattern:
+          - "^.{2,80}$"
+          - "Entre 2 et 80 caractères"
+      - label: "Rôle"
+        name: "role"
+        widget: "string"
+      - label: "Bio"
+        name: "bio"
+        widget: "text"
+      - label: "Avatar"
+        name: "avatar"
+        widget: "image"
+        required: false
+      - label: "Email"
+        name: "email"
+        widget: "string"
+        required: false
+
+  - name: "series"
+    label: "Séries"
+    label_singular: "Série"
+    folder: "content/series"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{fields.id}}"
+    identifier_field: "title"
+    summary: "{{title}}"
+    editor:
+      preview: false
+    fields:
+      - label: "ID série"
+        name: "id"
+        widget: "string"
+        pattern:
+          - "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          - "Utilise uniquement lettres minuscules, chiffres et tirets"
+      - label: "Titre"
+        name: "title"
+        widget: "string"
+      - label: "Description"
+        name: "description"
+        widget: "text"
+      - label: "Image de couverture"
+        name: "coverImage"
+        widget: "image"
+        required: false
+
+  - name: "documents"
+    label: "Documents"
+    label_singular: "Document"
+    folder: "content/documents"
+    create: true
+    extension: "json"
+    format: "json"
+    slug: "{{fields.id}}"
+    identifier_field: "title"
+    summary: "{{title}}"
+    editor:
+      preview: false
+    fields:
+      - label: "ID document"
+        name: "id"
+        widget: "string"
+        pattern:
+          - "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          - "Utilise uniquement lettres minuscules, chiffres et tirets"
+      - label: "Titre"
+        name: "title"
+        widget: "string"
+      - label: "Fichier source"
+        name: "file"
+        widget: "file"
+        media_folder: "documents"
+        public_folder: "./documents"
+      - label: "Type"
+        name: "type"
+        widget: "select"
+        options:
+          - "Document administratif"
+          - "Convention publique"
+          - "Jeu de données (CSV)"
+          - "Arrêté municipal"
+          - "Rapport"
+          - "Autre"
+      - label: "Date de référence"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+      - label: "URL de source"
+        name: "sourceUrl"
+        widget: "string"
+        required: false
+        hint: "Optionnel, pour un lien officiel externe"
+
   - name: "configuration"
     label: "Configuration"
     files:
@@ -40,7 +159,7 @@ collections:
         editor:
           preview: false
         fields:
-          - label: "Article a la une"
+          - label: "Article à la une"
             name: "featuredArticleId"
             widget: "relation"
             collection: "articles"
@@ -60,6 +179,22 @@ collections:
     summary: "{{title}} - {{date}}"
     editor:
       preview: false
+    view_filters:
+      - label: "Enquêtes"
+        field: "editorialTemplate"
+        pattern: "enquete"
+      - label: "Brèves"
+        field: "editorialTemplate"
+        pattern: "breve"
+      - label: "Portraits"
+        field: "editorialTemplate"
+        pattern: "portrait"
+      - label: "Décryptages"
+        field: "editorialTemplate"
+        pattern: "decryptage"
+      - label: "Publiés"
+        field: "status"
+        pattern: "published"
     fields:
       - label: "ID unique (slug)"
         name: "id"
@@ -69,22 +204,106 @@ collections:
           - "^[a-z0-9]+(?:-[a-z0-9]+)*$"
           - "Utilise uniquement lettres minuscules, chiffres et tirets"
 
+      - label: "Template éditorial"
+        name: "editorialTemplate"
+        widget: "select"
+        default: "enquete"
+        options:
+          - { label: "Enquête", value: "enquete" }
+          - { label: "Brève", value: "breve" }
+          - { label: "Portrait", value: "portrait" }
+          - { label: "Décryptage", value: "decryptage" }
+
+      - label: "Statut éditorial"
+        name: "status"
+        widget: "select"
+        default: "draft"
+        options:
+          - { label: "Idée", value: "idea" }
+          - { label: "Brouillon", value: "draft" }
+          - { label: "Relecture", value: "review" }
+          - { label: "Validation juridique", value: "legal" }
+          - { label: "Publié", value: "published" }
+          - { label: "Archivé", value: "archived" }
+
+      - label: "Publication planifiée"
+        name: "publishAt"
+        widget: "datetime"
+        required: false
+        date_format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        format: "YYYY-MM-DDTHH:mm:ss.SSSZ"
+
+      - label: "Dépublication planifiée"
+        name: "unpublishAt"
+        widget: "datetime"
+        required: false
+        date_format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        format: "YYYY-MM-DDTHH:mm:ss.SSSZ"
+
       - label: "Titre"
         name: "title"
         widget: "string"
+        pattern:
+          - "^.{12,120}$"
+          - "Entre 12 et 120 caractères"
+
+      - label: "Titre SEO"
+        name: "seoTitle"
+        widget: "string"
+        required: false
+        hint: "Optionnel: titre spécifique pour Google et réseaux"
 
       - label: "Chapô"
         name: "excerpt"
         widget: "text"
+        pattern:
+          - "^.{60,600}$"
+          - "Entre 60 et 600 caractères"
 
-      - label: "Legende image"
+      - label: "Description SEO"
+        name: "seoDescription"
+        widget: "text"
+        required: false
+        hint: "Optionnel: entre 80 et 200 caractères idéalement"
+
+      - label: "Légende image"
         name: "caption"
         widget: "text"
+        pattern:
+          - "^.{8,220}$"
+          - "Entre 8 et 220 caractères"
 
-      - label: "Image (URL)"
+      - label: "Image principale"
         name: "image"
         widget: "image"
-        hint: "Tu peux coller une URL externe ou uploader une image"
+        hint: "Tu peux aussi coller une URL externe"
+
+      - label: "Texte alternatif image (obligatoire)"
+        name: "heroImageAlt"
+        widget: "string"
+        pattern:
+          - "^.{8,200}$"
+          - "Entre 8 et 200 caractères"
+
+      - label: "Crédit image (obligatoire)"
+        name: "imageCredit"
+        widget: "string"
+        pattern:
+          - "^.{3,120}$"
+          - "Entre 3 et 120 caractères"
+
+      - label: "Image Open Graph (optionnel)"
+        name: "ogImage"
+        widget: "image"
+        required: false
+
+      - label: "URL canonique (optionnel)"
+        name: "canonicalUrl"
+        widget: "string"
+        required: false
+        hint: "Exemple: https://mistral-media.fr/article/..."
 
       - label: "Date de publication"
         name: "date"
@@ -93,7 +312,7 @@ collections:
         date_format: "YYYY-MM-DD"
         time_format: false
 
-      - label: "Date de mise a jour"
+      - label: "Date de mise à jour"
         name: "updatedDate"
         widget: "datetime"
         format: "YYYY-MM-DD"
@@ -102,18 +321,61 @@ collections:
 
       - label: "Auteur"
         name: "author"
-        widget: "string"
+        widget: "relation"
+        collection: "authors"
+        search_fields: ["name", "id", "role"]
+        display_fields: ["name", "role"]
+        value_field: "id"
+
+      - label: "Vérification factuelle"
+        name: "factCheckedBy"
+        widget: "relation"
+        collection: "authors"
+        required: false
+        search_fields: ["name", "id", "role"]
+        display_fields: ["name", "role"]
+        value_field: "id"
+
+      - label: "Validation juridique"
+        name: "legalReviewedBy"
+        widget: "relation"
+        collection: "authors"
+        required: false
+        search_fields: ["name", "id", "role"]
+        display_fields: ["name", "role"]
+        value_field: "id"
+
+      - label: "Sujet sensible"
+        name: "sensitiveTopic"
+        widget: "boolean"
+        default: false
 
       - label: "Temps de lecture (minutes)"
         name: "readTimeMinutes"
         widget: "number"
-        min: 1
+        min: 2
+        max: 45
         value_type: "int"
+
+      - label: "Localisation principale"
+        name: "location"
+        widget: "string"
+        default: "Marseille"
+
+      - label: "Série éditoriale"
+        name: "series"
+        widget: "relation"
+        collection: "series"
+        required: false
+        search_fields: ["title", "id"]
+        display_fields: ["title"]
+        value_field: "id"
 
       - label: "Tags"
         name: "tags"
         widget: "list"
         min: 1
+        max: 4
         field:
           label: "Tag"
           name: "tag"
@@ -126,7 +388,31 @@ collections:
             - "Culture"
             - "Quartiers"
 
-      - label: "Sections (optionnel)"
+      - label: "Articles liés (sélection manuelle)"
+        name: "relatedArticles"
+        widget: "list"
+        required: false
+        collapsed: true
+        field:
+          label: "Article lié"
+          name: "article"
+          widget: "relation"
+          collection: "articles"
+          search_fields: ["title", "id"]
+          display_fields: ["title", "id"]
+          value_field: "id"
+
+      - label: "Liens de sources externes"
+        name: "sourceLinks"
+        widget: "list"
+        required: false
+        collapsed: true
+        field:
+          label: "URL"
+          name: "url"
+          widget: "string"
+
+      - label: "Sections"
         name: "sections"
         widget: "list"
         required: false
@@ -136,6 +422,9 @@ collections:
           - label: "Titre section"
             name: "title"
             widget: "string"
+            pattern:
+              - "^.{3,90}$"
+              - "Entre 3 et 90 caractères"
           - label: "Paragraphes"
             name: "paragraphs"
             widget: "list"
@@ -145,21 +434,23 @@ collections:
               name: "paragraph"
               widget: "text"
 
-      - label: "Sources (optionnel)"
+      - label: "Sources"
         name: "sources"
         widget: "list"
         required: false
         collapsed: true
         summary: "{{fields.label}}"
         fields:
-          - label: "Libelle"
+          - label: "Libellé"
             name: "label"
             widget: "string"
-          - label: "Fichier (dans /documents)"
+          - label: "Document lié"
             name: "file"
-            widget: "file"
-            media_folder: "documents"
-            public_folder: "./documents"
+            widget: "relation"
+            collection: "documents"
+            search_fields: ["title", "id", "file"]
+            display_fields: ["title", "file", "type"]
+            value_field: "file"
           - label: "Type"
             name: "type"
             widget: "string"
@@ -176,7 +467,7 @@ collections:
             widget: "text"
             required: false
 
-      - label: "Corrections (optionnel)"
+      - label: "Corrections"
         name: "corrections"
         widget: "list"
         required: false
@@ -189,6 +480,6 @@ collections:
             format: "YYYY-MM-DD"
             date_format: "YYYY-MM-DD"
             time_format: false
-          - label: "Detail"
+          - label: "Détail"
             name: "detail"
             widget: "text"

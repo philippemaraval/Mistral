@@ -6,7 +6,7 @@
   "image": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
   "date": "2026-02-26",
   "updatedDate": "2026-03-01",
-  "author": "Amel Chabane",
+  "author": "amel-chabane",
   "readTimeMinutes": 9,
   "sources": [
     {
@@ -20,5 +20,24 @@
   "tags": [
     "Urbanisme",
     "Économie"
-  ]
+  ],
+  "editorialTemplate": "enquete",
+  "status": "published",
+  "publishAt": "2026-02-26T06:00:00.000Z",
+  "seoTitle": "Écoles rénovées : les marchés publics passés au crible",
+  "seoDescription": "Un relevé ligne par ligne des appels d'offres fait ressortir des écarts de coûts non expliqués.",
+  "ogImage": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
+  "factCheckedBy": "amel-chabane",
+  "legalReviewedBy": "lea-martin",
+  "sensitiveTopic": false,
+  "heroImageAlt": "Écoles rénovées : les marchés publics passés au crible",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "finances-publiques-marseille",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome"
+  ],
+  "sourceLinks": []
 }

@@ -6,7 +6,7 @@
   "image": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80",
   "date": "2026-03-11",
   "updatedDate": "2026-03-12",
-  "author": "Léa Martin",
+  "author": "lea-martin",
   "readTimeMinutes": 8,
   "sources": [
     {
@@ -34,5 +34,24 @@
     "Politique",
     "Économie",
     "Urbanisme"
-  ]
+  ],
+  "editorialTemplate": "enquete",
+  "status": "published",
+  "publishAt": "2026-03-11T06:00:00.000Z",
+  "seoTitle": "OM : Les chiffres cachés du nouveau stade",
+  "seoDescription": "Notre enquête révèle les montants réels du partenariat public-privé pour le Vélodrome. Un dossier qui bouscule les certitudes municipales.",
+  "ogImage": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80",
+  "factCheckedBy": "lea-martin",
+  "legalReviewedBy": "lea-martin",
+  "sensitiveTopic": false,
+  "heroImageAlt": "OM : Les chiffres cachés du nouveau stade",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "finances-publiques-marseille",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome"
+  ],
+  "sourceLinks": []
 }

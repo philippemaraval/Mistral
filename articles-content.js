@@ -3,96 +3,108 @@
 
 export const featuredArticleId = "om-chiffres-stade";
 
-export const articles = [
+export const authors = [
   {
-    "id": "cantines-prix-qualite-quartiers",
-    "title": "Cantines marseillaises : pourquoi la facture grimpe plus vite que la qualité",
-    "excerpt": "Pendant six semaines, Mistral a comparé menus affichés, portions servies et prix facturés dans plusieurs secteurs de Marseille. Le constat est net : les écarts entre quartiers se creusent, alors que les familles paient de plus en plus.",
-    "caption": "Service du midi dans une école du 3e arrondissement, relevé de terrain Mistral.",
-    "image": "https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=1400&q=80",
-    "date": "2026-03-17",
-    "updatedDate": "2026-03-17",
-    "author": "Nassim Belkacem",
-    "readTimeMinutes": 11,
-    "sections": [
-      {
-        "title": "Ce que montrent les relevés de terrain",
-        "paragraphs": [
-          "Entre le 29 janvier et le 11 mars 2026, nous avons observé 18 services de cantine dans six groupes scolaires situés dans les 2e, 3e, 8e, 11e et 14e arrondissements. Dans chaque établissement, nous avons comparé les menus annoncés la semaine précédente aux plats effectivement servis et aux portions réellement distribuées.",
-          "Sur 18 services observés, 11 présentaient au moins une différence significative entre le menu affiché et le plateau final : absence d'accompagnement prévu, remplacement d'un produit frais par un produit surgelé, ou réduction de la portion protéinée en fin de service. Ces écarts apparaissent davantage dans les écoles où la fréquentation dépasse les capacités théoriques de la cuisine de liaison.",
-          "Les familles rencontrées décrivent surtout une perte de confiance : elles ne contestent pas seulement la hausse tarifaire, elles disent ne plus comprendre ce qu'elles financent. Dans deux écoles du nord de la ville, plusieurs parents nous ont montré des tickets de paiement mensuel supérieurs à ceux de 2024, alors que leurs enfants signalent des repas moins variés."
-        ]
-      },
-      {
-        "title": "Des hausses qui pèsent davantage selon les quartiers",
-        "paragraphs": [
-          "La grille municipale reste progressive, mais ses effets concrets sont inégaux. Dans les quartiers où les revenus fluctuent et où les dossiers administratifs sont plus souvent incomplets, les bascules vers des tranches supérieures sont plus fréquentes. Résultat : certaines familles passent d'un palier social à un palier intermédiaire sans avoir réellement gagné en pouvoir d'achat.",
-          "Nos entretiens avec des directeurs d'école confirment un phénomène régulier : les changements de tranche sont compris tardivement, parfois plusieurs mois après la rentrée, lorsque les régularisations tombent. Dans ce contexte, une hausse de quelques dizaines d'euros mensuels devient un choc budgétaire pour des foyers déjà contraints.",
-          "Ce décalage est peu visible dans les communications institutionnelles, qui raisonnent en moyenne annuelle. Or, sur le terrain, les ménages comparent leur fin de mois, pas des moyennes consolidées."
-        ]
-      },
-      {
-        "title": "Le nerf du sujet : marchés, indexation et contrôle",
-        "paragraphs": [
-          "Les documents contractuels que nous avons examinés montrent une logique d'indexation automatique des coûts (énergie, transport, matières premières) qui protège d'abord la continuité du service. Cette mécanique est compréhensible, mais elle rend la facture finale très sensible aux aléas économiques, avec un contrôle qualitatif qui reste plus lent que la hausse des coûts.",
-          "Plusieurs agents de restauration évoquent un pilotage \"à flux tendu\" : ajustements de dernière minute, substitutions en cas de rupture, et arbitrages opérés au plus près de la production. Ce fonctionnement limite les ruptures de service, mais il dégrade la stabilité des menus et la lisibilité pour les familles.",
-          "Le principal angle mort reste la publication de données de suivi compréhensibles par le public. Les tableaux administratifs existent, mais ils ne permettent pas toujours de relier clairement prix payé, prestation promise et prestation servie, école par école."
-        ]
-      },
-      {
-        "title": "Ce que répond la mairie",
-        "paragraphs": [
-          "La municipalité souligne que l'inflation alimentaire et énergétique a imposé des ajustements successifs pour maintenir l'offre de restauration. Elle affirme également avoir renforcé les clauses de qualité dans les marchés récents, en particulier sur la traçabilité et la part de produits durables.",
-          "Sur les écarts de service signalés dans certains établissements, la ville reconnaît des tensions ponctuelles liées au volume de repas, aux absences de personnel et aux retards logistiques. Elle indique avoir lancé des audits ciblés dans les secteurs les plus en difficulté et promet une publication plus régulière des indicateurs de suivi.",
-          "Reste une question centrale : à quel rythme ces améliorations seront-elles perceptibles pour les familles qui subissent déjà la hausse des factures depuis plusieurs trimestres."
-        ]
-      },
-      {
-        "title": "Parents et agents demandent la même chose : visibilité",
-        "paragraphs": [
-          "Les collectifs de parents interrogés ne réclament pas uniquement une baisse générale des tarifs. Leur priorité est la prévisibilité : savoir à l'avance combien coûtera le mois suivant, comprendre précisément pourquoi une tranche change, et disposer d'un canal de recours simple en cas d'erreur.",
-          "Du côté des équipes de terrain, la demande rejoint celle des familles : plus de transparence opérationnelle. Les agents souhaitent des plannings stabilisés, des marges de sécurité sur les stocks sensibles et des protocoles clairs lorsque les menus doivent être modifiés.",
-          "Ces deux attentes convergent vers un même besoin démocratique : sortir d'une logique de correction après coup, et installer un suivi public continu de la qualité et du prix."
-        ]
-      },
-      {
-        "title": "Ce qu'il faut surveiller d'ici l'été",
-        "paragraphs": [
-          "Trois indicateurs seront décisifs dans les prochains mois : l'évolution des tranches tarifaires réellement appliquées, le taux de menus effectivement conformes, et le délai moyen de traitement des réclamations familles. Sans ces données, le débat restera bloqué entre ressenti individuel et communication globale.",
-          "La prochaine séquence budgétaire municipale offrira un test concret : soit la ville détaille un plan de stabilisation lisible, soit la hausse continuera d'être absorbée au cas par cas par les ménages et les établissements.",
-          "Pour les parents comme pour les agents, la question n'est plus de savoir si le service est indispensable, mais s'il peut rester soutenable financièrement tout en étant cohérent avec les promesses de qualité affichées."
-        ]
-      }
-    ],
-    "sources": [
-      {
-        "label": "Subventions associations Marseille 2024",
-        "file": "subventions-associations-marseille-2024.csv",
-        "type": "Jeu de données (CSV)",
-        "date": "2026-03-15",
-        "context": "Croisé avec les dépenses connexes de restauration scolaire pour analyser les arbitrages budgétaires locaux."
-      },
-      {
-        "label": "Arrêté municipal circulation Vieux-Port 2024",
-        "file": "arrete-circulation-vieux-port-2024.txt",
-        "type": "Arrêté municipal",
-        "date": "2026-03-14",
-        "context": "Référence utilisée pour vérifier les contraintes logistiques et d'acheminement évoquées par les agents."
-      },
-      {
-        "label": "Convention d'occupation Vélodrome - avenant 2",
-        "file": "convention-velodrome-avenant-2.txt",
-        "type": "Convention publique",
-        "date": "2026-03-13",
-        "context": "Document de comparaison utilisé pour relire les clauses d'indexation contractuelle et les mécanismes de suivi."
-      }
-    ],
-    "tags": [
-      "Économie",
-      "Quartiers",
-      "Politique"
-    ]
+    "id": "amel-chabane",
+    "name": "Amel Chabane",
+    "role": "Journaliste data",
+    "bio": "Spécialiste des marchés publics, budgets et jeux de données municipaux.",
+    "avatar": "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&w=320&q=80",
+    "email": "amel.chabane@mistral-media.fr"
   },
+  {
+    "id": "lea-martin",
+    "name": "Léa Martin",
+    "role": "Rédactrice enquêtes",
+    "bio": "Suit les sujets de politiques publiques et de finances locales à Marseille.",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=320&q=80",
+    "email": "lea.martin@mistral-media.fr"
+  },
+  {
+    "id": "nassim-belkacem",
+    "name": "Nassim Belkacem",
+    "role": "Journaliste terrain",
+    "bio": "Documente les services publics et les dynamiques sociales dans les quartiers marseillais.",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=320&q=80",
+    "email": "nassim.belkacem@mistral-media.fr"
+  },
+  {
+    "id": "paul-ferrand",
+    "name": "Paul Ferrand",
+    "role": "Chroniqueur politique",
+    "bio": "Décrypte les arbitrages politiques et leur impact concret pour les habitants.",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=320&q=80",
+    "email": "paul.ferrand@mistral-media.fr"
+  },
+  {
+    "id": "philou",
+    "name": "Philou",
+    "role": "Contributeur",
+    "bio": "Auteur test pour la validation du workflow éditorial Decap Bridge.",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=320&q=80",
+    "email": "philou@mistral-media.fr"
+  },
+  {
+    "id": "sarah-cadi",
+    "name": "Sarah Cadi",
+    "role": "Journaliste mobilités",
+    "bio": "Analyse les transports, l’accès aux services et les inégalités de desserte.",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=320&q=80",
+    "email": "sarah.cadi@mistral-media.fr"
+  },
+  {
+    "id": "yanis-gherbi",
+    "name": "Yanis Gherbi",
+    "role": "Reporter culture et quartiers",
+    "bio": "Raconte les initiatives locales, la mémoire urbaine et les collectifs citoyens.",
+    "avatar": "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?auto=format&fit=crop&w=320&q=80",
+    "email": "yanis.gherbi@mistral-media.fr"
+  }
+];
+
+export const series = [
+  {
+    "id": "finances-publiques-marseille",
+    "title": "Finances publiques marseillaises",
+    "description": "Suivi des budgets, marchés publics et choix d’allocation des moyens à Marseille.",
+    "coverImage": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "id": "ville-et-quartiers",
+    "title": "Ville et quartiers",
+    "description": "Une série d’articles sur les écarts de services, de mobilités et de cadre de vie selon les secteurs.",
+    "coverImage": "https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=1200&q=80"
+  }
+];
+
+export const documents = [
+  {
+    "id": "arrete-circulation-vieux-port-2024",
+    "title": "Arrêté municipal circulation Vieux-Port 2024",
+    "file": "arrete-circulation-vieux-port-2024.txt",
+    "type": "Arrêté municipal",
+    "date": "2026-03-14",
+    "sourceUrl": ""
+  },
+  {
+    "id": "convention-velodrome-avenant-2",
+    "title": "Convention d'occupation Vélodrome - avenant 2",
+    "file": "convention-velodrome-avenant-2.txt",
+    "type": "Convention publique",
+    "date": "2026-03-10",
+    "sourceUrl": ""
+  },
+  {
+    "id": "subventions-associations-marseille-2024",
+    "title": "Subventions associations Marseille 2024",
+    "file": "subventions-associations-marseille-2024.csv",
+    "type": "Jeu de données (CSV)",
+    "date": "2026-03-09",
+    "sourceUrl": ""
+  }
+];
+
+export const articles = [
   {
     "id": "om-chiffres-stade",
     "title": "OM : Les chiffres cachés du nouveau stade",
@@ -129,7 +141,30 @@ export const articles = [
       "Politique",
       "Économie",
       "Urbanisme"
-    ]
+    ],
+    "editorialTemplate": "enquete",
+    "status": "published",
+    "publishAt": "2026-03-11T06:00:00.000Z",
+    "seoTitle": "OM : Les chiffres cachés du nouveau stade",
+    "seoDescription": "Notre enquête révèle les montants réels du partenariat public-privé pour le Vélodrome. Un dossier qui bouscule les certitudes municipales.",
+    "ogImage": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80",
+    "factCheckedBy": "Léa Martin",
+    "legalReviewedBy": "Léa Martin",
+    "sensitiveTopic": false,
+    "heroImageAlt": "OM : Les chiffres cachés du nouveau stade",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "finances-publiques-marseille",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome"
+    ],
+    "sourceLinks": [],
+    "authorId": "lea-martin",
+    "factCheckedById": "lea-martin",
+    "legalReviewedById": "lea-martin",
+    "sections": []
   },
   {
     "id": "dockers-port-autonome",
@@ -144,7 +179,30 @@ export const articles = [
     "tags": [
       "Économie",
       "Quartiers"
-    ]
+    ],
+    "editorialTemplate": "decryptage",
+    "status": "published",
+    "publishAt": "2026-03-09T06:00:00.000Z",
+    "seoTitle": "Les dockers racontent l'autre visage du port autonome",
+    "seoDescription": "Entre automatisation et fatigue chronique, les travailleurs décrivent une réorganisation qui avance plus vite que la concertation.",
+    "ogImage": "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Nassim Belkacem",
+    "sensitiveTopic": false,
+    "heroImageAlt": "Les dockers racontent l'autre visage du port autonome",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "finances-publiques-marseille",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "ecoles-renovees-marches"
+    ],
+    "sourceLinks": [],
+    "authorId": "nassim-belkacem",
+    "factCheckedById": "nassim-belkacem",
+    "sections": [],
+    "sources": [],
+    "corrections": []
   },
   {
     "id": "retards-nord-ville",
@@ -159,7 +217,30 @@ export const articles = [
     "tags": [
       "Mobilités",
       "Quartiers"
-    ]
+    ],
+    "editorialTemplate": "decryptage",
+    "status": "published",
+    "publishAt": "2026-03-06T06:00:00.000Z",
+    "seoTitle": "Transports : les retards se concentrent dans le nord de la ville",
+    "seoDescription": "Nos relevés montrent une fracture persistante entre promesses de réseau et réalité des temps de trajet.",
+    "ogImage": "https://images.unsplash.com/photo-1470004914212-05527e49370b?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Sarah Cadi",
+    "sensitiveTopic": false,
+    "heroImageAlt": "Transports : les retards se concentrent dans le nord de la ville",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "ville-et-quartiers",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome"
+    ],
+    "sourceLinks": [],
+    "authorId": "sarah-cadi",
+    "factCheckedById": "sarah-cadi",
+    "sections": [],
+    "sources": [],
+    "corrections": []
   },
   {
     "id": "mediterranee-argument-politique",
@@ -174,7 +255,30 @@ export const articles = [
     "tags": [
       "Politique",
       "Culture"
-    ]
+    ],
+    "editorialTemplate": "portrait",
+    "status": "published",
+    "publishAt": "2026-03-03T06:00:00.000Z",
+    "seoTitle": "La Méditerranée comme argument politique permanent",
+    "seoDescription": "Quand les élus invoquent l'exception marseillaise, que disent vraiment les arbitrages budgétaires ?",
+    "ogImage": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Paul Ferrand",
+    "sensitiveTopic": false,
+    "heroImageAlt": "La Méditerranée comme argument politique permanent",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "finances-publiques-marseille",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome"
+    ],
+    "sourceLinks": [],
+    "authorId": "paul-ferrand",
+    "factCheckedById": "paul-ferrand",
+    "sections": [],
+    "sources": [],
+    "corrections": []
   },
   {
     "id": "ecoles-renovees-marches",
@@ -198,7 +302,31 @@ export const articles = [
     "tags": [
       "Urbanisme",
       "Économie"
-    ]
+    ],
+    "editorialTemplate": "enquete",
+    "status": "published",
+    "publishAt": "2026-02-26T06:00:00.000Z",
+    "seoTitle": "Écoles rénovées : les marchés publics passés au crible",
+    "seoDescription": "Un relevé ligne par ligne des appels d'offres fait ressortir des écarts de coûts non expliqués.",
+    "ogImage": "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Amel Chabane",
+    "legalReviewedBy": "Léa Martin",
+    "sensitiveTopic": false,
+    "heroImageAlt": "Écoles rénovées : les marchés publics passés au crible",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "finances-publiques-marseille",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome"
+    ],
+    "sourceLinks": [],
+    "authorId": "amel-chabane",
+    "factCheckedById": "amel-chabane",
+    "legalReviewedById": "lea-martin",
+    "sections": [],
+    "corrections": []
   },
   {
     "id": "arretes-municipaux-riverains",
@@ -222,7 +350,31 @@ export const articles = [
     "tags": [
       "Urbanisme",
       "Politique"
-    ]
+    ],
+    "editorialTemplate": "enquete",
+    "status": "published",
+    "publishAt": "2026-02-21T06:00:00.000Z",
+    "seoTitle": "Les arrêtés municipaux réclamés par les riverains",
+    "seoDescription": "Mistral publie les textes complets pour suivre ce qui a réellement été décidé autour des grands chantiers.",
+    "ogImage": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Léa Martin",
+    "legalReviewedBy": "Léa Martin",
+    "sensitiveTopic": false,
+    "heroImageAlt": "Les arrêtés municipaux réclamés par les riverains",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "finances-publiques-marseille",
+    "relatedArticles": [
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome",
+      "ecoles-renovees-marches"
+    ],
+    "sourceLinks": [],
+    "authorId": "lea-martin",
+    "factCheckedById": "lea-martin",
+    "legalReviewedById": "lea-martin",
+    "sections": [],
+    "corrections": []
   },
   {
     "id": "memoire-belle-de-mai",
@@ -237,7 +389,30 @@ export const articles = [
     "tags": [
       "Culture",
       "Quartiers"
-    ]
+    ],
+    "editorialTemplate": "portrait",
+    "status": "published",
+    "publishAt": "2026-02-16T06:00:00.000Z",
+    "seoTitle": "À la Belle de Mai, une mémoire de quartier s'organise",
+    "seoDescription": "Carnets, affiches et photos de façade composent une archive citoyenne face au récit officiel.",
+    "ogImage": "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Yanis Gherbi",
+    "sensitiveTopic": false,
+    "heroImageAlt": "À la Belle de Mai, une mémoire de quartier s'organise",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "ville-et-quartiers",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome"
+    ],
+    "sourceLinks": [],
+    "authorId": "yanis-gherbi",
+    "factCheckedById": "yanis-gherbi",
+    "sections": [],
+    "sources": [],
+    "corrections": []
   },
   {
     "id": "tramway-est-hypotheses",
@@ -253,7 +428,30 @@ export const articles = [
       "Mobilités",
       "Urbanisme",
       "Économie"
-    ]
+    ],
+    "editorialTemplate": "enquete",
+    "status": "published",
+    "publishAt": "2026-02-11T06:00:00.000Z",
+    "seoTitle": "Extension du tramway à l'est : les hypothèses sur la table",
+    "seoDescription": "Trois scénarios de tracé sont analysés avec leurs impacts budgétaires et leurs effets sur la desserte locale.",
+    "ogImage": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Sarah Cadi",
+    "sensitiveTopic": false,
+    "heroImageAlt": "Extension du tramway à l'est : les hypothèses sur la table",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "finances-publiques-marseille",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome"
+    ],
+    "sourceLinks": [],
+    "authorId": "sarah-cadi",
+    "factCheckedById": "sarah-cadi",
+    "sections": [],
+    "sources": [],
+    "corrections": []
   },
   {
     "id": "friches-culturelles-sud",
@@ -269,6 +467,29 @@ export const articles = [
       "Culture",
       "Politique",
       "Quartiers"
-    ]
+    ],
+    "editorialTemplate": "portrait",
+    "status": "published",
+    "publishAt": "2026-02-07T06:00:00.000Z",
+    "seoTitle": "Friches culturelles du sud : qui décide des occupations ?",
+    "seoDescription": "Derrière les projets temporaires, des arbitrages politiques tranchent entre programmation artistique et rentabilité.",
+    "ogImage": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=900&q=80",
+    "factCheckedBy": "Paul Ferrand",
+    "sensitiveTopic": false,
+    "heroImageAlt": "Friches culturelles du sud : qui décide des occupations ?",
+    "imageCredit": "Photo: Unsplash",
+    "location": "Marseille",
+    "series": "finances-publiques-marseille",
+    "relatedArticles": [
+      "arretes-municipaux-riverains",
+      "cantines-prix-qualite-quartiers",
+      "dockers-port-autonome"
+    ],
+    "sourceLinks": [],
+    "authorId": "paul-ferrand",
+    "factCheckedById": "paul-ferrand",
+    "sections": [],
+    "sources": [],
+    "corrections": []
   }
 ];

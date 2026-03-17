@@ -465,23 +465,25 @@ function setMetaTag(selector, content) {
 
 function updateSocialMeta() {
   const pageUrl = new URL(buildArticleUrl(article.id), window.location.href).toString();
-  const description = article.excerpt;
-  const previewImage = buildOptimizedImageUrl(article.image, 1200, 78);
+  const canonicalUrl = article.canonicalUrl || pageUrl;
+  const description = article.seoDescription || article.excerpt;
+  const socialTitle = article.seoTitle || article.title;
+  const previewImage = buildOptimizedImageUrl(article.ogImage || article.image, 1200, 78);
 
   setMetaTag('meta[name="description"]', description);
-  setMetaTag('meta[property="og:title"]', `${article.title} | Mistral`);
+  setMetaTag('meta[property="og:title"]', `${socialTitle} | Mistral`);
   setMetaTag('meta[property="og:description"]', description);
   setMetaTag('meta[property="og:image"]', previewImage);
-  setMetaTag('meta[property="og:url"]', pageUrl);
-  setMetaTag('meta[name="twitter:title"]', `${article.title} | Mistral`);
+  setMetaTag('meta[property="og:url"]', canonicalUrl);
+  setMetaTag('meta[name="twitter:title"]', `${socialTitle} | Mistral`);
   setMetaTag('meta[name="twitter:description"]', description);
   setMetaTag('meta[name="twitter:image"]', previewImage);
 
   const canonical = document.querySelector("#canonical-link");
-  if (canonical) canonical.setAttribute("href", pageUrl);
+  if (canonical) canonical.setAttribute("href", canonicalUrl);
 }
 
-document.title = `${article.title} | Mistral`;
+document.title = `${article.seoTitle || article.title} | Mistral`;
 title.textContent = article.title;
 excerpt.textContent = article.excerpt;
 metaPrimary.textContent = formatAuthorLine(article);
@@ -489,8 +491,10 @@ metaSecondary.textContent = formatPublishedUpdated(article);
 image.src = buildOptimizedImageUrl(article.image, 960, 72);
 image.srcset = buildOptimizedImageSrcSet(article.image, [480, 720, 960, 1200, 1600], 74);
 image.sizes = "(max-width: 980px) 100vw, 920px";
-image.alt = article.title;
-caption.textContent = article.caption;
+image.alt = article.heroImageAlt || article.title;
+caption.textContent = article.imageCredit
+  ? `${article.caption} · ${article.imageCredit}`
+  : article.caption;
 breadcrumbCategoryLink.href = buildCategoryUrl(primaryTag);
 breadcrumbCategoryLink.textContent = primaryTag;
 breadcrumbCurrent.textContent = article.title;

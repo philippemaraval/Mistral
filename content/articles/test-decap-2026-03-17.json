@@ -1,8 +1,8 @@
 {
-  "excerpt": "Chapô : je ne sais pas ce que c'est ",
-  "caption": "Belle photo",
+  "excerpt": "Article de test Decap Bridge utilisé pour valider le workflow complet de création, relecture et publication sur le site Mistral.",
+  "caption": "Article de validation du workflow éditorial",
   "updatedDate": "2026-03-17",
-  "author": "Philou",
+  "author": "philou",
   "date": "2026-03-17",
   "title": "Test Decap Bridge",
   "tags": [
@@ -10,5 +10,23 @@
   ],
   "id": "test-decap-2026-03-17",
   "image": "https://generationvoyage.fr/activites-pluie-marseille/",
-  "readTimeMinutes": 3
+  "readTimeMinutes": 3,
+  "editorialTemplate": "portrait",
+  "status": "published",
+  "publishAt": "2026-03-17T06:00:00.000Z",
+  "seoTitle": "Test Decap Bridge",
+  "seoDescription": "Validation du parcours Decap Bridge: création, relecture et publication d'un article test dans le back-office Mistral.",
+  "ogImage": "https://generationvoyage.fr/activites-pluie-marseille/",
+  "factCheckedBy": "philou",
+  "sensitiveTopic": false,
+  "heroImageAlt": "Test Decap Bridge",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "ville-et-quartiers",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome"
+  ],
+  "sourceLinks": []
 }

@@ -343,7 +343,7 @@ function buildCard(article) {
   image.src = buildOptimizedImageUrl(article.image, 640, 72);
   image.srcset = buildOptimizedImageSrcSet(article.image, [320, 480, 640, 800, 960], 72);
   image.sizes = "(max-width: 767px) 100vw, (max-width: 980px) 50vw, 33vw";
-  image.alt = article.title;
+  image.alt = article.heroImageAlt || article.title;
   link.href = buildArticleUrl(article.id);
   link.setAttribute("aria-label", `Lire l'article : ${article.title}`);
   buildTags(article.tags, tags);

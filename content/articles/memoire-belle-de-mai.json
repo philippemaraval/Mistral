@@ -6,10 +6,28 @@
   "image": "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=900&q=80",
   "date": "2026-02-16",
   "updatedDate": "2026-02-17",
-  "author": "Yanis Gherbi",
+  "author": "yanis-gherbi",
   "readTimeMinutes": 5,
   "tags": [
     "Culture",
     "Quartiers"
-  ]
+  ],
+  "editorialTemplate": "portrait",
+  "status": "published",
+  "publishAt": "2026-02-16T06:00:00.000Z",
+  "seoTitle": "À la Belle de Mai, une mémoire de quartier s'organise",
+  "seoDescription": "Carnets, affiches et photos de façade composent une archive citoyenne face au récit officiel.",
+  "ogImage": "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=900&q=80",
+  "factCheckedBy": "yanis-gherbi",
+  "sensitiveTopic": false,
+  "heroImageAlt": "À la Belle de Mai, une mémoire de quartier s'organise",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "ville-et-quartiers",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome"
+  ],
+  "sourceLinks": []
 }

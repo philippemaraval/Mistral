@@ -13,6 +13,9 @@ python3 -m http.server 4173
 ## Source editoriale
 
 - Articles: `content/articles/*.json`
+- Auteurs: `content/authors/*.json`
+- Series: `content/series/*.json`
+- Documents (metadonnees): `content/documents/*.json`
 - Configuration homepage: `content/site.json`
 - Documents sources telechargeables: `documents/`
 
@@ -27,6 +30,7 @@ npm run build
 Cette commande:
 1. genere `articles-content.js` depuis `content/`
 2. copie les fichiers dans `dist/`
+3. valide les contraintes editoriales (IDs uniques, references, dates, tags, etc.)
 
 ## Cloudflare Pages
 
@@ -53,7 +57,19 @@ Une fois l'auth configuree, les auteurs peuvent:
 3. envoyer en relecture
 4. publier (merge vers `main`, deploy Cloudflare automatique)
 
+Fonctionnalites editoriales disponibles dans `/admin`:
+- selection de la une par relation (pas de saisie manuelle d'ID)
+- champs SEO (titre, description, image OG, canonique)
+- scheduling (`publishAt`, `unpublishAt`) et statut editorial
+- relations vers auteurs, series, documents et articles lies
+- validations renforcees (formats, longueurs, coherence des champs)
+
 Guide interne: [docs/editorial-workflow.md](docs/editorial-workflow.md)
+
+## Verification CI
+
+Une GitHub Action valide le contenu et le build a chaque push/PR:
+- [content-validation.yml](.github/workflows/content-validation.yml)
 
 ## Publication quotidienne (mode manuel de secours)
 

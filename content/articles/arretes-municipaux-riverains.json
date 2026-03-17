@@ -6,7 +6,7 @@
   "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=80",
   "date": "2026-02-21",
   "updatedDate": "2026-02-22",
-  "author": "Léa Martin",
+  "author": "lea-martin",
   "readTimeMinutes": 6,
   "sources": [
     {
@@ -20,5 +20,24 @@
   "tags": [
     "Urbanisme",
     "Politique"
-  ]
+  ],
+  "editorialTemplate": "enquete",
+  "status": "published",
+  "publishAt": "2026-02-21T06:00:00.000Z",
+  "seoTitle": "Les arrêtés municipaux réclamés par les riverains",
+  "seoDescription": "Mistral publie les textes complets pour suivre ce qui a réellement été décidé autour des grands chantiers.",
+  "ogImage": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=80",
+  "factCheckedBy": "lea-martin",
+  "legalReviewedBy": "lea-martin",
+  "sensitiveTopic": false,
+  "heroImageAlt": "Les arrêtés municipaux réclamés par les riverains",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "finances-publiques-marseille",
+  "relatedArticles": [
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome",
+    "ecoles-renovees-marches"
+  ],
+  "sourceLinks": []
 }

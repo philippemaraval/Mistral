@@ -6,10 +6,28 @@
   "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
   "date": "2026-03-03",
   "updatedDate": "2026-03-05",
-  "author": "Paul Ferrand",
+  "author": "paul-ferrand",
   "readTimeMinutes": 5,
   "tags": [
     "Politique",
     "Culture"
-  ]
+  ],
+  "editorialTemplate": "portrait",
+  "status": "published",
+  "publishAt": "2026-03-03T06:00:00.000Z",
+  "seoTitle": "La Méditerranée comme argument politique permanent",
+  "seoDescription": "Quand les élus invoquent l'exception marseillaise, que disent vraiment les arbitrages budgétaires ?",
+  "ogImage": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+  "factCheckedBy": "paul-ferrand",
+  "sensitiveTopic": false,
+  "heroImageAlt": "La Méditerranée comme argument politique permanent",
+  "imageCredit": "Photo: Unsplash",
+  "location": "Marseille",
+  "series": "finances-publiques-marseille",
+  "relatedArticles": [
+    "arretes-municipaux-riverains",
+    "cantines-prix-qualite-quartiers",
+    "dockers-port-autonome"
+  ],
+  "sourceLinks": []
 }

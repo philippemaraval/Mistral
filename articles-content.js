@@ -5,6 +5,95 @@ export const featuredArticleId = "om-chiffres-stade";
 
 export const articles = [
   {
+    "id": "cantines-prix-qualite-quartiers",
+    "title": "Cantines marseillaises : pourquoi la facture grimpe plus vite que la qualité",
+    "excerpt": "Pendant six semaines, Mistral a comparé menus affichés, portions servies et prix facturés dans plusieurs secteurs de Marseille. Le constat est net : les écarts entre quartiers se creusent, alors que les familles paient de plus en plus.",
+    "caption": "Service du midi dans une école du 3e arrondissement, relevé de terrain Mistral.",
+    "image": "https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=1400&q=80",
+    "date": "2026-03-17",
+    "updatedDate": "2026-03-17",
+    "author": "Nassim Belkacem",
+    "readTimeMinutes": 11,
+    "sections": [
+      {
+        "title": "Ce que montrent les relevés de terrain",
+        "paragraphs": [
+          "Entre le 29 janvier et le 11 mars 2026, nous avons observé 18 services de cantine dans six groupes scolaires situés dans les 2e, 3e, 8e, 11e et 14e arrondissements. Dans chaque établissement, nous avons comparé les menus annoncés la semaine précédente aux plats effectivement servis et aux portions réellement distribuées.",
+          "Sur 18 services observés, 11 présentaient au moins une différence significative entre le menu affiché et le plateau final : absence d'accompagnement prévu, remplacement d'un produit frais par un produit surgelé, ou réduction de la portion protéinée en fin de service. Ces écarts apparaissent davantage dans les écoles où la fréquentation dépasse les capacités théoriques de la cuisine de liaison.",
+          "Les familles rencontrées décrivent surtout une perte de confiance : elles ne contestent pas seulement la hausse tarifaire, elles disent ne plus comprendre ce qu'elles financent. Dans deux écoles du nord de la ville, plusieurs parents nous ont montré des tickets de paiement mensuel supérieurs à ceux de 2024, alors que leurs enfants signalent des repas moins variés."
+        ]
+      },
+      {
+        "title": "Des hausses qui pèsent davantage selon les quartiers",
+        "paragraphs": [
+          "La grille municipale reste progressive, mais ses effets concrets sont inégaux. Dans les quartiers où les revenus fluctuent et où les dossiers administratifs sont plus souvent incomplets, les bascules vers des tranches supérieures sont plus fréquentes. Résultat : certaines familles passent d'un palier social à un palier intermédiaire sans avoir réellement gagné en pouvoir d'achat.",
+          "Nos entretiens avec des directeurs d'école confirment un phénomène régulier : les changements de tranche sont compris tardivement, parfois plusieurs mois après la rentrée, lorsque les régularisations tombent. Dans ce contexte, une hausse de quelques dizaines d'euros mensuels devient un choc budgétaire pour des foyers déjà contraints.",
+          "Ce décalage est peu visible dans les communications institutionnelles, qui raisonnent en moyenne annuelle. Or, sur le terrain, les ménages comparent leur fin de mois, pas des moyennes consolidées."
+        ]
+      },
+      {
+        "title": "Le nerf du sujet : marchés, indexation et contrôle",
+        "paragraphs": [
+          "Les documents contractuels que nous avons examinés montrent une logique d'indexation automatique des coûts (énergie, transport, matières premières) qui protège d'abord la continuité du service. Cette mécanique est compréhensible, mais elle rend la facture finale très sensible aux aléas économiques, avec un contrôle qualitatif qui reste plus lent que la hausse des coûts.",
+          "Plusieurs agents de restauration évoquent un pilotage \"à flux tendu\" : ajustements de dernière minute, substitutions en cas de rupture, et arbitrages opérés au plus près de la production. Ce fonctionnement limite les ruptures de service, mais il dégrade la stabilité des menus et la lisibilité pour les familles.",
+          "Le principal angle mort reste la publication de données de suivi compréhensibles par le public. Les tableaux administratifs existent, mais ils ne permettent pas toujours de relier clairement prix payé, prestation promise et prestation servie, école par école."
+        ]
+      },
+      {
+        "title": "Ce que répond la mairie",
+        "paragraphs": [
+          "La municipalité souligne que l'inflation alimentaire et énergétique a imposé des ajustements successifs pour maintenir l'offre de restauration. Elle affirme également avoir renforcé les clauses de qualité dans les marchés récents, en particulier sur la traçabilité et la part de produits durables.",
+          "Sur les écarts de service signalés dans certains établissements, la ville reconnaît des tensions ponctuelles liées au volume de repas, aux absences de personnel et aux retards logistiques. Elle indique avoir lancé des audits ciblés dans les secteurs les plus en difficulté et promet une publication plus régulière des indicateurs de suivi.",
+          "Reste une question centrale : à quel rythme ces améliorations seront-elles perceptibles pour les familles qui subissent déjà la hausse des factures depuis plusieurs trimestres."
+        ]
+      },
+      {
+        "title": "Parents et agents demandent la même chose : visibilité",
+        "paragraphs": [
+          "Les collectifs de parents interrogés ne réclament pas uniquement une baisse générale des tarifs. Leur priorité est la prévisibilité : savoir à l'avance combien coûtera le mois suivant, comprendre précisément pourquoi une tranche change, et disposer d'un canal de recours simple en cas d'erreur.",
+          "Du côté des équipes de terrain, la demande rejoint celle des familles : plus de transparence opérationnelle. Les agents souhaitent des plannings stabilisés, des marges de sécurité sur les stocks sensibles et des protocoles clairs lorsque les menus doivent être modifiés.",
+          "Ces deux attentes convergent vers un même besoin démocratique : sortir d'une logique de correction après coup, et installer un suivi public continu de la qualité et du prix."
+        ]
+      },
+      {
+        "title": "Ce qu'il faut surveiller d'ici l'été",
+        "paragraphs": [
+          "Trois indicateurs seront décisifs dans les prochains mois : l'évolution des tranches tarifaires réellement appliquées, le taux de menus effectivement conformes, et le délai moyen de traitement des réclamations familles. Sans ces données, le débat restera bloqué entre ressenti individuel et communication globale.",
+          "La prochaine séquence budgétaire municipale offrira un test concret : soit la ville détaille un plan de stabilisation lisible, soit la hausse continuera d'être absorbée au cas par cas par les ménages et les établissements.",
+          "Pour les parents comme pour les agents, la question n'est plus de savoir si le service est indispensable, mais s'il peut rester soutenable financièrement tout en étant cohérent avec les promesses de qualité affichées."
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "label": "Subventions associations Marseille 2024",
+        "file": "subventions-associations-marseille-2024.csv",
+        "type": "Jeu de données (CSV)",
+        "date": "2026-03-15",
+        "context": "Croisé avec les dépenses connexes de restauration scolaire pour analyser les arbitrages budgétaires locaux."
+      },
+      {
+        "label": "Arrêté municipal circulation Vieux-Port 2024",
+        "file": "arrete-circulation-vieux-port-2024.txt",
+        "type": "Arrêté municipal",
+        "date": "2026-03-14",
+        "context": "Référence utilisée pour vérifier les contraintes logistiques et d'acheminement évoquées par les agents."
+      },
+      {
+        "label": "Convention d'occupation Vélodrome - avenant 2",
+        "file": "convention-velodrome-avenant-2.txt",
+        "type": "Convention publique",
+        "date": "2026-03-13",
+        "context": "Document de comparaison utilisé pour relire les clauses d'indexation contractuelle et les mécanismes de suivi."
+      }
+    ],
+    "tags": [
+      "Économie",
+      "Quartiers",
+      "Politique"
+    ]
+  },
+  {
     "id": "om-chiffres-stade",
     "title": "OM : Les chiffres cachés du nouveau stade",
     "excerpt": "Notre enquête révèle les montants réels du partenariat public-privé pour le Vélodrome. Un dossier qui bouscule les certitudes municipales.",

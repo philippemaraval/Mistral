@@ -495,10 +495,13 @@ async function copyShareUrl(url) {
 
 function setShareFeedback(button, message) {
   if (!button) return;
-  const previousLabel = button.textContent;
-  button.textContent = message;
+  const previousTitle = button.dataset.shareTitle || button.getAttribute("title") || "";
+  if (!button.dataset.shareTitle && previousTitle) {
+    button.dataset.shareTitle = previousTitle;
+  }
+  button.setAttribute("title", message);
   window.setTimeout(() => {
-    button.textContent = previousLabel;
+    button.setAttribute("title", button.dataset.shareTitle || previousTitle || message);
   }, 1800);
 }
 

@@ -532,9 +532,8 @@ input {
   height: 2.35rem;
   border-radius: 50%;
   padding: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: normal;
+  display: inline-grid;
+  place-items: center;
   line-height: 1;
 }
 
@@ -1211,9 +1210,8 @@ mark {
   color: #3f5d7c;
   padding: 0;
   font-family: var(--font-sans);
-  font-size: 0.96rem;
-  font-weight: 700;
-  letter-spacing: normal;
+  display: inline-grid;
+  place-items: center;
   cursor: pointer;
   transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
 }
@@ -1223,6 +1221,13 @@ mark {
   background: #edf5ff;
   border-color: #b7cee4;
   color: var(--accent-strong);
+}
+
+.article-share-button svg,
+#mobile-reading-share svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
 }
 
 .article-page__image {
